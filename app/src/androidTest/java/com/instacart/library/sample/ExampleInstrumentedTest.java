@@ -1,4 +1,4 @@
-package com.instacart.library.truetime;
+package com.instacart.library.sample;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

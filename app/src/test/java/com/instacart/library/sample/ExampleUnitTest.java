@@ -1,4 +1,4 @@
-package com.instacart.library.truetime;
+package com.instacart.library.sample;
 
 import org.junit.Test;
 

@@ -21,7 +21,7 @@ public class TrueTime {
         _initClient();
     }
 
-    public TrueTime get() {
+    public static TrueTime get() {
         return new TrueTime();
     }
 
