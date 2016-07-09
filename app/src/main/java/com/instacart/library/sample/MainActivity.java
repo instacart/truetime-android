@@ -3,6 +3,7 @@ package com.instacart.library.sample;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -18,6 +19,8 @@ public class MainActivity
       extends AppCompatActivity {
 
     @Bind(R.id.tt_time_gmt) TextView timeGMT;
+    @Bind(R.id.tt_time_pst) TextView timePST;
+
     private TrueTime trueTime;
 
     @Override
@@ -32,7 +35,9 @@ public class MainActivity
 
     @OnClick(R.id.tt_btn_refresh)
     public void onBtnRefresh() {
-        timeGMT.setText(_formatDate(trueTime.now(), "yyyy-MM-dd HH:mm:ss z", TimeZone.getTimeZone("PST")));
+        Log.d("kg", String.format(" [now: %d] [new Date: %d]", trueTime.now().getTime(), new Date().getTime()));
+        timePST.setText(_formatDate(trueTime.now(), "yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("GMT-07:00")) + " [PST]");
+        timeGMT.setText(_formatDate(trueTime.now(), "yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("GMT")) + " [GMT]");
     }
 
     private String _formatDate(Date date, String pattern, TimeZone timeZone) {
