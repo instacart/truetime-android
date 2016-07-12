@@ -9,6 +9,7 @@ public class TrueTime {
 
     private static final String TAG = TrueTime.class.getSimpleName();
 
+    private String _ntpHost = "1.us.pool.ntp.org";
     private SntpClient _sntpClient;
     private boolean _sntpInitialized = false;
     private int _udpSocketTimeout = 30000;
@@ -23,6 +24,11 @@ public class TrueTime {
 
     public TrueTime setConnectionTimeout(int timeout) {
         _udpSocketTimeout = timeout;
+        return this;
+    }
+
+    public TrueTime setDefaultNtpHost(String ntpHost) {
+        _ntpHost = ntpHost;
         return this;
     }
 
@@ -46,7 +52,7 @@ public class TrueTime {
         _sntpClient = new SntpClient();
 
         try {
-            _sntpClient.requestTime("1.us.pool.ntp.org", _udpSocketTimeout);
+            _sntpClient.requestTime(_ntpHost, _udpSocketTimeout);
             Log.i(TAG, "---- SNTP request successful");
             _sntpInitialized = true;
         } catch (IOException e) {
