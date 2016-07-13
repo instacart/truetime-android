@@ -15,7 +15,7 @@ public class TrueTime {
     private int _udpSocketTimeout = 30000;
 
     private TrueTime() {
-        _initClient();
+        // no public constructors
     }
 
     public static TrueTime get() {
@@ -36,9 +36,8 @@ public class TrueTime {
      * @return Date object that returns the current time in the default Timezone
      */
     public Date now() {
-
         if (!_sntpInitialized) {
-            _initClient();
+            throw new IllegalStateException("You need to call init() on TrueTime atleast once.");
         }
 
         long now = _sntpClient.getNtpTime()//
@@ -47,8 +46,7 @@ public class TrueTime {
         return new Date(now);
     }
 
-    private void _initClient() {
-
+    public void initClient() {
         _sntpClient = new SntpClient();
 
         try {

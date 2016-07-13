@@ -28,7 +28,7 @@ public class MainActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        new InitTrueTime().execute();
+        new InitTrueTimeAsyncTask().execute();
 
         ButterKnife.bind(this);
     }
@@ -47,11 +47,12 @@ public class MainActivity
     }
 
     // a little part of me died, having to use this
-    private class InitTrueTime
+    private class InitTrueTimeAsyncTask
           extends AsyncTask<Void, Void, Void> {
 
         protected Void doInBackground(Void... params) {
             trueTime = TrueTime.get();
+            trueTime.initClient();
             return null;
         }
     }
