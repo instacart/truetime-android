@@ -5,7 +5,7 @@
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.instacart.library.sample.MainActivity">
+    tools:context="com.instacart.library.sample.SampleActivity">
 
     <TextView
         android:id="@+id/tt_time_gmt"

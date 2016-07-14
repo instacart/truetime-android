@@ -14,9 +14,7 @@ public class TrueTime {
     private boolean _sntpInitialized = false;
     private int _udpSocketTimeout = 30000;
 
-    private TrueTime() {
-        // no public constructors
-    }
+    protected TrueTime() { }
 
     public static TrueTime get() {
         return new TrueTime();
@@ -65,5 +63,14 @@ public class TrueTime {
             Log.e(TAG, "TrueTime initialization failed", new Throwable(e));
             _sntpInitialized = false;
         }
+    }
+
+    protected int getUdpSocketTimeout() {
+        return _udpSocketTimeout;
+    }
+
+    protected void setSntpClient(SntpClient sntpClient) {
+        _sntpClient = sntpClient;
+        _sntpInitialized = true;
     }
 }

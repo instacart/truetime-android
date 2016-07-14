@@ -15,7 +15,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
-public class MainActivity
+public class SampleActivity
       extends AppCompatActivity {
 
     @Bind(R.id.tt_time_gmt) TextView timeGMT;
@@ -26,7 +26,7 @@ public class MainActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_sample);
 
         new InitTrueTimeAsyncTask().execute();
 

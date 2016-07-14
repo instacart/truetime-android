@@ -25,7 +25,7 @@ import java.net.InetAddress;
 /**
  * Simple SNTP client class for retrieving network time.
  */
-class SntpClient {
+public class SntpClient {
 
     private static final String TAG = SntpClient.class.getSimpleName();
 
