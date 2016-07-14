@@ -4,7 +4,6 @@ import android.util.Log;
 import com.instacart.library.truetime.SntpClient;
 import com.instacart.library.truetime.TrueTime;
 import java.util.List;
-import java.util.Random;
 import rx.Observable;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
@@ -14,9 +13,7 @@ public class TrueTimeRx
 
     private static final String TAG = TrueTimeRx.class.getSimpleName();
 
-    private TrueTimeRx() {
-
-    }
+    private TrueTimeRx() { }
 
     public static TrueTimeRx get() {
         return new TrueTimeRx();
@@ -74,10 +71,4 @@ public class TrueTimeRx
                   }
               });
     }
-
-    // hacking
-    private static int randomIntBetween(int min, int max) {
-        return new Random().nextInt((max - min) + 1) + min;
-    }
-
 }
