@@ -1,4 +1,5 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.github.dcendents.android-maven'
 
 android {
     compileSdkVersion 23
@@ -33,3 +34,5 @@ dependencies {
 
     testCompile 'junit:junit:4.12'
 }
+
+group='com.github.instacart'
