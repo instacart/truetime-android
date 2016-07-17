@@ -19,9 +19,16 @@ android {
     }
 }
 
+repositories {
+    maven {
+        url "https://jitpack.io"
+    }
+}
+
 dependencies {
     compile project(path: ':library')
     compile project(path: ':library-extension-rx')
+//    compile 'com.github.instacart.truetime-android:library-extension-rx:master-SNAPSHOT'
 
     compile 'com.android.support:appcompat-v7:23.4.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha4'
