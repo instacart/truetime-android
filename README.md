@@ -53,7 +53,7 @@ You can then use:
   Date noReallyThisIsTheTrueDateAndTime = trueTime.now();
 ```
 
-#winning...
+... #winning
 
 Note: while the `IOException` is caught, we initialize an internal boolean flag that tells us if the call was a success. If the UDP call didn't go through, when you call `trueTime.now()` it will throw an `IllegalStateException`.
 
@@ -92,8 +92,8 @@ Now, as before:
 ### What is nifty about the Rx version?
 
 * it can take in multiple NTP hosts to shoot out the UDP request
-* those UDP requests are executed in parallel
-* if one of the NTP requests fail, we retry constantly (the failed host alone)
+* those UDP requests are executed in parallel (with a limit of 3 parallel calls)
+* if one of the NTP requests fail, we retry the failed request (alone) 5 times
 * as soon as we hear back from any of the hosts, we immediately take that and terminate the rest of the requests
 
 
