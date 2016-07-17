@@ -1,7 +1,8 @@
 package com.instacart.library.truetime;
 
 /*
- * Copyright (C) 2008 The Android Open Source Project
+ * Original work Copyright (C) 2008 The Android Open Source Project
+ * Modified work Copyright (C) 2016, Instacart
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
