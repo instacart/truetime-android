@@ -46,8 +46,8 @@ public class TrueTime {
             throw new IllegalStateException("You need to call init() on TrueTime atleast once.");
         }
 
-        long now = _sntpClient.getNtpTime()//
-                   + SystemClock.elapsedRealtime() - _sntpClient.getDeviceUptime(); // elapsed deviceUptime from calc.
+        long now = _sntpClient.getCachedSntpTime()//
+                   + SystemClock.elapsedRealtime() - _sntpClient.getCachedDeviceUptime(); // elapsed deviceUptime from calc.
 
         return new Date(now);
     }

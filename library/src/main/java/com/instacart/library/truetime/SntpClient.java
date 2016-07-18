@@ -28,32 +28,23 @@ import java.net.InetAddress;
  */
 public class SntpClient {
 
-    private static final String TAG = SntpClient.class.getSimpleName();
-
     private static final int NTP_MODE_CLIENT = 3;
     private static final int NTP_PACKET_SIZE = 48;
     private static final int NTP_PORT = 123;
     private static final int NTP_VERSION = 3;
     private static final int ORIGINATE_TIME_OFFSET = 24;
     private static final int RECEIVE_TIME_OFFSET = 32;
-    private static final int REFERENCE_TIME_OFFSET = 16;
     private static final int TRANSMIT_TIME_OFFSET = 40;
 
     // Number of seconds between Jan 1, 1900 and Jan 1, 1970
     // 70 years plus 17 leap days
     private static final long OFFSET_1900_TO_1970 = ((365L * 70L) + 17L) * 24L * 60L * 60L;
 
-    // system time computed from NTP server response
-    private long _ntpTime;
-
-    // value of SystemClock.elapsedRealtime() corresponding to _ntpTime
-    private long _deviceUptime;
-
-    // round trip time in milliseconds
-    private long _roundTripTime;
+    private long _cachedSntpTime;
+    private long _cachedDeviceUptime;
 
     /**
-     * Sends an SNTP request to the given host and processes the response.
+     * Sends an NTP request to the given host and processes the response.
      *
      * @param ntpHost    host name of the server.
      * @param timeout network timeout in milliseconds.
@@ -88,37 +79,23 @@ public class SntpClient {
 
             // read the response
             DatagramPacket response = new DatagramPacket(buffer, buffer.length);
-
             socket.receive(response);
 
             long responseTicks = SystemClock.elapsedRealtime();
-            long responseTime = requestTime + (responseTicks - requestTicks);
+
+            // See here for the algorithm used:
+            // https://en.wikipedia.org/wiki/Network_Time_Protocol#Clock_synchronization_algorithm
 
             // extract the results
-            long originateTime = _readTimeStamp(buffer, ORIGINATE_TIME_OFFSET);
-            long receiveTime = _readTimeStamp(buffer, RECEIVE_TIME_OFFSET);
-            long transmitTime = _readTimeStamp(buffer, TRANSMIT_TIME_OFFSET);
-            long roundTripTime = responseTicks - requestTicks - (transmitTime - receiveTime);
+            long originateTime = _readTimeStamp(buffer, ORIGINATE_TIME_OFFSET);     // T0
+            long receiveTime = _readTimeStamp(buffer, RECEIVE_TIME_OFFSET);         // T1
+            long transmitTime = _readTimeStamp(buffer, TRANSMIT_TIME_OFFSET);       // T2
+            long responseTime = requestTime + (responseTicks - requestTicks);       // T3
 
-            // receiveTime = originateTime + transit + skew
-            // responseTime = transmitTime + transit - skew
-            // clockOffset = ((receiveTime - originateTime) + (transmitTime - responseTime))/2
-            //             = ((originateTime + transit + skew - originateTime) +
-            //                (transmitTime - (transmitTime + transit - skew)))/2
-            //             = ((transit + skew) + (transmitTime - transmitTime - transit + skew))/2
-            //             = (transit + skew - transit + skew)/2
-            //             = (2 * skew)/2 = skew
+            long clockOffset = ((receiveTime - originateTime) + (transmitTime - responseTime)) / 2;  // θ
 
-            long clockOffset = ((receiveTime - originateTime) + (transmitTime - responseTime)) / 2;
-
-            // if (false) Log.d(TAG, "round trip: " + roundTripTime + " ms");
-            // if (false) Log.d(TAG, "clock offset: " + clockOffset + " ms");
-            // save our results - use the times on this side of the network latency
-            // (response rather than request time)
-
-            _ntpTime = responseTime + clockOffset;
-            _deviceUptime = responseTicks;
-            _roundTripTime = roundTripTime;
+            _cachedSntpTime = responseTime + clockOffset;
+            _cachedDeviceUptime = responseTicks;
 
         } finally {
             if (socket != null) {
@@ -128,31 +105,17 @@ public class SntpClient {
     }
 
     /**
-     * Returns the round trip time of the NTP transaction
-     *
-     * @return round trip time in milliseconds.
-     */
-    public long getRoundTripTime() {
-        return _roundTripTime;
-    }
-
-    /**
-     * Returns the time computed from the NTP transaction.
-     *
      * @return time value computed from NTP server response.
      */
-    long getNtpTime() {
-        return _ntpTime;
+    long getCachedSntpTime() {
+        return _cachedSntpTime;
     }
 
     /**
-     * Returns the reference clock value (value of SystemClock.elapsedRealtime())
-     * corresponding to the NTP time.
-     *
-     * @return reference clock corresponding to the NTP time.
+     * @return device uptime computed at time of executing the NTP request
      */
-    long getDeviceUptime() {
-        return _deviceUptime;
+    long getCachedDeviceUptime() {
+        return _cachedDeviceUptime;
     }
 
     // -----------------------------------------------------------------------------------
