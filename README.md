@@ -8,7 +8,7 @@ Users may do this for a variety of reasons like different timezones, trying to b
 
 # How is TrueTime calculated?
 
-It's pretty simple actually, you make a network (NTP) request to a server that tells you the actual time. You then establish the "delta" between the device "uptime" and the response from the network request. Everytime "now" is requested subsequently, we account for that offset and return a corrected `Date` object.
+It's pretty simple actually, you make a network (SNTP) request to a server that tells you the actual time. You then establish the "delta" between the device "uptime" and the response from the network request. Every time "now" is requested subsequently, we account for that offset and return a corrected `Date` object.
 
 You can read more of the juicy details in this [blog post]().
 
@@ -59,16 +59,16 @@ Note: while the `IOException` is caught, we initialize an internal boolean flag 
 
 ## Rx-ified Version
 
-If you're down to using [RxJava](https://github.com/ReactiveX/RxJava) then there's a niftier `initClient()` api that takes in the pool of NTP hosts you want to query.
+If you're down to using [RxJava](https://github.com/ReactiveX/RxJava) then there's a niftier `initClient()` api that takes in the pool of hosts you want to query.
 
 ```
-  List<String> ntpHosts = Arrays.asList("0.north-america.pool.ntp.org",
+  List<String> sntpHosts = Arrays.asList("0.north-america.pool.ntp.org",
                                         "1.north-america.pool.ntp.org",
                                         "2.north-america.pool.ntp.org",
                                         "3.north-america.pool.ntp.org",
                                         "0.us.pool.ntp.org",
                                         "1.us.pool.ntp.org");
-  trueTime.initClient(ntpHosts)
+  trueTime.initClient(sntpHosts)
             .subscribeOn(Schedulers.io())
             .subscribe(new Action1<Void>() {
                 @Override
@@ -91,9 +91,9 @@ Now, as before:
 
 ### What is nifty about the Rx version?
 
-* it can take in multiple NTP hosts to shoot out the UDP request
+* it can take in multiple SNTP hosts to shoot out the UDP request
 * those UDP requests are executed in parallel (with a limit of 3 parallel calls)
-* if one of the NTP requests fail, we retry the failed request (alone) 5 times
+* if one of the SNTP requests fail, we retry the failed request (alone) 5 times
 * as soon as we hear back from any of the hosts, we immediately take that and terminate the rest of the requests
 
 
@@ -101,7 +101,7 @@ Now, as before:
 
 * You want to `initClient` only once per device restart. This means as long as your device is not restarted, TrueTime needs to be initialized only once.
 * Preferable use dependency injection (like [Dagger](http://square.github.io/dagger/)) and create a TrueTime @Singleton object
-* TrueTime was built to be accurate "enough". If you want to get sub-millisecond accuracy the NTP second requires a slightly [modified synchronization algorithm](https://en.wikipedia.org/wiki/Network_Time_Protocol#Clock_synchronization_algorithm). TrueTime provides the building blocks for this. We welcome PRs if you think you can do this with TrueTimeRx pretty easily :).
+* TrueTime was built to be accurate "enough", hence the use of [SNTP](https://en.wikipedia.org/wiki/Network_Time_Protocol#SNTP). If you want to get sub-millisecond accuracy then you probably want to use [NTP](https://www.meinbergglobal.com/english/faq/faq_37.htm).TrueTime provides the building blocks for this. We welcome PRs if you think you can do this with TrueTimeRx pretty easily :).
 
 # License
 
