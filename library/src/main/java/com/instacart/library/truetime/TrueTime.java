@@ -31,14 +31,6 @@ public class TrueTime {
     }
 
     /**
-     * Client should let TrueTime know of device reboots
-     * This can be done with typically using a Broadcast Receiver
-     */
-    public void deviceWasRebooted() {
-        _sntpInitialized = false;
-    }
-
-    /**
      * @return Date object that returns the current time in the default Timezone
      */
     public Date now() {
