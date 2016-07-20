@@ -3,6 +3,7 @@ package com.instacart.library.truetime.extensionrx;
 import android.util.Log;
 import com.instacart.library.truetime.SntpClient;
 import com.instacart.library.truetime.TrueTime;
+import java.util.Date;
 import java.util.List;
 import rx.Observable;
 import rx.functions.Func1;
@@ -20,11 +21,12 @@ public class TrueTimeRx
     }
 
     /**
-     * Initialize the SntpClient by providing a list of hosts
-     *
-     * Pick the first
+     * Initialize the SntpClient
+     * Issue Sntp call via UDP to list of provided hosts
+     * Pick the first successful call and return
+     * Retry failed calls individually
      */
-    public Observable<Void> initClient(final List<String> ntpHosts) {
+    public Observable<Date> initClient(final List<String> ntpHosts) {
 
         return Observable//
               .from(ntpHosts)//
@@ -64,10 +66,10 @@ public class TrueTimeRx
                   }
               })//
               .first()//
-              .map(new Func1<SntpClient, Void>() {
+              .map(new Func1<SntpClient, Date>() {
                   @Override
-                  public Void call(SntpClient sntpClient) {
-                      return null;
+                  public Date call(SntpClient sntpClient) {
+                      return now();
                   }
               });
     }
