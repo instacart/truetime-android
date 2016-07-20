@@ -63,22 +63,18 @@ If you're down to using [RxJava](https://github.com/ReactiveX/RxJava) then there
 
 ```
   List<String> sntpHosts = Arrays.asList("0.north-america.pool.ntp.org",
-                                        "1.north-america.pool.ntp.org",
-                                        "2.north-america.pool.ntp.org",
-                                        "3.north-america.pool.ntp.org",
-                                        "0.us.pool.ntp.org",
-                                        "1.us.pool.ntp.org");
+                                        "1.north-america.pool.ntp.org");
   trueTime.initClient(sntpHosts)
             .subscribeOn(Schedulers.io())
             .subscribe(new Action1<Void>() {
                 @Override
                 public void call(Void dummy) {
-                    ILLog.v(TAG, "TrueTime was initialized and we have a time");
+                    Log.v(TAG, "TrueTime was initialized and we have a time");
                 }
             }, new Action1<Throwable>() {
                 @Override
                 public void call(Throwable throwable) {
-                    ILLog.logException(throwable);
+                    throwable.printStackTrace();
                 }
             });
 ```
