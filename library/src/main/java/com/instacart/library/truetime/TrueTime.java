@@ -35,7 +35,7 @@ public class TrueTime {
      */
     public Date now() {
         if (!_sntpInitialized) {
-            throw new IllegalStateException("You need to call init() on TrueTime atleast once.");
+            throw new IllegalStateException("You need to call init() on TrueTime at least once.");
         }
 
         long now = _sntpClient.getCachedSntpTime()//

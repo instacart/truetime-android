@@ -20,7 +20,7 @@ public class TrueTimeRx
     }
 
     /**
-     * initialize the SntpClient by providing a list of hosts
+     * Initialize the SntpClient by providing a list of hosts
      *
      * Pick the first
      */
