@@ -43,18 +43,18 @@ public class TrueTime {
     public TrueTime withConnectionTimeout(int timeoutInMillis) {
         assertInstanceCreated();
 
-        instance._udpSocketTimeoutInMillis = timeoutInMillis;
+        _udpSocketTimeoutInMillis = timeoutInMillis;
         return instance;
     }
 
     public TrueTime withNtpHost(String ntpHost) {
         assertInstanceCreated();
 
-        instance._ntpHost = ntpHost;
+        _ntpHost = ntpHost;
         return instance;
     }
 
-    public void initClient() {
+    public void initialize() {
         SntpClient sntpClient = new SntpClient();
 
         try {
@@ -63,7 +63,7 @@ public class TrueTime {
             setSntpClient(sntpClient);
         } catch (IOException e) {
             Log.e(TAG, "TrueTime initialization failed", new Throwable(e));
-            instance._sntpInitialized = false;
+            _sntpInitialized = false;
         }
     }
 
