@@ -47,16 +47,16 @@ public class SntpClient {
      * Sends an NTP request to the given host and processes the response.
      *
      * @param ntpHost    host name of the server.
-     * @param timeout network timeout in milliseconds.
+     * @param timeoutInMillis network timeout in milliseconds.
      */
-    public void requestTime(String ntpHost, int timeout) throws IOException {
+    public void requestTime(String ntpHost, int timeoutInMillis) throws IOException {
 
         DatagramSocket socket = null;
 
         try {
 
             socket = new DatagramSocket();
-            socket.setSoTimeout(timeout);
+            socket.setSoTimeout(timeoutInMillis);
 
             InetAddress address = InetAddress.getByName(ntpHost);
 

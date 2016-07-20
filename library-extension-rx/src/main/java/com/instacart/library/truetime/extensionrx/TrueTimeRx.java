@@ -16,8 +16,14 @@ public class TrueTimeRx
 
     private TrueTimeRx() { }
 
-    public static TrueTimeRx get() {
-        return new TrueTimeRx();
+    public static TrueTimeRx buildWithRx() {
+        instance = new TrueTimeRx();
+        return (TrueTimeRx) instance;
+    }
+
+    public TrueTimeRx withConnectionTimeout(int timeout) {
+        super.withConnectionTimeout(timeout);
+        return (TrueTimeRx) instance;
     }
 
     /**
@@ -27,7 +33,6 @@ public class TrueTimeRx
      * Retry failed calls individually
      */
     public Observable<Date> initClient(final List<String> ntpHosts) {
-
         return Observable//
               .from(ntpHosts)//
               .flatMap(new Func1<String, Observable<SntpClient>>() {
@@ -41,9 +46,10 @@ public class TrueTimeRx
                                 public SntpClient call(String host) {
                                     SntpClient sntpClient = new SntpClient();
                                     try {
-                                        Log.d(TAG, "Querying host : " + host);
+                                        Log.i(TAG, "---- Querying host : " + host);
                                         sntpClient.requestTime(host, getUdpSocketTimeout());
-                                        setSntpClient(sntpClient);
+                                        TrueTime.setSntpClient(sntpClient);
+
                                     } catch (Exception e) {
                                         throw new RuntimeException(e);
                                     }

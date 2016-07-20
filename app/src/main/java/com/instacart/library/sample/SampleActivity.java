@@ -21,8 +21,6 @@ public class SampleActivity
     @Bind(R.id.tt_time_gmt) TextView timeGMT;
     @Bind(R.id.tt_time_pst) TextView timePST;
 
-    private TrueTime trueTime;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,9 +33,10 @@ public class SampleActivity
 
     @OnClick(R.id.tt_btn_refresh)
     public void onBtnRefresh() {
-        Log.d("kg", String.format(" [now: %d] [new Date: %d]", trueTime.now().getTime(), new Date().getTime()));
-        timePST.setText(_formatDate(trueTime.now(), "yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("GMT-07:00")) + " [PST]");
-        timeGMT.setText(_formatDate(trueTime.now(), "yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("GMT")) + " [GMT]");
+        Log.d("kg", String.format(" [now: %d] [new Date: %d]", TrueTime.now().getTime(), new Date().getTime()));
+        timePST.setText(_formatDate(TrueTime.now(), "yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("GMT-07:00")) +
+                        " [PST]");
+        timeGMT.setText(_formatDate(TrueTime.now(), "yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("GMT")) + " [GMT]");
     }
 
     private String _formatDate(Date date, String pattern, TimeZone timeZone) {
@@ -51,8 +50,7 @@ public class SampleActivity
           extends AsyncTask<Void, Void, Void> {
 
         protected Void doInBackground(Void... params) {
-            trueTime = TrueTime.get();
-            trueTime.initClient();
+            TrueTime.build().withNtpHost("0.north-america.pool.ntp.org").withConnectionTimeout(3_1428).initClient();
             return null;
         }
     }
