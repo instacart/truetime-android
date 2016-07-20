@@ -14,6 +14,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 import rx.android.schedulers.AndroidSchedulers;
@@ -36,16 +37,17 @@ public class Sample2Activity
         setContentView(R.layout.activity_sample);
 
         ButterKnife.bind(this);
-
         refreshBtn.setEnabled(false);
-        TrueTimeRx.buildWithRx()
+
+        List<String> ntpHosts = Arrays.asList("0.north-america.pool.ntp.org",
+                                              "1.north-america.pool.ntp.org",
+                                              "2.north-america.pool.ntp.org",
+                                              "3.north-america.pool.ntp.org",
+                                              "0.us.pool.ntp.org",
+                                              "1.us.pool.ntp.org");
+        TrueTimeRx.build()
               .withConnectionTimeout(31_428)
-              .initClient(Arrays.asList("0.north-america.pool.ntp.org",
-                                        "1.north-america.pool.ntp.org",
-                                        "2.north-america.pool.ntp.org",
-                                        "3.north-america.pool.ntp.org",
-                                        "0.us.pool.ntp.org",
-                                        "1.us.pool.ntp.org"))
+              .initialize(ntpHosts)
               .subscribeOn(Schedulers.io())
               .observeOn(AndroidSchedulers.mainThread())
               .subscribe(new Action1<Date>() {

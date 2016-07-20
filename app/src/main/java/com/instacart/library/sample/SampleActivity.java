@@ -50,7 +50,7 @@ public class SampleActivity
           extends AsyncTask<Void, Void, Void> {
 
         protected Void doInBackground(Void... params) {
-            TrueTime.build().withNtpHost("0.north-america.pool.ntp.org").withConnectionTimeout(3_1428).initClient();
+            TrueTime.build().withNtpHost("0.north-america.pool.ntp.org").withConnectionTimeout(3_1428).initialize();
             return null;
         }
     }

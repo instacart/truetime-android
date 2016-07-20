@@ -16,7 +16,7 @@ public class TrueTimeRx
 
     private TrueTimeRx() { }
 
-    public static TrueTimeRx buildWithRx() {
+    public static TrueTimeRx build() {
         instance = new TrueTimeRx();
         return (TrueTimeRx) instance;
     }
@@ -32,7 +32,7 @@ public class TrueTimeRx
      * Pick the first successful call and return
      * Retry failed calls individually
      */
-    public Observable<Date> initClient(final List<String> ntpHosts) {
+    public Observable<Date> initialize(final List<String> ntpHosts) {
         return Observable//
               .from(ntpHosts)//
               .flatMap(new Func1<String, Observable<Date>>() {
