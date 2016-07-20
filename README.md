@@ -82,7 +82,7 @@ If you're down to using [RxJava](https://github.com/ReactiveX/RxJava) then there
 Now, as before:
 
 ```
-  TrueTime.now(); // return a Date object with the "true" time.
+  TrueTimeRx.now(); // return a Date object with the "true" time.
 ```
 
 ### What is nifty about the Rx version?
