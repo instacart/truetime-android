@@ -8,6 +8,7 @@ import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import com.instacart.library.truetime.TrueTime;
 import com.instacart.library.truetime.extensionrx.TrueTimeRx;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -25,8 +26,6 @@ public class Sample2Activity
 
     private static final String TAG = Sample2Activity.class.getSimpleName();
 
-    private TrueTimeRx _trueTimeRx;
-
     @Bind(R.id.tt_btn_refresh) Button refreshBtn;
     @Bind(R.id.tt_time_gmt) TextView timeGMT;
     @Bind(R.id.tt_time_pst) TextView timePST;
@@ -38,14 +37,15 @@ public class Sample2Activity
 
         ButterKnife.bind(this);
 
-        _trueTimeRx = TrueTimeRx.get();
         refreshBtn.setEnabled(false);
-        _trueTimeRx.initClient(Arrays.asList("0.north-america.pool.ntp.org",
-                                             "1.north-america.pool.ntp.org",
-                                             "2.north-america.pool.ntp.org",
-                                             "3.north-america.pool.ntp.org",
-                                             "0.us.pool.ntp.org",
-                                             "1.us.pool.ntp.org"))
+        TrueTimeRx.buildWithRx()
+              .withConnectionTimeout(31_428)
+              .initClient(Arrays.asList("0.north-america.pool.ntp.org",
+                                        "1.north-america.pool.ntp.org",
+                                        "2.north-america.pool.ntp.org",
+                                        "3.north-america.pool.ntp.org",
+                                        "0.us.pool.ntp.org",
+                                        "1.us.pool.ntp.org"))
               .subscribeOn(Schedulers.io())
               .observeOn(AndroidSchedulers.mainThread())
               .subscribe(new Action1<Date>() {
@@ -69,10 +69,10 @@ public class Sample2Activity
 
     @OnClick(R.id.tt_btn_refresh)
     public void onBtnRefresh() {
-        Log.d("kg", String.format(" [now: %d] [new Date: %d]", _trueTimeRx.now().getTime(), new Date().getTime()));
-        timePST.setText(_formatDate(_trueTimeRx.now(), "yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("GMT-07:00")) +
+        Log.d("kg", String.format(" [now: %d] [new Date: %d]", TrueTime.now().getTime(), new Date().getTime()));
+        timePST.setText(_formatDate(TrueTime.now(), "yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("GMT-07:00")) +
                         " [PST]");
-        timeGMT.setText(_formatDate(_trueTimeRx.now(), "yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("GMT")) + " [GMT]");
+        timeGMT.setText(_formatDate(TrueTime.now(), "yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("GMT")) + " [GMT]");
     }
 
     private String _formatDate(Date date, String pattern, TimeZone timeZone) {
