@@ -35,15 +35,15 @@ public class TrueTimeRx
     public Observable<Date> initClient(final List<String> ntpHosts) {
         return Observable//
               .from(ntpHosts)//
-              .flatMap(new Func1<String, Observable<SntpClient>>() {
+              .flatMap(new Func1<String, Observable<Date>>() {
                   @Override
-                  public Observable<SntpClient> call(String ntpHost) {
+                  public Observable<Date> call(String ntpHost) {
                       return Observable//
                             .just(ntpHost)//
                             .subscribeOn(Schedulers.io())//
-                            .map(new Func1<String, SntpClient>() {
+                            .map(new Func1<String, Date>() {
                                 @Override
-                                public SntpClient call(String host) {
+                                public Date call(String host) {
                                     SntpClient sntpClient = new SntpClient();
                                     try {
                                         Log.i(TAG, "---- Querying host : " + host);
@@ -53,30 +53,25 @@ public class TrueTimeRx
                                     } catch (Exception e) {
                                         throw new RuntimeException(e);
                                     }
-                                    return sntpClient;
+                                    return now();
                                 }
                             })//
                             .retry(5)//
-                            .onErrorReturn(new Func1<Throwable, SntpClient>() {
+                            .onErrorReturn(new Func1<Throwable, Date>() {
                                 @Override
-                                public SntpClient call(Throwable throwable) {
+                                public Date call(Throwable throwable) {
+                                    throwable.printStackTrace();
                                     return null;
                                 }
                             });
                   }
               }, 3)//
-              .filter(new Func1<SntpClient, Boolean>() {
+              .filter(new Func1<Date, Boolean>() {
                   @Override
-                  public Boolean call(SntpClient sntpClient) {
-                      return sntpClient != null;
+                  public Boolean call(Date date) {
+                      return date != null;
                   }
               })//
-              .first()//
-              .map(new Func1<SntpClient, Date>() {
-                  @Override
-                  public Date call(SntpClient sntpClient) {
-                      return now();
-                  }
-              });
+              .first();
     }
 }
