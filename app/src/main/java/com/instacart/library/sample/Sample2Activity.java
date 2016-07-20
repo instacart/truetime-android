@@ -48,9 +48,9 @@ public class Sample2Activity
                                              "1.us.pool.ntp.org"))
               .subscribeOn(Schedulers.io())
               .observeOn(AndroidSchedulers.mainThread())
-              .subscribe(new Action1<Void>() {
+              .subscribe(new Action1<Date>() {
                   @Override
-                  public void call(Void aVoid) {
+                  public void call(Date date) {
                       onBtnRefresh();
                   }
               }, new Action1<Throwable>() {

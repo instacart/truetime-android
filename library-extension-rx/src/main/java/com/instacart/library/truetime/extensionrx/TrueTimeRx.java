@@ -41,7 +41,7 @@ public class TrueTimeRx
                                 public SntpClient call(String host) {
                                     SntpClient sntpClient = new SntpClient();
                                     try {
-                                        Log.d(TAG, "Querying host : " + host);
+                                        Log.i(TAG, "---- Querying host : " + host);
                                         sntpClient.requestTime(host, getUdpSocketTimeout());
                                         setSntpClient(sntpClient);
                                     } catch (Exception e) {
