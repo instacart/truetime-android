@@ -41,30 +41,30 @@ dependencies {
 Importing `'com.github.instacart.truetime-android:library:<release-version>'` should be sufficient for this.
 
 ```
-  TrueTime trueTime = TrueTime.get();
-  trueTime.initClient();
+  TrueTime.build().initialize();
 ```
 
-`initClient` must be run on a background thread. If you run it on the main thread, you will get a [`NetworkOnMainThreadException`](https://developer.android.com/reference/android/os/NetworkOnMainThreadException.html)
+`initialize` must be run on a background thread. If you run it on the main thread, you will get a [`NetworkOnMainThreadException`](https://developer.android.com/reference/android/os/NetworkOnMainThreadException.html)
 
 You can then use:
 
 ```
-  Date noReallyThisIsTheTrueDateAndTime = trueTime.now();
+  Date noReallyThisIsTheTrueDateAndTime = TrueTime.now();
 ```
 
 ... #winning
 
-Note: while the `IOException` is caught, we initialize an internal boolean flag that tells us if the call was a success. If the UDP call didn't go through, when you call `trueTime.now()` it will throw an `IllegalStateException`.
+Note: while the `IOException` is caught, we initialize an internal boolean flag that tells us if the call was a success. If the UDP call didn't go through, when you call `TrueTime.now()` it will throw an `IllegalStateException`.
 
 ## Rx-ified Version
 
-If you're down to using [RxJava](https://github.com/ReactiveX/RxJava) then there's a niftier `initClient()` api that takes in the pool of hosts you want to query.
+If you're down to using [RxJava](https://github.com/ReactiveX/RxJava) then there's a niftier `initialize()` api that takes in the pool of hosts you want to query.
 
 ```
-  List<String> sntpHosts = Arrays.asList("0.north-america.pool.ntp.org",
+  List<String> ntpHosts = Arrays.asList("0.north-america.pool.ntp.org",
                                         "1.north-america.pool.ntp.org");
-  trueTime.initClient(sntpHosts)
+  TrueTimeRx.build()
+            .initialize(ntpHosts)
             .subscribeOn(Schedulers.io())
             .subscribe(new Action1<Void>() {
                 @Override
@@ -82,7 +82,7 @@ If you're down to using [RxJava](https://github.com/ReactiveX/RxJava) then there
 Now, as before:
 
 ```
-  trueTime.now(); // return a Date object with the "true" time.
+  TrueTime.now(); // return a Date object with the "true" time.
 ```
 
 ### What is nifty about the Rx version?
@@ -95,7 +95,7 @@ Now, as before:
 
 ## Notes/tips:
 
-* You want to `initClient` only once per device restart. This means as long as your device is not restarted, TrueTime needs to be initialized only once.
+* You want to `initialize` only once per device restart. This means as long as your device is not restarted, TrueTime needs to be initialized only once.
 * Preferable use dependency injection (like [Dagger](http://square.github.io/dagger/)) and create a TrueTime @Singleton object
 * TrueTime was built to be accurate "enough", hence the use of [SNTP](https://en.wikipedia.org/wiki/Network_Time_Protocol#SNTP). If you want to get sub-millisecond accuracy then you probably want to use [NTP](https://www.meinbergglobal.com/english/faq/faq_37.htm).TrueTime provides the building blocks for this. We welcome PRs if you think you can do this with TrueTimeRx pretty easily :).
 
