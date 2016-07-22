@@ -1,14 +1,14 @@
 # TrueTime for Android
 
-Get the date and time "now" impervious to manual changes to your device clock.
+SNTP client for Android. Calculate the date and time "now" impervious to manual changes to device clock time.
 
-In certain applications it becomes important to get the real or "true" date and time. On mobile devices, if the the user has changed their clock settings manually, then a `new Date()` gives you a `Date` object impacted by the user's settings changes.
+In certain applications it becomes important to get the real or "true" date and time. On most devices, if the clock has been changed manually, then a `new Date()` instance gives you a time impacted by local settings.
 
-Users may do this for a variety of reasons like different timezones, trying to be punctual and setting their clocks 5/10 minutes early etc. Your application or service may want a `Date` object that is unaffected by these changes and is reliable. TrueTime gives you that.
+Users may do this for a variety of reasons, like being in different timezones, trying to be punctual and setting their clocks 5 – 10 minutes early, etc. Your application or service may want a date that is unaffected by these changes and reliable as a source of truth. TrueTime gives you that.
 
 # How is TrueTime calculated?
 
-It's pretty simple actually, you make a network (SNTP) request to a server that tells you the actual time. You then establish the "delta" between the device "uptime" and the response from the network request. Every time "now" is requested subsequently, we account for that offset and return a corrected `Date` object.
+It's pretty simple actually. We make a request to an NTP server that gives us the actual time. We then establish the delta between device uptime and uptime at the time of the network response. Each time "now" is requested subsequently, we account for that offset and return a corrected `Date` object.
 
 You can read more of the juicy details in this [blog post]().
 
@@ -97,7 +97,7 @@ Now, as before:
 
 * You want to `initialize` only once per device restart. This means as long as your device is not restarted, TrueTime needs to be initialized only once.
 * Preferable use dependency injection (like [Dagger](http://square.github.io/dagger/)) and create a TrueTime @Singleton object
-* TrueTime was built to be accurate "enough", hence the use of [SNTP](https://en.wikipedia.org/wiki/Network_Time_Protocol#SNTP). If you want to get sub-millisecond accuracy then you probably want to use [NTP](https://www.meinbergglobal.com/english/faq/faq_37.htm).TrueTime provides the building blocks for this. We welcome PRs if you think you can do this with TrueTimeRx pretty easily :).
+* TrueTime was built to be accurate "enough", hence the use of [SNTP](https://en.wikipedia.org/wiki/Network_Time_Protocol#SNTP). If you need exact millisecond accuracy then you probably want [NTP](https://www.meinbergglobal.com/english/faq/faq_37.htm) (i.e. SNTP + statistical analysis to ensure the reference time is exactly correct). TrueTime provides the building blocks for this. We welcome PRs if you think you can do this with TrueTimeRx pretty easily :).
 
 # License
 
