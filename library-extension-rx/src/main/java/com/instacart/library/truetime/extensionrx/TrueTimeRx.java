@@ -14,16 +14,15 @@ public class TrueTimeRx
 
     private static final String TAG = TrueTimeRx.class.getSimpleName();
 
-    private TrueTimeRx() { }
+    private static final TrueTime INSTANCE = new TrueTimeRx();
 
     public static TrueTimeRx build() {
-        instance = new TrueTimeRx();
-        return (TrueTimeRx) instance;
+        return (TrueTimeRx) INSTANCE;
     }
 
     public TrueTimeRx withConnectionTimeout(int timeout) {
         super.withConnectionTimeout(timeout);
-        return (TrueTimeRx) instance;
+        return (TrueTimeRx) INSTANCE;
     }
 
     /**
@@ -48,7 +47,7 @@ public class TrueTimeRx
                                     try {
                                         Log.i(TAG, "---- Querying host : " + host);
                                         sntpClient.requestTime(host, getUdpSocketTimeout());
-                                        TrueTime.setSntpClient(sntpClient);
+                                        setSntpClient(sntpClient);
 
                                     } catch (Exception e) {
                                         throw new RuntimeException(e);

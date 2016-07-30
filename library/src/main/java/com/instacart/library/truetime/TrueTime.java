@@ -9,79 +9,64 @@ public class TrueTime {
 
     private static final String TAG = TrueTime.class.getSimpleName();
 
-    protected static TrueTime instance;
+    private static final TrueTime INSTANCE = new TrueTime();
 
     private String _ntpHost = "1.us.pool.ntp.org";
-    private SntpClient _sntpClient;
-    private boolean _sntpInitialized = false;
+    private SntpClient _sntpClient = null;
     private int _udpSocketTimeoutInMillis = 30_000;
 
-    protected TrueTime() { }
-
     public static TrueTime build() {
-        instance = new TrueTime();
-        return instance;
+        return INSTANCE;
     }
 
     /**
      * @return Date object that returns the current time in the default Timezone
      */
     public static Date now() {
-        if (!instance._sntpInitialized) {
+        if (!isInitialized()) {
             throw new IllegalStateException("You need to call init() on TrueTime at least once.");
         }
 
-        long now = instance._sntpClient.getCachedSntpTime()//
+        long now = INSTANCE._sntpClient.getCachedSntpTime()//
                    + SystemClock.elapsedRealtime() -
-                   instance._sntpClient.getCachedDeviceUptime(); // elapsed deviceUptime from calc.
+                   INSTANCE._sntpClient.getCachedDeviceUptime(); // elapsed deviceUptime from calc.
 
         return new Date(now);
     }
 
+
     // -----------------------------------------------------------------------------------
 
-    public TrueTime withConnectionTimeout(int timeoutInMillis) {
-        assertInstanceCreated();
-
+    public synchronized TrueTime withConnectionTimeout(int timeoutInMillis) {
         _udpSocketTimeoutInMillis = timeoutInMillis;
-        return instance;
+        return INSTANCE;
     }
 
-    public TrueTime withNtpHost(String ntpHost) {
-        assertInstanceCreated();
-
+    public synchronized TrueTime withNtpHost(String ntpHost) {
         _ntpHost = ntpHost;
-        return instance;
+        return INSTANCE;
     }
 
     public void initialize() {
         SntpClient sntpClient = new SntpClient();
 
         try {
-            sntpClient.requestTime(instance._ntpHost, instance._udpSocketTimeoutInMillis);
+            sntpClient.requestTime(INSTANCE._ntpHost, INSTANCE._udpSocketTimeoutInMillis);
             Log.i(TAG, "---- SNTP request successful");
             setSntpClient(sntpClient);
         } catch (IOException e) {
+            _sntpClient = null;
             Log.e(TAG, "TrueTime initialization failed", new Throwable(e));
-            _sntpInitialized = false;
         }
     }
 
     // -----------------------------------------------------------------------------------
 
-    protected static void setSntpClient(SntpClient sntpClient) {
-        instance._sntpClient = sntpClient;
-        instance._sntpInitialized = true;
+    protected synchronized static void setSntpClient(SntpClient sntpClient) {
+        INSTANCE._sntpClient = sntpClient;
     }
 
     protected static int getUdpSocketTimeout() {
-        return instance._udpSocketTimeoutInMillis;
+        return INSTANCE._udpSocketTimeoutInMillis;
     }
-
-    private void assertInstanceCreated() {
-        if (instance == null) {
-            throw new IllegalStateException("call build before you start");
-        }
-    }
-
 }
