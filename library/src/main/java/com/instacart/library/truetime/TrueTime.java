@@ -34,6 +34,9 @@ public class TrueTime {
         return new Date(now);
     }
 
+    public static boolean isInitialized() {
+        return INSTANCE._sntpClient != null;
+    }
 
     // -----------------------------------------------------------------------------------
 
