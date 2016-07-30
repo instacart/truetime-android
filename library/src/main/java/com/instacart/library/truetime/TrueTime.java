@@ -12,7 +12,8 @@ public class TrueTime {
     private static final TrueTime INSTANCE = new TrueTime();
 
     private String _ntpHost = "1.us.pool.ntp.org";
-    private SntpClient _sntpClient = null;
+    private SntpClient _sntpClient;
+    private boolean _sntpInitialized = false;
     private int _udpSocketTimeoutInMillis = 30_000;
 
     public static TrueTime build() {
@@ -35,7 +36,7 @@ public class TrueTime {
     }
 
     public static boolean isInitialized() {
-        return INSTANCE._sntpClient != null;
+        return INSTANCE._sntpInitialized;
     }
 
     // -----------------------------------------------------------------------------------
@@ -58,8 +59,8 @@ public class TrueTime {
             Log.i(TAG, "---- SNTP request successful");
             setSntpClient(sntpClient);
         } catch (IOException e) {
-            _sntpClient = null;
             Log.e(TAG, "TrueTime initialization failed", new Throwable(e));
+            _sntpInitialized = false;
         }
     }
 
@@ -67,6 +68,7 @@ public class TrueTime {
 
     protected synchronized static void setSntpClient(SntpClient sntpClient) {
         INSTANCE._sntpClient = sntpClient;
+        INSTANCE._sntpInitialized = true;
     }
 
     protected static int getUdpSocketTimeout() {
