@@ -100,16 +100,21 @@ public class SntpClient {
             // -----------------------------------------------------------------------------------
             // check validity of response
 
-            if (Math.abs(requestTime - originateTime) > 1) {
-                throw new RuntimeException("Invalid response from NTP server. Varying origin times");
+            long originTimeDiff = Math.abs(requestTime - originateTime);
+            if (originTimeDiff > 1) {
+                throw new RuntimeException("Invalid response from NTP server." +
+                                           " Originating times differed by " + originTimeDiff);
             }
 
-            if (_read(buffer, INDEX_ROOT_DELAY) > 100) {
-                throw new RuntimeException("Invalid response from NTP server. Root delay violation");
+            long rootDelay = _read(buffer, INDEX_ROOT_DELAY);
+            if (rootDelay > 100) {
+                throw new RuntimeException("Invalid response from NTP server. Root delay violation " + rootDelay);
             }
 
-            if (_read(buffer, INDEX_ROOT_DISPERSION) > 100) {
-                throw new RuntimeException("Invalid response from NTP server. Root dispersion violation");
+            long rootDispersion = _read(buffer, INDEX_ROOT_DISPERSION);
+            if (rootDispersion > 100) {
+                throw new RuntimeException("Invalid response from NTP server. Root dispersion violation " +
+                                           rootDispersion);
             }
 
             // -----------------------------------------------------------------------------------
