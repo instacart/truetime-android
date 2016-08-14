@@ -55,7 +55,7 @@ public class TrueTimeRx
                                     return now();
                                 }
                             })//
-                            .retry(5)//
+                            .retry(50)//
                             .onErrorReturn(new Func1<Throwable, Date>() {
                                 @Override
                                 public Date call(Throwable throwable) {
