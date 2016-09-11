@@ -8,11 +8,11 @@ In certain applications it becomes important to get the real or "true" date and 
 
 Users may do this for a variety of reasons, like being in different timezones, trying to be punctual by setting their clocks 5 – 10 minutes early, etc. Your application or service may want a date that is unaffected by these changes and reliable as a source of truth. TrueTime gives you that.
 
+You can read more about the useceas in our [blog post](https://tech.instacart.com/truetime/).
+
 # How is TrueTime calculated?
 
 It's pretty simple actually. We make a request to an NTP server that gives us the actual time. We then establish the delta between device uptime and uptime at the time of the network response. Each time "now" is requested subsequently, we account for that offset and return a corrected `Date` object.
-
-You can read more of the juicy details in this [blog post]().
 
 # Installation
 
