@@ -70,8 +70,8 @@ If you're down to using [RxJava](https://github.com/ReactiveX/RxJava) then there
             .subscribeOn(Schedulers.io())
             .subscribe(new Action1<Void>() {
                 @Override
-                public void call(Void dummy) {
-                    Log.v(TAG, "TrueTime was initialized and we have a time");
+                public void call(Date date) {
+                    Log.v(TAG, "TrueTime was initialized and we have a time: " + date);
                 }
             }, new Action1<Throwable>() {
                 @Override
