@@ -68,16 +68,10 @@ If you're down to using [RxJava](https://github.com/ReactiveX/RxJava) then there
   TrueTimeRx.build()
             .initialize(ntpHosts)
             .subscribeOn(Schedulers.io())
-            .subscribe(new Action1<Void>() {
-                @Override
-                public void call(Date date) {
-                    Log.v(TAG, "TrueTime was initialized and we have a time: " + date);
-                }
-            }, new Action1<Throwable>() {
-                @Override
-                public void call(Throwable throwable) {
-                    throwable.printStackTrace();
-                }
+            .subscribe(date -> {
+                Log.v(TAG, "TrueTime was initialized and we have a time: " + date);
+            }, throwable -> {
+                throwable.printStackTrace();
             });
 ```
 
