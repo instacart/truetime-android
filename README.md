@@ -1,10 +1,12 @@
 # TrueTime for Android
 
+![TrueTime](truetime.png "TrueTime for Android")
+
 Get the date and time "now" impervious to manual changes to your device clock.
 
 In certain applications it becomes important to get the real or "true" date and time. On mobile devices, if the the user has changed their clock settings manually, then a `new Date()` gives you a `Date` object impacted by the user's settings changes.
 
-Users may do this for a variety of reasons like different timezones, trying to be punctual and setting their clocks 5/10 minutes early etc. Your application or service may want a `Date` object that is unaffected by these changes and is reliable. TrueTime gives you that.
+Users may do this for a variety of reasons like different timezones, trying to be punctual by setting their clocks 5/10 minutes early etc. Your application or service may want a `Date` object that is unaffected by these changes and is reliable. TrueTime gives you that.
 
 # How is TrueTime calculated?
 
@@ -98,6 +100,7 @@ Now, as before:
 * You want to `initialize` only once per device restart. This means as long as your device is not restarted, TrueTime needs to be initialized only once.
 * Preferable use dependency injection (like [Dagger](http://square.github.io/dagger/)) and create a TrueTime @Singleton object
 * TrueTime was built to be accurate "enough", hence the use of [SNTP](https://en.wikipedia.org/wiki/Network_Time_Protocol#SNTP). If you need exact millisecond accuracy then you probably want [NTP](https://www.meinbergglobal.com/english/faq/faq_37.htm) (i.e. SNTP + statistical analysis to ensure the reference time is exactly correct). TrueTime provides the building blocks for this. We welcome PRs if you think you can do this with TrueTime(Rx) pretty easily :).
+* TrueTime is also [available for iOS/Swift](https://github.com/instacart/truetime.swift)
 
 # License
 
