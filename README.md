@@ -97,7 +97,7 @@ Now, as before:
 
 * You want to `initialize` only once per device restart. This means as long as your device is not restarted, TrueTime needs to be initialized only once.
 * Preferable use dependency injection (like [Dagger](http://square.github.io/dagger/)) and create a TrueTime @Singleton object
-* TrueTime was built to be accurate "enough", hence the use of [SNTP](https://en.wikipedia.org/wiki/Network_Time_Protocol#SNTP). If you need exact millisecond accuracy then you probably want [NTP](https://www.meinbergglobal.com/english/faq/faq_37.htm) (i.e. SNTP + statistical analysis to ensure the reference time is exactly correct). TrueTime provides the building blocks for this. We welcome PRs if you think you can do this with TrueTimeRx pretty easily :).
+* TrueTime was built to be accurate "enough", hence the use of [SNTP](https://en.wikipedia.org/wiki/Network_Time_Protocol#SNTP). If you need exact millisecond accuracy then you probably want [NTP](https://www.meinbergglobal.com/english/faq/faq_37.htm) (i.e. SNTP + statistical analysis to ensure the reference time is exactly correct). TrueTime provides the building blocks for this. We welcome PRs if you think you can do this with TrueTime(Rx) pretty easily :).
 
 # License
 

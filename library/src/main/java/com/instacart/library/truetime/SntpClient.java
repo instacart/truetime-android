@@ -28,25 +28,29 @@ import java.net.InetAddress;
  */
 public class SntpClient {
 
-    private static final int NTP_MODE_CLIENT = 3;
-    private static final int NTP_PACKET_SIZE = 48;
     private static final int NTP_PORT = 123;
+    private static final int NTP_MODE = 3;
     private static final int NTP_VERSION = 3;
-    private static final int ORIGINATE_TIME_OFFSET = 24;
-    private static final int RECEIVE_TIME_OFFSET = 32;
-    private static final int TRANSMIT_TIME_OFFSET = 40;
 
-    // Number of seconds between Jan 1, 1900 and Jan 1, 1970
+    private static final int NTP_PACKET_SIZE = 48;
+
+    private static final int INDEX_VERSION = 0;
+    private static final int INDEX_ROOT_DELAY = 4;
+    private static final int INDEX_ROOT_DISPERSION = 8;
+    private static final int INDEX_ORIGINATE_TIME = 24;
+    private static final int INDEX_RECEIVE_TIME = 32;
+    private static final int INDEX_TRANSMIT_TIME = 40;
+
     // 70 years plus 17 leap days
     private static final long OFFSET_1900_TO_1970 = ((365L * 70L) + 17L) * 24L * 60L * 60L;
 
-    private long _cachedSntpTime;
     private long _cachedDeviceUptime;
+    private long _cachedSntpTime;
 
     /**
      * Sends an NTP request to the given host and processes the response.
      *
-     * @param ntpHost    host name of the server.
+     * @param ntpHost         host name of the server.
      * @param timeoutInMillis network timeout in milliseconds.
      */
     public void requestTime(String ntpHost, int timeoutInMillis) throws IOException {
@@ -55,44 +59,67 @@ public class SntpClient {
 
         try {
 
-            socket = new DatagramSocket();
-            socket.setSoTimeout(timeoutInMillis);
-
-            InetAddress address = InetAddress.getByName(ntpHost);
-
             byte[] buffer = new byte[NTP_PACKET_SIZE];
+            InetAddress address = InetAddress.getByName(ntpHost);
 
             DatagramPacket request = new DatagramPacket(buffer, buffer.length, address, NTP_PORT);
 
-            // set mode = 3 (client) and version = 3
-            // mode is in low 3 bits of first byte
-            // version is in bits 3-5 of first byte
-            buffer[0] = NTP_MODE_CLIENT | (NTP_VERSION << 3);
+            _writeVersion(buffer);
 
+            // -----------------------------------------------------------------------------------
             // get current time and write it to the request packet
+
             long requestTime = System.currentTimeMillis();
             long requestTicks = SystemClock.elapsedRealtime();
 
-            _writeTimeStamp(buffer, TRANSMIT_TIME_OFFSET, requestTime);
+            _writeTimeStamp(buffer, INDEX_TRANSMIT_TIME, requestTime);
 
+            socket = new DatagramSocket();
+            socket.setSoTimeout(timeoutInMillis);
             socket.send(request);
 
+            // -----------------------------------------------------------------------------------
             // read the response
+
             DatagramPacket response = new DatagramPacket(buffer, buffer.length);
             socket.receive(response);
 
             long responseTicks = SystemClock.elapsedRealtime();
 
+            // -----------------------------------------------------------------------------------
+            // extract the results
+
+            long originateTime = _readTimeStamp(buffer, INDEX_ORIGINATE_TIME);     // T0
+            long receiveTime = _readTimeStamp(buffer, INDEX_RECEIVE_TIME);         // T1
+            long transmitTime = _readTimeStamp(buffer, INDEX_TRANSMIT_TIME);       // T2
+
             // See here for the algorithm used:
             // https://en.wikipedia.org/wiki/Network_Time_Protocol#Clock_synchronization_algorithm
-
-            // extract the results
-            long originateTime = _readTimeStamp(buffer, ORIGINATE_TIME_OFFSET);     // T0
-            long receiveTime = _readTimeStamp(buffer, RECEIVE_TIME_OFFSET);         // T1
-            long transmitTime = _readTimeStamp(buffer, TRANSMIT_TIME_OFFSET);       // T2
             long responseTime = requestTime + (responseTicks - requestTicks);       // T3
 
-            long clockOffset = ((receiveTime - originateTime) + (transmitTime - responseTime)) / 2;  // θ
+            // -----------------------------------------------------------------------------------
+            // check validity of response
+
+            long originTimeDiff = Math.abs(requestTime - originateTime);
+            if (originTimeDiff > 1) {
+                throw new RuntimeException("Invalid response from NTP server." +
+                                           " Originating times differed by " + originTimeDiff);
+            }
+
+            long rootDelay = _read(buffer, INDEX_ROOT_DELAY);
+            if (rootDelay > 100) {
+                throw new RuntimeException("Invalid response from NTP server. Root delay violation " + rootDelay);
+            }
+
+            long rootDispersion = _read(buffer, INDEX_ROOT_DISPERSION);
+            if (rootDispersion > 100) {
+                throw new RuntimeException("Invalid response from NTP server. Root dispersion violation " +
+                                           rootDispersion);
+            }
+
+            // -----------------------------------------------------------------------------------
+            // θ
+            long clockOffset = ((receiveTime - originateTime) + (transmitTime - responseTime)) / 2;
 
             _cachedSntpTime = responseTime + clockOffset;
             _cachedDeviceUptime = responseTicks;
@@ -105,7 +132,7 @@ public class SntpClient {
     }
 
     /**
-     * @return time value computed from NTP server response.
+     * @return time value computed from NTP server response
      */
     long getCachedSntpTime() {
         return _cachedSntpTime;
@@ -122,50 +149,83 @@ public class SntpClient {
     // private helpers
 
     /**
-     * Reads an unsigned 32 bit big endian number from the given offset in the buffer.
+     * Writes NTP version as defined in RFC-1305
      */
-    private long _read32(byte[] buffer, int offset) {
-        byte b0 = buffer[offset];
-        byte b1 = buffer[offset + 1];
-        byte b2 = buffer[offset + 2];
-        byte b3 = buffer[offset + 3];
-        // convert signed bytes to unsigned values
-        int i0 = ((b0 & 0x80) == 0x80 ? (b0 & 0x7F) + 0x80 : b0);
-        int i1 = ((b1 & 0x80) == 0x80 ? (b1 & 0x7F) + 0x80 : b1);
-        int i2 = ((b2 & 0x80) == 0x80 ? (b2 & 0x7F) + 0x80 : b2);
-        int i3 = ((b3 & 0x80) == 0x80 ? (b3 & 0x7F) + 0x80 : b3);
-        return ((long) i0 << 24) + ((long) i1 << 16) + ((long) i2 << 8) + (long) i3;
+    private void _writeVersion(byte[] buffer) {
+        // mode is in low 3 bits of first byte
+        // version is in bits 3-5 of first byte
+        buffer[INDEX_VERSION] = NTP_MODE | (NTP_VERSION << 3);
     }
 
     /**
-     * Reads the NTP time stamp at the given offset in the buffer and returns
-     * it as a system time (milliseconds since January 1, 1970).
-     */
-    private long _readTimeStamp(byte[] buffer, int offset) {
-        long seconds = _read32(buffer, offset);
-        long fraction = _read32(buffer, offset + 4);
-        return ((seconds - OFFSET_1900_TO_1970) * 1000) + ((fraction * 1000L) / 0x100000000L);
-    }
-
-    /**
-     * Writes system time (milliseconds since January 1, 1970) as an NTP time stamp
-     * at the given offset in the buffer.
+     * Writes system time (milliseconds since January 1, 1970)
+     * as an NTP time stamp as defined in RFC-1305
+     * at the given offset in the buffer
      */
     private void _writeTimeStamp(byte[] buffer, int offset, long time) {
+
         long seconds = time / 1000L;
         long milliseconds = time - seconds * 1000L;
+
+        // consider offset for number of seconds
+        // between Jan 1, 1900 (NTP epoch) and Jan 1, 1970 (Java epoch)
         seconds += OFFSET_1900_TO_1970;
+
         // write seconds in big endian format
         buffer[offset++] = (byte) (seconds >> 24);
         buffer[offset++] = (byte) (seconds >> 16);
         buffer[offset++] = (byte) (seconds >> 8);
         buffer[offset++] = (byte) (seconds >> 0);
+
         long fraction = milliseconds * 0x100000000L / 1000L;
+
         // write fraction in big endian format
         buffer[offset++] = (byte) (fraction >> 24);
         buffer[offset++] = (byte) (fraction >> 16);
         buffer[offset++] = (byte) (fraction >> 8);
+
         // low order bits should be random data
         buffer[offset++] = (byte) (Math.random() * 255.0);
     }
+
+    /**
+     * @param offset offset index in buffer to start reading from
+     * @return NTP timestamp in Java epoch
+     */
+    private long _readTimeStamp(byte[] buffer, int offset) {
+        long seconds = _read(buffer, offset);
+        long fraction = _read(buffer, offset + 4);
+
+        return ((seconds - OFFSET_1900_TO_1970) * 1000) + ((fraction * 1000L) / 0x100000000L);
+    }
+
+    /**
+     * @return 4 bytes as a 32-bit long (unsigned big endian)
+     */
+    private long _read(byte[] buffer, int offset) {
+
+        byte b0 = buffer[offset];
+        byte b1 = buffer[offset + 1];
+        byte b2 = buffer[offset + 2];
+        byte b3 = buffer[offset + 3];
+
+        return ((long) ui(b0) << 24) +
+               ((long) ui(b1) << 16) +
+               ((long) ui(b2) << 8) +
+               (long) ui(b3);
+    }
+
+    /***
+     * Convert byte to unsigned int.
+     *
+     * Java only has signed types so we have to do
+     * more work to get unsigned ops
+     *
+     * @param b input byte
+     * @return unsigned int value
+     */
+    private int ui(byte b) {
+        return (b & 0x80) == 0x80 ? (b & 0x7F) + 0x80 : b;
+    }
+
 }

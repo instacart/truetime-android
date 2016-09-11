@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -33,6 +34,11 @@ public class SampleActivity
 
     @OnClick(R.id.tt_btn_refresh)
     public void onBtnRefresh() {
+        if (!TrueTime.isInitialized()) {
+            Toast.makeText(this, "Sorry TrueTime not yet initialized", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         Log.d("kg", String.format(" [now: %d] [new Date: %d]", TrueTime.now().getTime(), new Date().getTime()));
         timePST.setText(_formatDate(TrueTime.now(), "yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("GMT-07:00")) +
                         " [PST]");

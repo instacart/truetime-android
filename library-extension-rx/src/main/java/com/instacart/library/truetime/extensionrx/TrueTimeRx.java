@@ -12,18 +12,24 @@ import rx.schedulers.Schedulers;
 public class TrueTimeRx
       extends TrueTime {
 
+    private int _retryCount = 50;
+
     private static final String TAG = TrueTimeRx.class.getSimpleName();
 
-    private TrueTimeRx() { }
+    private static final TrueTime INSTANCE = new TrueTimeRx();
 
     public static TrueTimeRx build() {
-        instance = new TrueTimeRx();
-        return (TrueTimeRx) instance;
+        return (TrueTimeRx) INSTANCE;
     }
 
     public TrueTimeRx withConnectionTimeout(int timeout) {
         super.withConnectionTimeout(timeout);
-        return (TrueTimeRx) instance;
+        return (TrueTimeRx) INSTANCE;
+    }
+
+    public TrueTimeRx withRetryCount(int retryCount) {
+        _retryCount = retryCount;
+        return (TrueTimeRx) INSTANCE;
     }
 
     /**
@@ -48,7 +54,7 @@ public class TrueTimeRx
                                     try {
                                         Log.i(TAG, "---- Querying host : " + host);
                                         sntpClient.requestTime(host, getUdpSocketTimeout());
-                                        TrueTime.setSntpClient(sntpClient);
+                                        setSntpClient(sntpClient);
 
                                     } catch (Exception e) {
                                         throw new RuntimeException(e);
@@ -56,7 +62,7 @@ public class TrueTimeRx
                                     return now();
                                 }
                             })//
-                            .retry(5)//
+                            .retry(_retryCount)//
                             .onErrorReturn(new Func1<Throwable, Date>() {
                                 @Override
                                 public Date call(Throwable throwable) {
@@ -72,6 +78,6 @@ public class TrueTimeRx
                       return date != null;
                   }
               })//
-              .first();
+              .take(1);
     }
 }

@@ -47,6 +47,7 @@ public class Sample2Activity
                                               "1.us.pool.ntp.org");
         TrueTimeRx.build()
               .withConnectionTimeout(31_428)
+              .withRetryCount(100)
               .initialize(ntpHosts)
               .subscribeOn(Schedulers.io())
               .observeOn(AndroidSchedulers.mainThread())
