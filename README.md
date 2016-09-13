@@ -20,7 +20,7 @@ We use [Jitpack](https://jitpack.io) to host the library.
 
 Add this to your application's `build.gradle` file:
 
-```
+```groovy
 repositories {
     maven {
         url "https://jitpack.io"
@@ -42,16 +42,16 @@ dependencies {
 
 Importing `'com.github.instacart.truetime-android:library:<release-version>'` should be sufficient for this.
 
-```
-  TrueTime.build().initialize();
+```java
+TrueTime.build().initialize();
 ```
 
 `initialize` must be run on a background thread. If you run it on the main thread, you will get a [`NetworkOnMainThreadException`](https://developer.android.com/reference/android/os/NetworkOnMainThreadException.html)
 
 You can then use:
 
-```
-  Date noReallyThisIsTheTrueDateAndTime = TrueTime.now();
+```java
+Date noReallyThisIsTheTrueDateAndTime = TrueTime.now();
 ```
 
 ... #winning
@@ -62,23 +62,23 @@ Note: while the `IOException` is caught, we initialize an internal boolean flag 
 
 If you're down to using [RxJava](https://github.com/ReactiveX/RxJava) then there's a niftier `initialize()` api that takes in the pool of hosts you want to query.
 
-```
-  List<String> ntpHosts = Arrays.asList("0.north-america.pool.ntp.org",
-                                        "1.north-america.pool.ntp.org");
-  TrueTimeRx.build()
-            .initialize(ntpHosts)
-            .subscribeOn(Schedulers.io())
-            .subscribe(date -> {
-                Log.v(TAG, "TrueTime was initialized and we have a time: " + date);
-            }, throwable -> {
-                throwable.printStackTrace();
-            });
+```java
+List<String> ntpHosts = Arrays.asList("0.north-america.pool.ntp.org",
+                                    "1.north-america.pool.ntp.org");
+TrueTimeRx.build()
+        .initialize(ntpHosts)
+        .subscribeOn(Schedulers.io())
+        .subscribe(date -> {
+            Log.v(TAG, "TrueTime was initialized and we have a time: " + date);
+        }, throwable -> {
+            throwable.printStackTrace();
+        });
 ```
 
 Now, as before:
 
-```
-  TrueTimeRx.now(); // return a Date object with the "true" time.
+```java
+TrueTimeRx.now(); // return a Date object with the "true" time.
 ```
 
 ### What is nifty about the Rx version?
