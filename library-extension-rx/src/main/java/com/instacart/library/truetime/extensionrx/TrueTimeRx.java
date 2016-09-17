@@ -51,9 +51,9 @@ public class TrueTimeRx
                                 @Override
                                 public Observable<Date> call(String ntpHost) {
                                     try {
+                                        Log.i(TAG, "---- Querying host : " + ntpHost);
 
                                         SntpClient sntpClient = new SntpClient();
-                                        Log.i(TAG, "---- Querying host : " + ntpHost);
                                         sntpClient.requestTime(ntpHost, udpSocketTimeoutInMillis);
                                         setSntpClient(sntpClient);
 
