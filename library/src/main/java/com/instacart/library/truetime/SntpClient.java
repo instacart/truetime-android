@@ -31,7 +31,6 @@ public class SntpClient {
     private static final int NTP_PORT = 123;
     private static final int NTP_MODE = 3;
     private static final int NTP_VERSION = 3;
-
     private static final int NTP_PACKET_SIZE = 48;
 
     private static final int INDEX_VERSION = 0;
@@ -53,7 +52,7 @@ public class SntpClient {
      * @param ntpHost         host name of the server.
      * @param timeoutInMillis network timeout in milliseconds.
      */
-    public void requestTime(String ntpHost, int timeoutInMillis) throws IOException, InvalidNtpServerResponse {
+    public void requestTime(String ntpHost, int timeoutInMillis) throws IOException, InvalidNtpServerResponseException {
 
         DatagramSocket socket = null;
 
@@ -102,7 +101,12 @@ public class SntpClient {
 
             final int stratum = buffer[1] & 0xff;
             if (stratum < 1 || stratum > 15) {
-                throw new InvalidNtpServerResponse("untrusted stratum value for TrueTime: " + stratum);
+                throw new InvalidNtpServerResponseException("untrusted stratum value for TrueTime: " + stratum);
+            }
+
+            final byte mode = (byte) (buffer[0] & 0x7);
+            if (mode != 4 && mode != 5) {
+                throw new InvalidNtpServerResponseException("untrusted mode value for TrueTime: " + mode);
             }
 
             long originTimeDiff = Math.abs(requestTime - originateTime);
