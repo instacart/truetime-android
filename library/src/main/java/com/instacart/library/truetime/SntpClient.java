@@ -125,10 +125,9 @@ public class SntpClient {
                 throw new InvalidNtpServerResponseException("unsynchronized server responded for TrueTime");
             }
 
-            long originTimeDiff = Math.abs(requestTime - originateTime);
-            if (originTimeDiff > 1) {
-                throw new RuntimeException("Invalid response from NTP server." +
-                                           " Originating times differed by " + originTimeDiff);
+            long delay = Math.abs((responseTime - originateTime) - (transmitTime - receiveTime));
+            if (delay >= 100) {
+                throw new InvalidNtpServerResponseException("Server response delay too large for comfort " + delay);
             }
 
             // -----------------------------------------------------------------------------------
