@@ -53,7 +53,7 @@ public class SntpClient {
      * @param ntpHost         host name of the server.
      * @param timeoutInMillis network timeout in milliseconds.
      */
-    public void requestTime(String ntpHost, int timeoutInMillis) throws IOException {
+    public void requestTime(String ntpHost, int timeoutInMillis) throws IOException, InvalidNtpServerResponse {
 
         DatagramSocket socket = null;
 
@@ -99,6 +99,11 @@ public class SntpClient {
 
             // -----------------------------------------------------------------------------------
             // check validity of response
+
+            final int stratum = buffer[1] & 0xff;
+            if (stratum < 1 || stratum > 15) {
+                throw new InvalidNtpServerResponse("untrusted stratum value for TrueTime: " + stratum);
+            }
 
             long originTimeDiff = Math.abs(requestTime - originateTime);
             if (originTimeDiff > 1) {
@@ -203,7 +208,6 @@ public class SntpClient {
      * @return 4 bytes as a 32-bit long (unsigned big endian)
      */
     private long _read(byte[] buffer, int offset) {
-
         byte b0 = buffer[offset];
         byte b1 = buffer[offset + 1];
         byte b2 = buffer[offset + 2];
@@ -227,5 +231,4 @@ public class SntpClient {
     private int ui(byte b) {
         return (b & 0x80) == 0x80 ? (b & 0x7F) + 0x80 : b;
     }
-
 }
