@@ -99,22 +99,6 @@ public class SntpClient {
             // -----------------------------------------------------------------------------------
             // check validity of response
 
-            final int stratum = buffer[1] & 0xff;
-            if (stratum < 1 || stratum > 15) {
-                throw new InvalidNtpServerResponseException("untrusted stratum value for TrueTime: " + stratum);
-            }
-
-            final byte mode = (byte) (buffer[0] & 0x7);
-            if (mode != 4 && mode != 5) {
-                throw new InvalidNtpServerResponseException("untrusted mode value for TrueTime: " + mode);
-            }
-
-            long originTimeDiff = Math.abs(requestTime - originateTime);
-            if (originTimeDiff > 1) {
-                throw new RuntimeException("Invalid response from NTP server." +
-                                           " Originating times differed by " + originTimeDiff);
-            }
-
             long rootDelay = _read(buffer, INDEX_ROOT_DELAY);
             if (rootDelay > 100) {
                 throw new RuntimeException("Invalid response from NTP server. Root delay violation " + rootDelay);
@@ -124,6 +108,27 @@ public class SntpClient {
             if (rootDispersion > 100) {
                 throw new RuntimeException("Invalid response from NTP server. Root dispersion violation " +
                                            rootDispersion);
+            }
+
+            final byte mode = (byte) (buffer[0] & 0x7);
+            if (mode != 4 && mode != 5) {
+                throw new InvalidNtpServerResponseException("untrusted mode value for TrueTime: " + mode);
+            }
+
+            final int stratum = buffer[1] & 0xff;
+            if (stratum < 1 || stratum > 15) {
+                throw new InvalidNtpServerResponseException("untrusted stratum value for TrueTime: " + stratum);
+            }
+
+            final byte leap = (byte) ((buffer[0] >> 6) & 0x3);
+            if (leap == 3) {
+                throw new InvalidNtpServerResponseException("unsynchronized server responded for TrueTime");
+            }
+
+            long originTimeDiff = Math.abs(requestTime - originateTime);
+            if (originTimeDiff > 1) {
+                throw new RuntimeException("Invalid response from NTP server." +
+                                           " Originating times differed by " + originTimeDiff);
             }
 
             // -----------------------------------------------------------------------------------
