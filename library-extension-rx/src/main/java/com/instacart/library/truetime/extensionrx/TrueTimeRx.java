@@ -12,11 +12,9 @@ import rx.schedulers.Schedulers;
 public class TrueTimeRx
       extends TrueTime {
 
-    private int _retryCount = 50;
-
     private static final String TAG = TrueTimeRx.class.getSimpleName();
-
     private static final TrueTime INSTANCE = new TrueTimeRx();
+    private int _retryCount = 50;
 
     public static TrueTimeRx build() {
         return (TrueTimeRx) INSTANCE;
@@ -71,7 +69,7 @@ public class TrueTimeRx
                                 }
                             });
                   }
-              }, 3)//
+              })//
               .filter(new Func1<Date, Boolean>() {
                   @Override
                   public Boolean call(Date date) {
