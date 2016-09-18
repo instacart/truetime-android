@@ -10,6 +10,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.instacart.library.truetime.TrueTime;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -18,6 +19,8 @@ import java.util.TimeZone;
 
 public class SampleActivity
       extends AppCompatActivity {
+
+    private static final String TAG = SampleActivity.class.getSimpleName();
 
     @Bind(R.id.tt_time_gmt) TextView timeGMT;
     @Bind(R.id.tt_time_pst) TextView timePST;
@@ -56,7 +59,12 @@ public class SampleActivity
           extends AsyncTask<Void, Void, Void> {
 
         protected Void doInBackground(Void... params) {
-            TrueTime.build().withNtpHost("0.north-america.pool.ntp.org").withConnectionTimeout(3_1428).initialize();
+            try {
+                TrueTime.build().withNtpHost("0.north-america.pool.ntp.org").withConnectionTimeout(3_1428).initialize();
+            } catch (IOException e) {
+                e.printStackTrace();
+                Log.e(TAG, "Exception when trying to get TrueTime", e);
+            }
             return null;
         }
     }
