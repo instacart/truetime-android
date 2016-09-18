@@ -30,6 +30,7 @@ public class Sample2Activity
     @Bind(R.id.tt_btn_refresh) Button refreshBtn;
     @Bind(R.id.tt_time_gmt) TextView timeGMT;
     @Bind(R.id.tt_time_pst) TextView timePST;
+    @Bind(R.id.tt_time_device) TextView timeDeviceTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,15 +69,25 @@ public class Sample2Activity
                       refreshBtn.setEnabled(true);
                   }
               });
-
     }
 
     @OnClick(R.id.tt_btn_refresh)
     public void onBtnRefresh() {
-        Log.d("kg", String.format(" [now: %d] [new Date: %d]", TrueTime.now().getTime(), new Date().getTime()));
-        timePST.setText(_formatDate(TrueTime.now(), "yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("GMT-07:00")) +
-                        " [PST]");
-        timeGMT.setText(_formatDate(TrueTime.now(), "yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("GMT")) + " [GMT]");
+        Date trueTime = TrueTime.now();
+        Date deviceTime = new Date();
+
+        Log.d("kg",
+              String.format(" [trueTime: %d] [devicetime: %d] [drift_sec: %f]",
+                            trueTime.getTime(),
+                            deviceTime.getTime(),
+                            (trueTime.getTime() - deviceTime.getTime()) / 1000F));
+
+        timeGMT.setText(getString(R.string.tt_time_gmt,
+                                  _formatDate(trueTime, "yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("GMT"))));
+        timePST.setText(getString(R.string.tt_time_pst,
+                                  _formatDate(trueTime, "yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("GMT-07:00"))));
+        timeDeviceTime.setText(getString(R.string.tt_time_device,
+                                         _formatDate(deviceTime, "yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("GMT-07:00"))));
     }
 
     private String _formatDate(Date date, String pattern, TimeZone timeZone) {
