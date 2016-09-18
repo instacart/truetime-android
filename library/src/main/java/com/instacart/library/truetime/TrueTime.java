@@ -8,13 +8,13 @@ import java.util.Date;
 public class TrueTime {
 
     private static final String TAG = TrueTime.class.getSimpleName();
-
     private static final TrueTime INSTANCE = new TrueTime();
+
+    protected int udpSocketTimeoutInMillis = 30_000;
 
     private String _ntpHost = "1.us.pool.ntp.org";
     private SntpClient _sntpClient;
     private boolean _sntpInitialized = false;
-    private int _udpSocketTimeoutInMillis = 30_000;
 
     public static TrueTime build() {
         return INSTANCE;
@@ -42,7 +42,7 @@ public class TrueTime {
     // -----------------------------------------------------------------------------------
 
     public synchronized TrueTime withConnectionTimeout(int timeoutInMillis) {
-        _udpSocketTimeoutInMillis = timeoutInMillis;
+        INSTANCE.udpSocketTimeoutInMillis = timeoutInMillis;
         return INSTANCE;
     }
 
@@ -55,7 +55,7 @@ public class TrueTime {
         SntpClient sntpClient = new SntpClient();
 
         try {
-            sntpClient.requestTime(INSTANCE._ntpHost, INSTANCE._udpSocketTimeoutInMillis);
+            sntpClient.requestTime(INSTANCE._ntpHost, INSTANCE.udpSocketTimeoutInMillis);
             Log.i(TAG, "---- SNTP request successful");
             setSntpClient(sntpClient);
         } catch (IOException e) {
@@ -69,9 +69,5 @@ public class TrueTime {
     protected synchronized static void setSntpClient(SntpClient sntpClient) {
         INSTANCE._sntpClient = sntpClient;
         INSTANCE._sntpInitialized = true;
-    }
-
-    protected static int getUdpSocketTimeout() {
-        return INSTANCE._udpSocketTimeoutInMillis;
     }
 }

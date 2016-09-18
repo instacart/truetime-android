@@ -15,6 +15,7 @@ public class TrueTimeRx
 
     private static final String TAG = TrueTimeRx.class.getSimpleName();
     private static final TrueTime INSTANCE = new TrueTimeRx();
+
     private int _retryCount = 50;
 
     public static TrueTimeRx build() {
@@ -22,7 +23,7 @@ public class TrueTimeRx
     }
 
     public TrueTimeRx withConnectionTimeout(int timeout) {
-        super.withConnectionTimeout(timeout);
+        udpSocketTimeoutInMillis = timeout;
         return (TrueTimeRx) INSTANCE;
     }
 
@@ -53,7 +54,7 @@ public class TrueTimeRx
 
                                         SntpClient sntpClient = new SntpClient();
                                         Log.i(TAG, "---- Querying host : " + ntpHost);
-                                        sntpClient.requestTime(ntpHost, getUdpSocketTimeout());
+                                        sntpClient.requestTime(ntpHost, udpSocketTimeoutInMillis);
                                         setSntpClient(sntpClient);
 
                                     } catch (IOException e) {
