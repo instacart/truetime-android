@@ -14,27 +14,27 @@ public class TrueTimeRx
       extends TrueTime {
 
     private static final String TAG = TrueTimeRx.class.getSimpleName();
-    private static final TrueTime INSTANCE = new TrueTimeRx();
+    private static final TrueTimeRx RX_INSTANCE = new TrueTimeRx();
 
     private int _retryCount = 50;
 
     public static TrueTimeRx build() {
-        return (TrueTimeRx) INSTANCE;
+        return RX_INSTANCE;
     }
 
     public TrueTimeRx withSharedPreferences(SharedPreferences preferences) {
         super.withSharedPreferences(preferences);
-        return (TrueTimeRx) INSTANCE;
+        return this;
     }
 
     public TrueTimeRx withConnectionTimeout(int timeout) {
         super.withConnectionTimeout(timeout);
-        return (TrueTimeRx) INSTANCE;
+        return this;
     }
 
     public TrueTimeRx withRetryCount(int retryCount) {
         _retryCount = retryCount;
-        return (TrueTimeRx) INSTANCE;
+        return this;
     }
 
     /**
@@ -70,12 +70,10 @@ public class TrueTimeRx
                                     throwable.printStackTrace();
                                     return null;
                                 }
-                            })
-                            .take(1)
-                            .doOnNext(new Action1<Date>() {
+                            }).take(1).doOnNext(new Action1<Date>() {
                                 @Override
                                 public void call(Date date) {
-                                    cacheTrueTimeInfo(sharedPreferences);
+                                    cacheTrueTimeInfo();
                                 }
                             });
                   }
