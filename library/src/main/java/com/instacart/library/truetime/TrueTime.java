@@ -5,7 +5,6 @@ import android.os.SystemClock;
 import android.util.Log;
 import java.io.IOException;
 import java.util.Date;
-import java.util.Locale;
 
 public class TrueTime {
 
@@ -30,30 +29,12 @@ public class TrueTime {
         long cachedSntpTime = _getCachedSntpTime();
         long cachedDeviceUptime = _getCachedDeviceUptime();
         long deviceUptime = SystemClock.elapsedRealtime();
-
         long now = cachedSntpTime + (deviceUptime - cachedDeviceUptime);
-
-        // -----------------------------------------------------------------------------------
-        // hacking
-        long nowSntp = (getSntpClient() != null) ? getSntpClient().getCachedSntpTime() + deviceUptime -
-                                                   getSntpClient().getCachedDeviceUptime() : 0L;
-        long nowDisk = getDiskCacheClient().getCachedSntpTime() + deviceUptime -
-                       getDiskCacheClient().getCachedDeviceUptime();
-        Log.d(TAG,
-              String.format(Locale.getDefault(),
-                            "now (disk) [%s] now (sntp) [%s] diff [%f]",
-                            nowDisk,
-                            nowSntp,
-                            (nowDisk - nowSntp) / 1000F));
-        // -----------------------------------------------------------------------------------
 
         return new Date(now);
     }
 
     public static boolean isInitialized() {
-        //hacking
-        Log.d("kg", "SNTP initialized " + _isSntpInitialized() + " disk info available " + getDiskCacheClient().isTrueTimeCachedFromAPreviousBoot());
-        return _isSntpInitialized() || getDiskCacheClient().isTrueTimeCachedFromAPreviousBoot();
         return SNTP_CLIENT.wasInitialized() || DISK_CACHE_CLIENT.isTrueTimeCachedFromAPreviousBoot();
     }
 

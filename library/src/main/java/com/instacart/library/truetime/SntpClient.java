@@ -135,8 +135,8 @@ public class SntpClient {
                 throw new InvalidNtpServerResponseException("Server response delay too large for comfort " + delay);
             }
 
-            Log.i(TAG, "---- Received successful response from " + ntpHost);
             _sntpInitialized = true;
+            Log.i(TAG, "---- SNTP successful response from " + ntpHost);
 
             // -----------------------------------------------------------------------------------
             // θ

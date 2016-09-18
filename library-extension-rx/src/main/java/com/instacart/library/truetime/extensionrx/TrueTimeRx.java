@@ -13,7 +13,6 @@ import rx.schedulers.Schedulers;
 public class TrueTimeRx
       extends TrueTime {
 
-    private static final String TAG = TrueTimeRx.class.getSimpleName();
     private static final TrueTimeRx RX_INSTANCE = new TrueTimeRx();
 
     private int _retryCount = 50;

@@ -68,7 +68,7 @@ public class DiskCacheClient {
 
         boolean bootTimeSame = currentBootTime == cachedBootTime;
 
-        Log.i(TAG, "boot time changed " + !bootTimeSame);
+        Log.i(TAG, "---- boot time changed " + !bootTimeSame);
 
         return bootTimeSame;
     }
