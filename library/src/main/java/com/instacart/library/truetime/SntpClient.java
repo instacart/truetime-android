@@ -48,6 +48,7 @@ public class SntpClient {
 
     private long _cachedDeviceUptime;
     private long _cachedSntpTime;
+    private boolean _sntpInitialized = false;
 
     /**
      * Sends an NTP request to the given host and processes the response.
@@ -55,7 +56,7 @@ public class SntpClient {
      * @param ntpHost         host name of the server.
      * @param timeoutInMillis network timeout in milliseconds.
      */
-    public void requestTime(String ntpHost, int timeoutInMillis) throws IOException {
+    void requestTime(String ntpHost, int timeoutInMillis) throws IOException {
 
         DatagramSocket socket = null;
 
@@ -135,6 +136,7 @@ public class SntpClient {
             }
 
             Log.i(TAG, "---- Received successful response from " + ntpHost);
+            _sntpInitialized = true;
 
             // -----------------------------------------------------------------------------------
             // θ
@@ -143,6 +145,12 @@ public class SntpClient {
             _cachedSntpTime = responseTime + clockOffset;
             _cachedDeviceUptime = responseTicks;
 
+        } catch (Exception e) {
+            //hacking
+            Log.d(TAG, "---- SNTP request failed for " + ntpHost);
+            Log.e(TAG, "SNTP request failed", new Throwable(e));
+            _sntpInitialized = false;
+            throw e;
         } finally {
             if (socket != null) {
                 socket.close();
@@ -162,6 +170,10 @@ public class SntpClient {
      */
     long getCachedDeviceUptime() {
         return _cachedDeviceUptime;
+    }
+
+    boolean wasInitialized() {
+        return _sntpInitialized;
     }
 
     // -----------------------------------------------------------------------------------

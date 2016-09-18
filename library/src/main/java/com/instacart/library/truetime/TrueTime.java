@@ -10,13 +10,14 @@ import java.util.Locale;
 public class TrueTime {
 
     private static final String TAG = TrueTime.class.getSimpleName();
-    private static final TrueTime INSTANCE = new TrueTime();
 
-    private final DiskCacheClient _diskCacheClient = new DiskCacheClient();
+    private static final TrueTime INSTANCE = new TrueTime();
+    private static final SntpClient SNTP_CLIENT = new SntpClient();
+    private static final DiskCacheClient DISK_CACHE_CLIENT = new DiskCacheClient();
+
+    private static int _udpSocketTimeoutInMillis = 30_000;
+
     private String _ntpHost = "1.us.pool.ntp.org";
-    private SntpClient _sntpClient;
-    private boolean _sntpInitialized = false;
-    private int _udpSocketTimeoutInMillis = 30_000;
 
     /**
      * @return Date object that returns the current time in the default Timezone
@@ -53,6 +54,7 @@ public class TrueTime {
         //hacking
         Log.d("kg", "SNTP initialized " + _isSntpInitialized() + " disk info available " + getDiskCacheClient().isTrueTimeCachedFromAPreviousBoot());
         return _isSntpInitialized() || getDiskCacheClient().isTrueTimeCachedFromAPreviousBoot();
+        return SNTP_CLIENT.wasInitialized() || DISK_CACHE_CLIENT.isTrueTimeCachedFromAPreviousBoot();
     }
 
     public static TrueTime build() {
@@ -60,7 +62,7 @@ public class TrueTime {
     }
 
     public static void clearCachedInfo(SharedPreferences preferences) {
-        getDiskCacheClient().clearCachedInfo(preferences);
+        DISK_CACHE_CLIENT.clearCachedInfo(preferences);
     }
 
     public void initialize() throws IOException {
@@ -73,12 +75,12 @@ public class TrueTime {
      * This can help avoid additional TrueTime initialization on app kills
      */
     public synchronized TrueTime withSharedPreferences(SharedPreferences preferences) {
-        getDiskCacheClient().setSource(preferences);
+        DISK_CACHE_CLIENT.setSource(preferences);
         return INSTANCE;
     }
 
     public synchronized TrueTime withConnectionTimeout(int timeoutInMillis) {
-        INSTANCE._udpSocketTimeoutInMillis = timeoutInMillis;
+        _udpSocketTimeoutInMillis = timeoutInMillis;
         return INSTANCE;
     }
 
@@ -94,52 +96,23 @@ public class TrueTime {
             Log.i(TAG, "---- TrueTime already initialized from previous boot/init");
             return;
         }
-
-        try {
-
-            SntpClient sntpClient = new SntpClient();
-            sntpClient.requestTime(ntpHost, INSTANCE._udpSocketTimeoutInMillis);
-            Log.i(TAG, "---- SNTP request successful");
-            _setSntpClient(sntpClient);
-
-        } catch (IOException e) {
-            Log.e(TAG, "TrueTime initialization failed", new Throwable(e));
-            _sntpInitialized = false;
-            throw e;
-        }
+        SNTP_CLIENT.requestTime(ntpHost, _udpSocketTimeoutInMillis);
     }
 
     protected synchronized static void cacheTrueTimeInfo() {
-        if (!_isSntpInitialized()) {
+        if (!SNTP_CLIENT.wasInitialized()) {
             Log.w(TAG, "SNTP client info not available. cannot cache TrueTime info in disk");
             return;
         }
 
-        SntpClient sntpClient = getSntpClient();
-        getDiskCacheClient().cacheTrueTimeInfo(sntpClient);
-    }
-
-    private static DiskCacheClient getDiskCacheClient() {
-        return INSTANCE._diskCacheClient;
-    }
-
-    private static SntpClient getSntpClient() {
-        return INSTANCE._sntpClient;
-    }
-
-    private synchronized static void _setSntpClient(SntpClient sntpClient) {
-        INSTANCE._sntpClient = sntpClient;
-        INSTANCE._sntpInitialized = true;
-    }
-
-    private static boolean _isSntpInitialized() {
-        return getSntpClient() != null && INSTANCE._sntpInitialized;
+        SntpClient sntpClient = SNTP_CLIENT;
+        DISK_CACHE_CLIENT.cacheTrueTimeInfo(sntpClient);
     }
 
     private static long _getCachedDeviceUptime() {
-        long cachedDeviceUptime = _isSntpInitialized()
-                                  ? getSntpClient().getCachedDeviceUptime()
-                                  : getDiskCacheClient().getCachedDeviceUptime();
+        long cachedDeviceUptime = SNTP_CLIENT.wasInitialized()
+                                  ? SNTP_CLIENT.getCachedDeviceUptime()
+                                  : DISK_CACHE_CLIENT.getCachedDeviceUptime();
 
         if (cachedDeviceUptime == 0L) {
             throw new RuntimeException("expected SNTP time from last boot to be cached. couldn't find it.");
@@ -149,9 +122,9 @@ public class TrueTime {
     }
 
     private static long _getCachedSntpTime() {
-        long cachedSntpTime = _isSntpInitialized()
-                              ? getSntpClient().getCachedSntpTime()
-                              : getDiskCacheClient().getCachedSntpTime();
+        long cachedSntpTime = SNTP_CLIENT.wasInitialized()
+                              ? SNTP_CLIENT.getCachedSntpTime()
+                              : DISK_CACHE_CLIENT.getCachedSntpTime();
 
         if (cachedSntpTime == 0L) {
             throw new RuntimeException("expected SNTP time from last boot to be cached. couldn't find it.");
