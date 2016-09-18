@@ -1,7 +1,7 @@
 package com.instacart.library.truetime;
 
 import android.os.SystemClock;
-import android.util.Log;
+
 import java.io.IOException;
 import java.util.Date;
 
@@ -51,15 +51,20 @@ public class TrueTime {
         return INSTANCE;
     }
 
+    public synchronized TrueTime withLoggingEnabled(boolean isLoggingEnabled) {
+        TrueLog.setLoggingEnabled(isLoggingEnabled);
+        return INSTANCE;
+    }
+
     public void initialize() {
         SntpClient sntpClient = new SntpClient();
 
         try {
             sntpClient.requestTime(INSTANCE._ntpHost, INSTANCE.udpSocketTimeoutInMillis);
-            Log.i(TAG, "---- SNTP request successful");
+            TrueLog.i(TAG, "---- SNTP request successful");
             setSntpClient(sntpClient);
         } catch (IOException e) {
-            Log.e(TAG, "TrueTime initialization failed", new Throwable(e));
+            TrueLog.e(TAG, "TrueTime initialization failed", new Throwable(e));
             _sntpInitialized = false;
         }
     }

@@ -3,12 +3,13 @@ package com.instacart.library.sample;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
+import com.instacart.library.truetime.TrueLog;
 import com.instacart.library.truetime.TrueTime;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -39,7 +40,7 @@ public class SampleActivity
             return;
         }
 
-        Log.d("kg", String.format(" [now: %d] [new Date: %d]", TrueTime.now().getTime(), new Date().getTime()));
+        TrueLog.d("kg", String.format(" [now: %d] [new Date: %d]", TrueTime.now().getTime(), new Date().getTime()));
         timePST.setText(_formatDate(TrueTime.now(), "yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("GMT-07:00")) +
                         " [PST]");
         timeGMT.setText(_formatDate(TrueTime.now(), "yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("GMT")) + " [GMT]");
@@ -56,7 +57,11 @@ public class SampleActivity
           extends AsyncTask<Void, Void, Void> {
 
         protected Void doInBackground(Void... params) {
-            TrueTime.build().withNtpHost("0.north-america.pool.ntp.org").withConnectionTimeout(3_1428).initialize();
+            TrueTime.build()
+                    .withNtpHost("0.north-america.pool.ntp.org")
+                    .withConnectionTimeout(3_1428)
+                    .withLoggingEnabled(false)
+                    .initialize();
             return null;
         }
     }

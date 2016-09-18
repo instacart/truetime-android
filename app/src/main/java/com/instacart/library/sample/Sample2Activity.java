@@ -2,12 +2,13 @@ package com.instacart.library.sample;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
+import com.instacart.library.truetime.TrueLog;
 import com.instacart.library.truetime.TrueTime;
 import com.instacart.library.truetime.extensionrx.TrueTimeRx;
 import java.text.DateFormat;
@@ -60,7 +61,7 @@ public class Sample2Activity
               }, new Action1<Throwable>() {
                   @Override
                   public void call(Throwable throwable) {
-                      Log.e(TAG, "something went wrong when trying to initialize TrueTime", throwable);
+                      TrueLog.e(TAG, "something went wrong when trying to initialize TrueTime", throwable);
                   }
               }, new Action0() {
                   @Override
@@ -73,7 +74,7 @@ public class Sample2Activity
 
     @OnClick(R.id.tt_btn_refresh)
     public void onBtnRefresh() {
-        Log.d("kg", String.format(" [now: %d] [new Date: %d]", TrueTime.now().getTime(), new Date().getTime()));
+        TrueLog.d("kg", String.format(" [now: %d] [new Date: %d]", TrueTime.now().getTime(), new Date().getTime()));
         timePST.setText(_formatDate(TrueTime.now(), "yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("GMT-07:00")) +
                         " [PST]");
         timeGMT.setText(_formatDate(TrueTime.now(), "yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("GMT")) + " [GMT]");

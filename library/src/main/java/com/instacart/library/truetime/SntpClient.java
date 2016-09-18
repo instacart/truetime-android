@@ -18,7 +18,7 @@ package com.instacart.library.truetime;
  */
 
 import android.os.SystemClock;
-import android.util.Log;
+
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -134,7 +134,7 @@ public class SntpClient {
                 throw new InvalidNtpServerResponseException("Server response delay too large for comfort " + delay);
             }
 
-            Log.i(TAG, "---- Received successful response from " + ntpHost);
+            TrueLog.i(TAG, "---- Received successful response from " + ntpHost);
 
             // -----------------------------------------------------------------------------------
             // θ

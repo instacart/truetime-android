@@ -1,11 +1,13 @@
 package com.instacart.library.truetime.extensionrx;
 
-import android.util.Log;
+import com.instacart.library.truetime.TrueLog;
 import com.instacart.library.truetime.SntpClient;
 import com.instacart.library.truetime.TrueTime;
+
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+
 import rx.Observable;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
@@ -53,7 +55,7 @@ public class TrueTimeRx
                                     try {
 
                                         SntpClient sntpClient = new SntpClient();
-                                        Log.i(TAG, "---- Querying host : " + ntpHost);
+                                        TrueLog.i(TAG, "---- Querying host : " + ntpHost);
                                         sntpClient.requestTime(ntpHost, udpSocketTimeoutInMillis);
                                         setSntpClient(sntpClient);
 
