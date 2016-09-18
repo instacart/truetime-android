@@ -38,7 +38,7 @@ dependencies {
 
 # Usage
 
-# Vanilla version
+## Vanilla version
 
 Importing `'com.github.instacart.truetime-android:library:<release-version>'` should be sufficient for this.
 
@@ -56,15 +56,13 @@ Date noReallyThisIsTheTrueDateAndTime = TrueTime.now();
 
 ... #winning
 
-Note: while the `IOException` is caught, we initialize an internal boolean flag that tells us if the call was a success. If the UDP call didn't go through, when you call `TrueTime.now()` it will throw an `IllegalStateException`.
-
 ## Rx-ified Version
 
 If you're down to using [RxJava](https://github.com/ReactiveX/RxJava) then there's a niftier `initialize()` api that takes in the pool of hosts you want to query.
 
 ```java
 List<String> ntpHosts = Arrays.asList("0.north-america.pool.ntp.org",
-                                    "1.north-america.pool.ntp.org");
+                                      "1.north-america.pool.ntp.org");
 TrueTimeRx.build()
         .initialize(ntpHosts)
         .subscribeOn(Schedulers.io())
@@ -80,6 +78,11 @@ Now, as before:
 ```java
 TrueTimeRx.now(); // return a Date object with the "true" time.
 ```
+
+## Exception handling:
+
+* an `InvalidNtpServerResponseException` is thrown every time the server gets an invalid response (this can happen with the SNTP calls).
+* If TrueTime fails to initialize (because of the above exception being throw), then an `IllegalStateException` is thrown if you try to call `TrueTime.now()` at a later point.
 
 ### What is nifty about the Rx version?
 
