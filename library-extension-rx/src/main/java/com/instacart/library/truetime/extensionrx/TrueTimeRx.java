@@ -3,6 +3,7 @@ package com.instacart.library.truetime.extensionrx;
 import android.util.Log;
 import com.instacart.library.truetime.SntpClient;
 import com.instacart.library.truetime.TrueTime;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import rx.Observable;
@@ -45,19 +46,20 @@ public class TrueTimeRx
                       return Observable//
                             .just(ntpHost)//
                             .subscribeOn(Schedulers.io())//
-                            .map(new Func1<String, Date>() {
+                            .flatMap(new Func1<String, Observable<Date>>() {
                                 @Override
-                                public Date call(String host) {
-                                    SntpClient sntpClient = new SntpClient();
+                                public Observable<Date> call(String ntpHost) {
                                     try {
-                                        Log.i(TAG, "---- Querying host : " + host);
-                                        sntpClient.requestTime(host, getUdpSocketTimeout());
+
+                                        SntpClient sntpClient = new SntpClient();
+                                        Log.i(TAG, "---- Querying host : " + ntpHost);
+                                        sntpClient.requestTime(ntpHost, getUdpSocketTimeout());
                                         setSntpClient(sntpClient);
 
-                                    } catch (Exception e) {
-                                        throw new RuntimeException(e);
+                                    } catch (IOException e) {
+                                        return Observable.error(e);
                                     }
-                                    return now();
+                                    return Observable.just(now());
                                 }
                             })//
                             .retry(_retryCount)//

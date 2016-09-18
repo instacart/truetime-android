@@ -18,6 +18,7 @@ package com.instacart.library.truetime;
  */
 
 import android.os.SystemClock;
+import android.util.Log;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -27,6 +28,8 @@ import java.net.InetAddress;
  * Simple SNTP client class for retrieving network time.
  */
 public class SntpClient {
+
+    private static final String TAG = SntpClient.class.getSimpleName();
 
     private static final int NTP_PORT = 123;
     private static final int NTP_MODE = 3;
@@ -52,7 +55,7 @@ public class SntpClient {
      * @param ntpHost         host name of the server.
      * @param timeoutInMillis network timeout in milliseconds.
      */
-    public void requestTime(String ntpHost, int timeoutInMillis) throws IOException, InvalidNtpServerResponseException {
+    public void requestTime(String ntpHost, int timeoutInMillis) throws IOException {
 
         DatagramSocket socket = null;
 
@@ -101,13 +104,14 @@ public class SntpClient {
 
             long rootDelay = _read(buffer, INDEX_ROOT_DELAY);
             if (rootDelay > 100) {
-                throw new RuntimeException("Invalid response from NTP server. Root delay violation " + rootDelay);
+                throw new InvalidNtpServerResponseException("Invalid response from NTP server. Root delay violation " +
+                                                            rootDelay);
             }
 
             long rootDispersion = _read(buffer, INDEX_ROOT_DISPERSION);
             if (rootDispersion > 100) {
-                throw new RuntimeException("Invalid response from NTP server. Root dispersion violation " +
-                                           rootDispersion);
+                throw new InvalidNtpServerResponseException(
+                      "Invalid response from NTP server. Root dispersion violation " + rootDispersion);
             }
 
             final byte mode = (byte) (buffer[0] & 0x7);
@@ -129,6 +133,8 @@ public class SntpClient {
             if (delay >= 100) {
                 throw new InvalidNtpServerResponseException("Server response delay too large for comfort " + delay);
             }
+
+            Log.i(TAG, "---- Received successful response from " + ntpHost);
 
             // -----------------------------------------------------------------------------------
             // θ
