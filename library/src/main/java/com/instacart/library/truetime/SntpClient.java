@@ -18,6 +18,7 @@ package com.instacart.library.truetime;
  */
 
 import android.os.SystemClock;
+import android.util.Log;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -28,10 +29,11 @@ import java.net.InetAddress;
  */
 public class SntpClient {
 
+    private static final String TAG = SntpClient.class.getSimpleName();
+
     private static final int NTP_PORT = 123;
     private static final int NTP_MODE = 3;
     private static final int NTP_VERSION = 3;
-
     private static final int NTP_PACKET_SIZE = 48;
 
     private static final int INDEX_VERSION = 0;
@@ -100,22 +102,39 @@ public class SntpClient {
             // -----------------------------------------------------------------------------------
             // check validity of response
 
-            long originTimeDiff = Math.abs(requestTime - originateTime);
-            if (originTimeDiff > 1) {
-                throw new RuntimeException("Invalid response from NTP server." +
-                                           " Originating times differed by " + originTimeDiff);
-            }
-
             long rootDelay = _read(buffer, INDEX_ROOT_DELAY);
             if (rootDelay > 100) {
-                throw new RuntimeException("Invalid response from NTP server. Root delay violation " + rootDelay);
+                throw new InvalidNtpServerResponseException("Invalid response from NTP server. Root delay violation " +
+                                                            rootDelay);
             }
 
             long rootDispersion = _read(buffer, INDEX_ROOT_DISPERSION);
             if (rootDispersion > 100) {
-                throw new RuntimeException("Invalid response from NTP server. Root dispersion violation " +
-                                           rootDispersion);
+                throw new InvalidNtpServerResponseException(
+                      "Invalid response from NTP server. Root dispersion violation " + rootDispersion);
             }
+
+            final byte mode = (byte) (buffer[0] & 0x7);
+            if (mode != 4 && mode != 5) {
+                throw new InvalidNtpServerResponseException("untrusted mode value for TrueTime: " + mode);
+            }
+
+            final int stratum = buffer[1] & 0xff;
+            if (stratum < 1 || stratum > 15) {
+                throw new InvalidNtpServerResponseException("untrusted stratum value for TrueTime: " + stratum);
+            }
+
+            final byte leap = (byte) ((buffer[0] >> 6) & 0x3);
+            if (leap == 3) {
+                throw new InvalidNtpServerResponseException("unsynchronized server responded for TrueTime");
+            }
+
+            long delay = Math.abs((responseTime - originateTime) - (transmitTime - receiveTime));
+            if (delay >= 100) {
+                throw new InvalidNtpServerResponseException("Server response delay too large for comfort " + delay);
+            }
+
+            Log.i(TAG, "---- Received successful response from " + ntpHost);
 
             // -----------------------------------------------------------------------------------
             // θ
@@ -203,7 +222,6 @@ public class SntpClient {
      * @return 4 bytes as a 32-bit long (unsigned big endian)
      */
     private long _read(byte[] buffer, int offset) {
-
         byte b0 = buffer[offset];
         byte b1 = buffer[offset + 1];
         byte b2 = buffer[offset + 2];
@@ -227,5 +245,4 @@ public class SntpClient {
     private int ui(byte b) {
         return (b & 0x80) == 0x80 ? (b & 0x7F) + 0x80 : b;
     }
-
 }

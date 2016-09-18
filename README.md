@@ -38,7 +38,7 @@ dependencies {
 
 # Usage
 
-# Vanilla version
+## Vanilla version
 
 Importing `'com.github.instacart.truetime-android:library:<release-version>'` should be sufficient for this.
 
@@ -56,15 +56,13 @@ Date noReallyThisIsTheTrueDateAndTime = TrueTime.now();
 
 ... #winning
 
-Note: while the `IOException` is caught, we initialize an internal boolean flag that tells us if the call was a success. If the UDP call didn't go through, when you call `TrueTime.now()` it will throw an `IllegalStateException`.
-
 ## Rx-ified Version
 
 If you're down to using [RxJava](https://github.com/ReactiveX/RxJava) then there's a niftier `initialize()` api that takes in the pool of hosts you want to query.
 
 ```java
 List<String> ntpHosts = Arrays.asList("0.north-america.pool.ntp.org",
-                                    "1.north-america.pool.ntp.org");
+                                      "1.north-america.pool.ntp.org");
 TrueTimeRx.build()
         .initialize(ntpHosts)
         .subscribeOn(Schedulers.io())
@@ -84,10 +82,9 @@ TrueTimeRx.now(); // return a Date object with the "true" time.
 ### What is nifty about the Rx version?
 
 * it can take in multiple SNTP hosts to shoot out the UDP request
-* those UDP requests are executed in parallel (with a limit of 3 parallel calls)
-* if one of the SNTP requests fail, we retry the failed request (alone) 5 times
+* those UDP requests are executed in parallel
+* if one of the SNTP requests fail, we retry the failed request (alone) for a specified number of times
 * as soon as we hear back from any of the hosts, we immediately take that and terminate the rest of the requests
-
 
 ## Notes/tips:
 
@@ -95,6 +92,12 @@ TrueTimeRx.now(); // return a Date object with the "true" time.
 * Preferable use dependency injection (like [Dagger](http://square.github.io/dagger/)) and create a TrueTime @Singleton object
 * TrueTime was built to be accurate "enough", hence the use of [SNTP](https://en.wikipedia.org/wiki/Network_Time_Protocol#SNTP). If you need exact millisecond accuracy then you probably want [NTP](https://www.meinbergglobal.com/english/faq/faq_37.htm) (i.e. SNTP + statistical analysis to ensure the reference time is exactly correct). TrueTime provides the building blocks for this. We welcome PRs if you think you can do this with TrueTime(Rx) pretty easily :).
 * TrueTime is also [available for iOS/Swift](https://github.com/instacart/truetime.swift)
+
+## Exception handling:
+
+* an `InvalidNtpServerResponseException` is thrown every time the server gets an invalid response (this can happen with the SNTP calls).
+* If TrueTime fails to initialize (because of the above exception being throw), then an `IllegalStateException` is thrown if you try to call `TrueTime.now()` at a later point.
+
 
 # License
 

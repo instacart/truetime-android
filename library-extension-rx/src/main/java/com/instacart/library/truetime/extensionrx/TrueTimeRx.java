@@ -3,6 +3,7 @@ package com.instacart.library.truetime.extensionrx;
 import android.util.Log;
 import com.instacart.library.truetime.SntpClient;
 import com.instacart.library.truetime.TrueTime;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import rx.Observable;
@@ -12,18 +13,17 @@ import rx.schedulers.Schedulers;
 public class TrueTimeRx
       extends TrueTime {
 
-    private int _retryCount = 50;
-
     private static final String TAG = TrueTimeRx.class.getSimpleName();
-
     private static final TrueTime INSTANCE = new TrueTimeRx();
+
+    private int _retryCount = 50;
 
     public static TrueTimeRx build() {
         return (TrueTimeRx) INSTANCE;
     }
 
     public TrueTimeRx withConnectionTimeout(int timeout) {
-        super.withConnectionTimeout(timeout);
+        udpSocketTimeoutInMillis = timeout;
         return (TrueTimeRx) INSTANCE;
     }
 
@@ -47,19 +47,20 @@ public class TrueTimeRx
                       return Observable//
                             .just(ntpHost)//
                             .subscribeOn(Schedulers.io())//
-                            .map(new Func1<String, Date>() {
+                            .flatMap(new Func1<String, Observable<Date>>() {
                                 @Override
-                                public Date call(String host) {
-                                    SntpClient sntpClient = new SntpClient();
+                                public Observable<Date> call(String ntpHost) {
                                     try {
-                                        Log.i(TAG, "---- Querying host : " + host);
-                                        sntpClient.requestTime(host, getUdpSocketTimeout());
+
+                                        SntpClient sntpClient = new SntpClient();
+                                        Log.i(TAG, "---- Querying host : " + ntpHost);
+                                        sntpClient.requestTime(ntpHost, udpSocketTimeoutInMillis);
                                         setSntpClient(sntpClient);
 
-                                    } catch (Exception e) {
-                                        throw new RuntimeException(e);
+                                    } catch (IOException e) {
+                                        return Observable.error(e);
                                     }
-                                    return now();
+                                    return Observable.just(now());
                                 }
                             })//
                             .retry(_retryCount)//
@@ -71,7 +72,7 @@ public class TrueTimeRx
                                 }
                             });
                   }
-              }, 3)//
+              })//
               .filter(new Func1<Date, Boolean>() {
                   @Override
                   public Boolean call(Date date) {

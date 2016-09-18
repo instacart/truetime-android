@@ -39,7 +39,8 @@ public class Sample2Activity
         ButterKnife.bind(this);
         refreshBtn.setEnabled(false);
 
-        List<String> ntpHosts = Arrays.asList("0.north-america.pool.ntp.org",
+        List<String> ntpHosts = Arrays.asList("time.apple.com",
+                                              "0.north-america.pool.ntp.org",
                                               "1.north-america.pool.ntp.org",
                                               "2.north-america.pool.ntp.org",
                                               "3.north-america.pool.ntp.org",
