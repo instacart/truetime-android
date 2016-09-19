@@ -5,10 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-public class BootupCompletedBroadcastReceiver
+public class BootCompletedBroadcastReceiver
       extends BroadcastReceiver {
 
-    private static final String TAG = BootupCompletedBroadcastReceiver.class.getSimpleName();
+    private static final String TAG = BootCompletedBroadcastReceiver.class.getSimpleName();
 
     @Override
     public void onReceive(Context context, Intent intent) {

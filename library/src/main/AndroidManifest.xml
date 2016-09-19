@@ -12,7 +12,7 @@
 
     <application android:label="@string/app_name">
         <!-- Start the Service if applicable on boot -->
-        <receiver android:name="BootupCompletedBroadcastReceiver">
+        <receiver android:name=".BootCompletedBroadcastReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
