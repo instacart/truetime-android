@@ -2,7 +2,6 @@ package com.instacart.library.truetime;
 
 import android.content.Context;
 import android.os.SystemClock;
-import android.util.Log;
 import java.io.IOException;
 import java.util.Date;
 
@@ -70,11 +69,16 @@ public class TrueTime {
         return INSTANCE;
     }
 
+    public synchronized TrueTime withLoggingEnabled(boolean isLoggingEnabled) {
+        TrueLog.setLoggingEnabled(isLoggingEnabled);
+        return INSTANCE;
+    }
+
     // -----------------------------------------------------------------------------------
 
     protected void initialize(String ntpHost) throws IOException {
         if (isInitialized()) {
-            Log.i(TAG, "---- TrueTime already initialized from previous boot/init");
+            TrueLog.i(TAG, "---- TrueTime already initialized from previous boot/init");
             return;
         }
         SNTP_CLIENT.requestTime(ntpHost, _udpSocketTimeoutInMillis);
@@ -82,7 +86,7 @@ public class TrueTime {
 
     protected synchronized static void cacheTrueTimeInfo() {
         if (!SNTP_CLIENT.wasInitialized()) {
-            Log.i(TAG, "---- SNTP client not available. not caching TrueTime info in disk");
+            TrueLog.i(TAG, "---- SNTP client not available. not caching TrueTime info in disk");
             return;
         }
 

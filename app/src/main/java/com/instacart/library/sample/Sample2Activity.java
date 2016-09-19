@@ -2,13 +2,13 @@ package com.instacart.library.sample;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import com.instacart.library.truetime.TrueLog;
 import com.instacart.library.truetime.TrueTime;
 import com.instacart.library.truetime.extensionrx.TrueTimeRx;
 import java.text.DateFormat;
@@ -65,7 +65,7 @@ public class Sample2Activity
               }, new Action1<Throwable>() {
                   @Override
                   public void call(Throwable throwable) {
-                      Log.e(TAG, "something went wrong when trying to initialize TrueTime", throwable);
+                      TrueLog.e(TAG, "something went wrong when trying to initialize TrueTime", throwable);
                   }
               }, new Action0() {
                   @Override
@@ -85,7 +85,7 @@ public class Sample2Activity
         Date trueTime = TrueTime.now();
         Date deviceTime = new Date();
 
-        Log.d("kg",
+        TrueLog.d("kg",
               String.format(" [trueTime: %d] [devicetime: %d] [drift_sec: %f]",
                             trueTime.getTime(),
                             deviceTime.getTime(),

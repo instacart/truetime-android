@@ -18,7 +18,6 @@ package com.instacart.library.truetime;
  */
 
 import android.os.SystemClock;
-import android.util.Log;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -136,7 +135,7 @@ public class SntpClient {
             }
 
             _sntpInitialized = true;
-            Log.i(TAG, "---- SNTP successful response from " + ntpHost);
+            TrueLog.i(TAG, "---- SNTP successful response from " + ntpHost);
 
             // -----------------------------------------------------------------------------------
             // θ
@@ -146,7 +145,7 @@ public class SntpClient {
             _cachedDeviceUptime = responseTicks;
 
         } catch (Exception e) {
-            Log.d(TAG, "---- SNTP request failed for " + ntpHost);
+            TrueLog.d(TAG, "---- SNTP request failed for " + ntpHost);
             throw e;
         } finally {
             if (socket != null) {

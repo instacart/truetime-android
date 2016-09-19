@@ -1,5 +1,7 @@
 package com.instacart.library.truetime.extensionrx;
 
+import com.instacart.library.truetime.TrueLog;
+import com.instacart.library.truetime.SntpClient;
 import android.content.Context;
 import com.instacart.library.truetime.TrueTime;
 import java.io.IOException;
