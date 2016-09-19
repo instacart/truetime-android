@@ -54,6 +54,7 @@ public class Sample2Activity
               .withConnectionTimeout(31_428)
               .withRetryCount(100)
               .withSharedPreferences(this)
+              .withLoggingEnabled(true)
               .initialize(ntpHosts)
               .subscribeOn(Schedulers.io())
               .observeOn(AndroidSchedulers.mainThread())

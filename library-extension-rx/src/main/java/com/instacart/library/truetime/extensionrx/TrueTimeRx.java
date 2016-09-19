@@ -31,6 +31,11 @@ public class TrueTimeRx
         return this;
     }
 
+    public TrueTimeRx withLoggingEnabled(boolean isLoggingEnabled) {
+        super.withLoggingEnabled(isLoggingEnabled);
+        return this;
+    }
+
     public TrueTimeRx withRetryCount(int retryCount) {
         _retryCount = retryCount;
         return this;
