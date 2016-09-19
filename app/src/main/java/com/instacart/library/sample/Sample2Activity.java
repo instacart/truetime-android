@@ -47,7 +47,7 @@ public class Sample2Activity
                                               "3.north-america.pool.ntp.org",
                                               "0.us.pool.ntp.org",
                                               "1.us.pool.ntp.org");
-        //TrueTimeRx.clearCachedInfo(prefs);
+        //TrueTimeRx.clearCachedInfo(this);
 
         TrueTimeRx.build()
               .withConnectionTimeout(31_428)

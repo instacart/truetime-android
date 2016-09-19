@@ -146,10 +146,7 @@ public class SntpClient {
             _cachedDeviceUptime = responseTicks;
 
         } catch (Exception e) {
-            //hacking
             Log.d(TAG, "---- SNTP request failed for " + ntpHost);
-            Log.e(TAG, "SNTP request failed", new Throwable(e));
-            _sntpInitialized = false;
             throw e;
         } finally {
             if (socket != null) {
