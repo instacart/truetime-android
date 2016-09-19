@@ -3,7 +3,6 @@ package com.instacart.library.truetime;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.SystemClock;
-import android.util.Log;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -39,11 +38,11 @@ class DiskCacheClient {
         long cachedDeviceUptime = sntpClient.getCachedDeviceUptime();
         long bootTime = cachedSntpTime - cachedDeviceUptime;
 
-        Log.d(TAG,
-              String.format("Caching true time info to disk sntp [%s] device [%s] boot [%s]",
-                            cachedSntpTime,
-                            cachedDeviceUptime,
-                            bootTime));
+        TrueLog.d(TAG,
+                  String.format("Caching true time info to disk sntp [%s] device [%s] boot [%s]",
+                                cachedSntpTime,
+                                cachedDeviceUptime,
+                                bootTime));
 
         _sharedPreferences.edit().putLong(DiskCacheClient.KEY_CACHED_BOOT_TIME, bootTime).apply();
         _sharedPreferences.edit().putLong(DiskCacheClient.KEY_CACHED_DEVICE_UPTIME, cachedDeviceUptime).apply();
@@ -87,7 +86,7 @@ class DiskCacheClient {
 
     private boolean sharedPreferencesUnavailable() {
         if (_sharedPreferences == null) {
-            Log.w(TAG, "Cannot use disk caching strategy for TrueTime. SharedPreferences unavailable");
+            TrueLog.w(TAG, "Cannot use disk caching strategy for TrueTime. SharedPreferences unavailable");
             return true;
         }
         return false;
