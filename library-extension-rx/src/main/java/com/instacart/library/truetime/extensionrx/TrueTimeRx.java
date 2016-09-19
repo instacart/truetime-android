@@ -1,6 +1,6 @@
 package com.instacart.library.truetime.extensionrx;
 
-import android.content.SharedPreferences;
+import android.content.Context;
 import com.instacart.library.truetime.TrueTime;
 import java.io.IOException;
 import java.util.Date;
@@ -21,8 +21,8 @@ public class TrueTimeRx
         return RX_INSTANCE;
     }
 
-    public TrueTimeRx withSharedPreferences(SharedPreferences preferences) {
-        super.withSharedPreferences(preferences);
+    public TrueTimeRx withSharedPreferences(Context context) {
+        super.withSharedPreferences(context);
         return this;
     }
 

@@ -1,6 +1,6 @@
 package com.instacart.library.truetime;
 
-import android.content.SharedPreferences;
+import android.content.Context;
 import android.os.SystemClock;
 import android.util.Log;
 import java.io.IOException;
@@ -42,8 +42,8 @@ public class TrueTime {
         return INSTANCE;
     }
 
-    public static void clearCachedInfo(SharedPreferences preferences) {
-        DISK_CACHE_CLIENT.clearCachedInfo(preferences);
+    public static void clearCachedInfo(Context context) {
+        DISK_CACHE_CLIENT.clearCachedInfo(context);
     }
 
     public void initialize() throws IOException {
@@ -55,8 +55,8 @@ public class TrueTime {
      * Cache TrueTime initialization information in SharedPreferences
      * This can help avoid additional TrueTime initialization on app kills
      */
-    public synchronized TrueTime withSharedPreferences(SharedPreferences preferences) {
-        DISK_CACHE_CLIENT.setSource(preferences);
+    public synchronized TrueTime withSharedPreferences(Context context) {
+        DISK_CACHE_CLIENT.enableDiskCaching(context);
         return INSTANCE;
     }
 
@@ -82,12 +82,11 @@ public class TrueTime {
 
     protected synchronized static void cacheTrueTimeInfo() {
         if (!SNTP_CLIENT.wasInitialized()) {
-            Log.w(TAG, "SNTP client info not available. cannot cache TrueTime info in disk");
+            Log.i(TAG, "---- SNTP client not available. not caching TrueTime info in disk");
             return;
         }
 
-        SntpClient sntpClient = SNTP_CLIENT;
-        DISK_CACHE_CLIENT.cacheTrueTimeInfo(sntpClient);
+        DISK_CACHE_CLIENT.cacheTrueTimeInfo(SNTP_CLIENT);
     }
 
     private static long _getCachedDeviceUptime() {

@@ -1,31 +1,33 @@
 package com.instacart.library.truetime;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.SystemClock;
 import android.util.Log;
 
-public class DiskCacheClient {
+import static android.content.Context.MODE_PRIVATE;
 
-    static final String KEY_CACHED_BOOT_TIME = "com.instacart.library.truetime.cached_boot_time";
-    static final String KEY_CACHED_DEVICE_UPTIME = "com.instacart.library.truetime.cached_device_uptime";
-    static final String KEY_CACHED_SNTP_TIME = "com.instacart.library.truetime.cached_sntp_time";
+class DiskCacheClient {
+
+    private static final String KEY_CACHED_SHARED_PREFS = "com.instacart.library.truetime.shared_preferences";
+    private static final String KEY_CACHED_BOOT_TIME = "com.instacart.library.truetime.cached_boot_time";
+    private static final String KEY_CACHED_DEVICE_UPTIME = "com.instacart.library.truetime.cached_device_uptime";
+    private static final String KEY_CACHED_SNTP_TIME = "com.instacart.library.truetime.cached_sntp_time";
 
     private static final String TAG = DiskCacheClient.class.getSimpleName();
 
     private SharedPreferences _sharedPreferences = null;
 
-    public void setSource(SharedPreferences sharedPreferences) {
-        _sharedPreferences = sharedPreferences;
+    void enableDiskCaching(Context context) {
+        _sharedPreferences = context.getSharedPreferences(KEY_CACHED_SHARED_PREFS, MODE_PRIVATE);
     }
 
-    void clearCachedInfo(SharedPreferences sharedPreferences) {
+    void clearCachedInfo(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(KEY_CACHED_SHARED_PREFS, MODE_PRIVATE);
         if (sharedPreferences == null) {
             return;
         }
-
-        sharedPreferences.edit().remove(KEY_CACHED_BOOT_TIME).apply();
-        sharedPreferences.edit().remove(KEY_CACHED_DEVICE_UPTIME).apply();
-        sharedPreferences.edit().remove(KEY_CACHED_SNTP_TIME).apply();
+        sharedPreferences.edit().clear().apply();
     }
 
     void cacheTrueTimeInfo(SntpClient sntpClient) {
@@ -59,18 +61,10 @@ public class DiskCacheClient {
             return false;
         }
 
-        // has boot time changed
-        long cachedSntpTime = getCachedSntpTime();
-        long cachedDeviceUptime = getCachedDeviceUptime();
-        long currentDeviceUptime = SystemClock.elapsedRealtime();
-        long nowAccordingToCachedTrueTime = cachedSntpTime + (currentDeviceUptime - cachedDeviceUptime);
-        long currentBootTime = nowAccordingToCachedTrueTime - currentDeviceUptime;
-
-        boolean bootTimeSame = currentBootTime == cachedBootTime;
-
-        Log.i(TAG, "---- boot time changed " + !bootTimeSame);
-
-        return bootTimeSame;
+        // has boot time changed (simple check)
+        boolean bootTimeChanged = SystemClock.elapsedRealtime() < getCachedDeviceUptime();
+        Log.i(TAG, "---- boot time changed " + bootTimeChanged);
+        return !bootTimeChanged;
     }
 
     long getCachedDeviceUptime() {

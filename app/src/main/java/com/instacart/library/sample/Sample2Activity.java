@@ -1,6 +1,5 @@
 package com.instacart.library.sample;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -48,13 +47,12 @@ public class Sample2Activity
                                               "3.north-america.pool.ntp.org",
                                               "0.us.pool.ntp.org",
                                               "1.us.pool.ntp.org");
-        SharedPreferences prefs = getSharedPreferences("test", MODE_PRIVATE);
         //TrueTimeRx.clearCachedInfo(prefs);
 
         TrueTimeRx.build()
               .withConnectionTimeout(31_428)
               .withRetryCount(100)
-              .withSharedPreferences(prefs)
+              .withSharedPreferences(this)
               .initialize(ntpHosts)
               .subscribeOn(Schedulers.io())
               .observeOn(AndroidSchedulers.mainThread())
