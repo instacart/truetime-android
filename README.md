@@ -2,6 +2,8 @@
 
 ![TrueTime](truetime.png "TrueTime for Android")
 
+*Make sure to check out our counterpart too: [TrueTime](https://github.com/instacart/TrueTime.swift), an SNTP library for Swift.*
+
 SNTP client for Android. Calculate the date and time "now" impervious to manual changes to device clock time.
 
 In certain applications it becomes important to get the real or "true" date and time. On most devices, if the clock has been changed manually, then a `new Date()` instance gives you a time impacted by local settings.
