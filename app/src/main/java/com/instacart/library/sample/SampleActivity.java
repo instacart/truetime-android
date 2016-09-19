@@ -3,12 +3,12 @@ package com.instacart.library.sample;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import com.instacart.library.truetime.TrueLog;
 import com.instacart.library.truetime.TrueTime;
 import java.io.IOException;
 import java.text.DateFormat;
@@ -53,9 +53,6 @@ public class SampleActivity
                                   _formatDate(trueTime, "yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("GMT-07:00"))));
         timeDeviceTime.setText(getString(R.string.tt_time_device,
                                          _formatDate(deviceTime, "yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("GMT-07:00"))));
-
-
-
     }
 
     private String _formatDate(Date date, String pattern, TimeZone timeZone) {
@@ -73,11 +70,12 @@ public class SampleActivity
                 TrueTime.build()
                       //.withSharedPreferences(SampleActivity.this)
                       .withNtpHost("0.north-america.pool.ntp.org")
+                      .withLoggingEnabled(false)
                       .withConnectionTimeout(3_1428)
                       .initialize();
             } catch (IOException e) {
                 e.printStackTrace();
-                Log.e(TAG, "Exception when trying to get TrueTime", e);
+                TrueLog.e(TAG, "Exception when trying to get TrueTime", e);
             }
             return null;
         }
