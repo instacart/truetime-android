@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -76,6 +77,11 @@ public class Sample2Activity
 
     @OnClick(R.id.tt_btn_refresh)
     public void onBtnRefresh() {
+        if (!TrueTimeRx.isInitialized()) {
+            Toast.makeText(this, "Sorry TrueTime not yet initialized.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         Date trueTime = TrueTime.now();
         Date deviceTime = new Date();
 
