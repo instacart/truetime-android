@@ -3,12 +3,12 @@ package com.instacart.library.sample;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import com.instacart.library.truetime.TrueLog;
 import com.instacart.library.truetime.TrueTime;
 import java.io.IOException;
 import java.text.DateFormat;
@@ -75,7 +75,7 @@ public class SampleActivity
                       .initialize();
             } catch (IOException e) {
                 e.printStackTrace();
-                TrueLog.e(TAG, "Exception when trying to get TrueTime", e);
+                Log.e(TAG, "Exception when trying to get TrueTime", e);
             }
             return null;
         }
