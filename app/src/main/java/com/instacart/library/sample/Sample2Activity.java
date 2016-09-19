@@ -2,13 +2,13 @@ package com.instacart.library.sample;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import com.instacart.library.truetime.TrueLog;
 import com.instacart.library.truetime.TrueTime;
 import com.instacart.library.truetime.extensionrx.TrueTimeRx;
 import java.text.DateFormat;
@@ -65,7 +65,7 @@ public class Sample2Activity
               }, new Action1<Throwable>() {
                   @Override
                   public void call(Throwable throwable) {
-                      TrueLog.e(TAG, "something went wrong when trying to initialize TrueTime", throwable);
+                      Log.e(TAG, "something went wrong when trying to initialize TrueTime", throwable);
                   }
               }, new Action0() {
                   @Override
@@ -85,7 +85,7 @@ public class Sample2Activity
         Date trueTime = TrueTime.now();
         Date deviceTime = new Date();
 
-        TrueLog.d("kg",
+        Log.d("kg",
               String.format(" [trueTime: %d] [devicetime: %d] [drift_sec: %f]",
                             trueTime.getTime(),
                             deviceTime.getTime(),
@@ -96,7 +96,9 @@ public class Sample2Activity
         timePST.setText(getString(R.string.tt_time_pst,
                                   _formatDate(trueTime, "yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("GMT-07:00"))));
         timeDeviceTime.setText(getString(R.string.tt_time_device,
-                                         _formatDate(deviceTime, "yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("GMT-07:00"))));
+                                         _formatDate(deviceTime,
+                                                     "yyyy-MM-dd HH:mm:ss",
+                                                     TimeZone.getTimeZone("GMT-07:00"))));
     }
 
     private String _formatDate(Date date, String pattern, TimeZone timeZone) {

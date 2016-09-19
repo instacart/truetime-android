@@ -2,12 +2,9 @@ package com.instacart.library.truetime;
 
 import android.util.Log;
 
-public class TrueLog {
-    private static boolean LOGGING_ENABLED = true;
+class TrueLog {
 
-    protected static void setLoggingEnabled(boolean isLoggingEnabled) {
-        LOGGING_ENABLED = isLoggingEnabled;
-    }
+    private static boolean LOGGING_ENABLED = true;
 
     public static void v(String tag, String msg) {
         if (LOGGING_ENABLED) {
@@ -61,5 +58,9 @@ public class TrueLog {
         if (LOGGING_ENABLED) {
             Log.wtf(tag, msg, tr);
         }
+    }
+
+    static void setLoggingEnabled(boolean isLoggingEnabled) {
+        LOGGING_ENABLED = isLoggingEnabled;
     }
 }

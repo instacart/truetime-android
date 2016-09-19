@@ -89,7 +89,6 @@ public class TrueTime {
             TrueLog.i(TAG, "---- SNTP client not available. not caching TrueTime info in disk");
             return;
         }
-
         DISK_CACHE_CLIENT.cacheTrueTimeInfo(SNTP_CLIENT);
     }
 
@@ -116,4 +115,5 @@ public class TrueTime {
 
         return cachedSntpTime;
     }
+
 }
