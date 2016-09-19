@@ -14,6 +14,8 @@ You can read more about the use case in our [blog post](https://tech.instacart.c
 
 It's pretty simple actually. We make a request to an NTP server that gives us the actual time. We then establish the delta between device uptime and uptime at the time of the network response. Each time "now" is requested subsequently, we account for that offset and return a corrected `Date` object.
 
+Also, once we have this information it's valid until the next time you boot your device. This means if you enable the disk caching feature, after a signle successfull SNTP request you can use the information on disk directly without ever making another network request. This applies even across application kills which can happen frequently if your users have a memory starved device.
+
 # Installation
 
 We use [Jitpack](https://jitpack.io) to host the library.
@@ -88,7 +90,7 @@ TrueTimeRx.now(); // return a Date object with the "true" time.
 
 ## Notes/tips:
 
-* You want to `initialize` only once per device restart. This means as long as your device is not restarted, TrueTime needs to be initialized only once.
+* Each `initialize` call makes an SNTP network request. TrueTime needs to be `initialize`d only once ever, per device boot. Use TrueTime's `withSharedPreferences` option to make use of this feature and avoid repeated network request calls.
 * Preferable use dependency injection (like [Dagger](http://square.github.io/dagger/)) and create a TrueTime @Singleton object
 * TrueTime was built to be accurate "enough", hence the use of [SNTP](https://en.wikipedia.org/wiki/Network_Time_Protocol#SNTP). If you need exact millisecond accuracy then you probably want [NTP](https://www.meinbergglobal.com/english/faq/faq_37.htm) (i.e. SNTP + statistical analysis to ensure the reference time is exactly correct). TrueTime provides the building blocks for this. We welcome PRs if you think you can do this with TrueTime(Rx) pretty easily :).
 * TrueTime is also [available for iOS/Swift](https://github.com/instacart/truetime.swift)
