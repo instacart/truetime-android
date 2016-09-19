@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -30,6 +31,7 @@ public class Sample2Activity
     @Bind(R.id.tt_btn_refresh) Button refreshBtn;
     @Bind(R.id.tt_time_gmt) TextView timeGMT;
     @Bind(R.id.tt_time_pst) TextView timePST;
+    @Bind(R.id.tt_time_device) TextView timeDeviceTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,9 +48,12 @@ public class Sample2Activity
                                               "3.north-america.pool.ntp.org",
                                               "0.us.pool.ntp.org",
                                               "1.us.pool.ntp.org");
+        //TrueTimeRx.clearCachedInfo(this);
+
         TrueTimeRx.build()
               .withConnectionTimeout(31_428)
               .withRetryCount(100)
+              .withSharedPreferences(this)
               .initialize(ntpHosts)
               .subscribeOn(Schedulers.io())
               .observeOn(AndroidSchedulers.mainThread())
@@ -68,15 +73,30 @@ public class Sample2Activity
                       refreshBtn.setEnabled(true);
                   }
               });
-
     }
 
     @OnClick(R.id.tt_btn_refresh)
     public void onBtnRefresh() {
-        Log.d("kg", String.format(" [now: %d] [new Date: %d]", TrueTime.now().getTime(), new Date().getTime()));
-        timePST.setText(_formatDate(TrueTime.now(), "yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("GMT-07:00")) +
-                        " [PST]");
-        timeGMT.setText(_formatDate(TrueTime.now(), "yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("GMT")) + " [GMT]");
+        if (!TrueTimeRx.isInitialized()) {
+            Toast.makeText(this, "Sorry TrueTime not yet initialized.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Date trueTime = TrueTime.now();
+        Date deviceTime = new Date();
+
+        Log.d("kg",
+              String.format(" [trueTime: %d] [devicetime: %d] [drift_sec: %f]",
+                            trueTime.getTime(),
+                            deviceTime.getTime(),
+                            (trueTime.getTime() - deviceTime.getTime()) / 1000F));
+
+        timeGMT.setText(getString(R.string.tt_time_gmt,
+                                  _formatDate(trueTime, "yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("GMT"))));
+        timePST.setText(getString(R.string.tt_time_pst,
+                                  _formatDate(trueTime, "yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("GMT-07:00"))));
+        timeDeviceTime.setText(getString(R.string.tt_time_device,
+                                         _formatDate(deviceTime, "yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("GMT-07:00"))));
     }
 
     private String _formatDate(Date date, String pattern, TimeZone timeZone) {
@@ -84,5 +104,4 @@ public class Sample2Activity
         format.setTimeZone(timeZone);
         return format.format(date);
     }
-
 }

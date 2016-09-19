@@ -1,40 +1,44 @@
 package com.instacart.library.truetime.extensionrx;
 
-import android.util.Log;
-import com.instacart.library.truetime.SntpClient;
+import android.content.Context;
 import com.instacart.library.truetime.TrueTime;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import rx.Observable;
+import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 public class TrueTimeRx
       extends TrueTime {
 
-    private static final String TAG = TrueTimeRx.class.getSimpleName();
-    private static final TrueTime INSTANCE = new TrueTimeRx();
+    private static final TrueTimeRx RX_INSTANCE = new TrueTimeRx();
 
     private int _retryCount = 50;
 
     public static TrueTimeRx build() {
-        return (TrueTimeRx) INSTANCE;
+        return RX_INSTANCE;
+    }
+
+    public TrueTimeRx withSharedPreferences(Context context) {
+        super.withSharedPreferences(context);
+        return this;
     }
 
     public TrueTimeRx withConnectionTimeout(int timeout) {
-        udpSocketTimeoutInMillis = timeout;
-        return (TrueTimeRx) INSTANCE;
+        super.withConnectionTimeout(timeout);
+        return this;
     }
 
     public TrueTimeRx withRetryCount(int retryCount) {
         _retryCount = retryCount;
-        return (TrueTimeRx) INSTANCE;
+        return this;
     }
 
     /**
      * Initialize the SntpClient
-     * Issue Sntp call via UDP to list of provided hosts
+     * Issue SNTP call via UDP to list of provided hosts
      * Pick the first successful call and return
      * Retry failed calls individually
      */
@@ -51,12 +55,7 @@ public class TrueTimeRx
                                 @Override
                                 public Observable<Date> call(String ntpHost) {
                                     try {
-
-                                        SntpClient sntpClient = new SntpClient();
-                                        Log.i(TAG, "---- Querying host : " + ntpHost);
-                                        sntpClient.requestTime(ntpHost, udpSocketTimeoutInMillis);
-                                        setSntpClient(sntpClient);
-
+                                        initialize(ntpHost);
                                     } catch (IOException e) {
                                         return Observable.error(e);
                                     }
@@ -69,6 +68,11 @@ public class TrueTimeRx
                                 public Date call(Throwable throwable) {
                                     throwable.printStackTrace();
                                     return null;
+                                }
+                            }).take(1).doOnNext(new Action1<Date>() {
+                                @Override
+                                public void call(Date date) {
+                                    cacheTrueTimeInfo();
                                 }
                             });
                   }

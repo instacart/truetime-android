@@ -10,6 +10,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.instacart.library.truetime.TrueTime;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -19,8 +20,11 @@ import java.util.TimeZone;
 public class SampleActivity
       extends AppCompatActivity {
 
+    private static final String TAG = SampleActivity.class.getSimpleName();
+
     @Bind(R.id.tt_time_gmt) TextView timeGMT;
     @Bind(R.id.tt_time_pst) TextView timePST;
+    @Bind(R.id.tt_time_device) TextView timeDeviceTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,14 +39,23 @@ public class SampleActivity
     @OnClick(R.id.tt_btn_refresh)
     public void onBtnRefresh() {
         if (!TrueTime.isInitialized()) {
-            Toast.makeText(this, "Sorry TrueTime not yet initialized", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Sorry TrueTime not yet initialized. Trying again.", Toast.LENGTH_SHORT).show();
+            new InitTrueTimeAsyncTask().execute();
             return;
         }
 
-        Log.d("kg", String.format(" [now: %d] [new Date: %d]", TrueTime.now().getTime(), new Date().getTime()));
-        timePST.setText(_formatDate(TrueTime.now(), "yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("GMT-07:00")) +
-                        " [PST]");
-        timeGMT.setText(_formatDate(TrueTime.now(), "yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("GMT")) + " [GMT]");
+        Date trueTime = TrueTime.now();
+        Date deviceTime = new Date();
+
+        timeGMT.setText(getString(R.string.tt_time_gmt,
+                                  _formatDate(trueTime, "yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("GMT"))));
+        timePST.setText(getString(R.string.tt_time_pst,
+                                  _formatDate(trueTime, "yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("GMT-07:00"))));
+        timeDeviceTime.setText(getString(R.string.tt_time_device,
+                                         _formatDate(deviceTime, "yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("GMT-07:00"))));
+
+
+
     }
 
     private String _formatDate(Date date, String pattern, TimeZone timeZone) {
@@ -56,7 +69,16 @@ public class SampleActivity
           extends AsyncTask<Void, Void, Void> {
 
         protected Void doInBackground(Void... params) {
-            TrueTime.build().withNtpHost("0.north-america.pool.ntp.org").withConnectionTimeout(3_1428).initialize();
+            try {
+                TrueTime.build()
+                      //.withSharedPreferences(SampleActivity.this)
+                      .withNtpHost("0.north-america.pool.ntp.org")
+                      .withConnectionTimeout(3_1428)
+                      .initialize();
+            } catch (IOException e) {
+                e.printStackTrace();
+                Log.e(TAG, "Exception when trying to get TrueTime", e);
+            }
             return null;
         }
     }

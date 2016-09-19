@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main"
@@ -8,52 +9,69 @@
     tools:context="com.instacart.library.sample.SampleActivity">
 
     <TextView
-        android:id="@+id/tt_time_gmt"
-
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-
-        android:text="GMT time goes here"
-        android:textSize="22dp"
-
-        app:layout_constraintLeft_toLeftOf="@+id/activity_main"
-        tools:layout_constraintLeft_creator="1"
-        app:layout_constraintTop_toTopOf="@+id/activity_main"
-        tools:layout_constraintTop_creator="1"
-        app:layout_constraintRight_toRightOf="@+id/activity_main"
-        tools:layout_constraintRight_creator="1"
-        app:layout_constraintBottom_toBottomOf="@+id/activity_main"
-        tools:layout_constraintBottom_creator="1"
-        app:layout_constraintVertical_bias="0.41" />
-
-    <TextView
         android:id="@+id/tt_time_pst"
 
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
-        android:text="PST time goes here"
-        android:textSize="22dp"
+        android:text="GMT time goes here"
+        android:textSize="20dp"
 
-        app:layout_constraintRight_toRightOf="@+id/tt_time_gmt"
+        app:layout_constraintBottom_toBottomOf="@+id/activity_main"
+        app:layout_constraintLeft_toLeftOf="@+id/activity_main"
+        app:layout_constraintRight_toRightOf="@+id/activity_main"
+        app:layout_constraintTop_toTopOf="@+id/activity_main"
+        tools:layout_constraintBottom_creator="1"
+        tools:layout_constraintLeft_creator="1"
         tools:layout_constraintRight_creator="1"
-        app:layout_constraintBottom_toTopOf="@+id/tt_btn_refresh"
-        android:layout_marginBottom="14dp"
-        tools:layout_constraintBottom_creator="1" />
+        tools:layout_constraintTop_creator="1"/>
 
+    <TextView
+        android:id="@+id/tt_time_gmt"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_marginTop="16dp"
+        android:text="PST time goes here"
+
+        android:textSize="20dp"
+        app:layout_constraintRight_toRightOf="@+id/tt_time_pst"
+        app:layout_constraintTop_toBottomOf="@+id/tt_time_pst"
+        tools:layout_constraintRight_creator="1"
+        tools:layout_constraintTop_creator="1"/>
+
+    <TextView
+        android:id="@+id/tt_time_device"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+
+        android:text="Device time goes here"
+        android:textSize="20dp"
+
+        app:layout_constraintBottom_toTopOf="@+id/tt_time_pst"
+        app:layout_constraintHorizontal_bias="0.47"
+        app:layout_constraintLeft_toLeftOf="@+id/activity_main"
+        app:layout_constraintRight_toRightOf="@+id/activity_main"
+        tools:layout_constraintBottom_creator="1"
+        tools:layout_constraintLeft_creator="1"
+        tools:layout_constraintRight_creator="1"/>
 
     <Button
         android:id="@+id/tt_btn_refresh"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
+        android:layout_marginTop="16dp"
         android:text="Get Time NOW"
         app:layout_constraintLeft_toLeftOf="@+id/activity_main"
-        tools:layout_constraintLeft_creator="1"
-        app:layout_constraintTop_toBottomOf="@+id/tt_time_gmt"
-        android:layout_marginTop="56dp"
-        tools:layout_constraintTop_creator="1"
         app:layout_constraintRight_toRightOf="@+id/activity_main"
-        tools:layout_constraintRight_creator="1" />
+        app:layout_constraintTop_toBottomOf="@+id/tt_time_gmt"
+        tools:layout_constraintLeft_creator="1"
+        tools:layout_constraintRight_creator="1"
+        tools:layout_constraintTop_creator="1"/>
+
 
 </android.support.constraint.ConstraintLayout>
