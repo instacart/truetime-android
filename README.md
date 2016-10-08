@@ -33,10 +33,10 @@ repositories {
 
 dependencies {
     // ...
-    compile 'com.github.instacart.truetime-android:library-extension-rx:1.0'
+    compile 'com.github.instacart.truetime-android:library-extension-rx:<release-version>'
 
     // or if you want the vanilla version of Truetime:
-    compile 'com.github.instacart.truetime-android:library:1.0'
+    compile 'com.github.instacart.truetime-android:library:<release-version>'
 }
 ```
 
