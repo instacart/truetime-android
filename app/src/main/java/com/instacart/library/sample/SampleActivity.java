@@ -10,6 +10,8 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.instacart.library.truetime.TrueTime;
+import com.instacart.library.truetime.TrueTimeCallback;
+
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -18,7 +20,7 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 public class SampleActivity
-      extends AppCompatActivity {
+        extends AppCompatActivity implements TrueTimeCallback {
 
     private static final String TAG = SampleActivity.class.getSimpleName();
 
@@ -48,11 +50,11 @@ public class SampleActivity
         Date deviceTime = new Date();
 
         timeGMT.setText(getString(R.string.tt_time_gmt,
-                                  _formatDate(trueTime, "yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("GMT"))));
+                _formatDate(trueTime, "yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("GMT"))));
         timePST.setText(getString(R.string.tt_time_pst,
-                                  _formatDate(trueTime, "yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("GMT-07:00"))));
+                _formatDate(trueTime, "yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("GMT-07:00"))));
         timeDeviceTime.setText(getString(R.string.tt_time_device,
-                                         _formatDate(deviceTime, "yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("GMT-07:00"))));
+                _formatDate(deviceTime, "yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("GMT-07:00"))));
     }
 
     private String _formatDate(Date date, String pattern, TimeZone timeZone) {
@@ -61,18 +63,39 @@ public class SampleActivity
         return format.format(date);
     }
 
+    @Override
+    public void onSuccess() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(SampleActivity.this, "Success!", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    @Override
+    public void onFailure() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(SampleActivity.this, "Failure :(", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
     // a little part of me died, having to use this
     private class InitTrueTimeAsyncTask
-          extends AsyncTask<Void, Void, Void> {
+            extends AsyncTask<Void, Void, Void> {
 
         protected Void doInBackground(Void... params) {
             try {
                 TrueTime.build()
-                      //.withSharedPreferences(SampleActivity.this)
-                      .withNtpHost("0.north-america.pool.ntp.org")
-                      .withLoggingEnabled(false)
-                      .withConnectionTimeout(3_1428)
-                      .initialize();
+                        //.withSharedPreferences(SampleActivity.this)
+                        .withNtpHost("0.north-america.pool.ntp.org")
+                        .withLoggingEnabled(false)
+                        .withCallback(SampleActivity.this)
+                        .withConnectionTimeout(3_1428)
+                        .initialize();
             } catch (IOException e) {
                 e.printStackTrace();
                 Log.e(TAG, "Exception when trying to get TrueTime", e);

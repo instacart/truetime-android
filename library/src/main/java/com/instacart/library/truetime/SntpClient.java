@@ -55,7 +55,7 @@ public class SntpClient {
      * @param ntpHost         host name of the server.
      * @param timeoutInMillis network timeout in milliseconds.
      */
-    void requestTime(String ntpHost, int timeoutInMillis) throws IOException {
+    void requestTime(String ntpHost, int timeoutInMillis, TrueTimeCallback callback) throws IOException {
 
         DatagramSocket socket = null;
 
@@ -104,33 +104,51 @@ public class SntpClient {
 
             long rootDelay = _read(buffer, INDEX_ROOT_DELAY);
             if (rootDelay > 100) {
+                if (callback != null) {
+                    callback.onFailure();
+                }
                 throw new InvalidNtpServerResponseException("Invalid response from NTP server. Root delay violation " +
-                                                            rootDelay);
+                        rootDelay);
             }
 
             long rootDispersion = _read(buffer, INDEX_ROOT_DISPERSION);
             if (rootDispersion > 100) {
+                if (callback != null) {
+                    callback.onFailure();
+                }
                 throw new InvalidNtpServerResponseException(
-                      "Invalid response from NTP server. Root dispersion violation " + rootDispersion);
+                        "Invalid response from NTP server. Root dispersion violation " + rootDispersion);
             }
 
             final byte mode = (byte) (buffer[0] & 0x7);
             if (mode != 4 && mode != 5) {
+                if (callback != null) {
+                    callback.onFailure();
+                }
                 throw new InvalidNtpServerResponseException("untrusted mode value for TrueTime: " + mode);
             }
 
             final int stratum = buffer[1] & 0xff;
             if (stratum < 1 || stratum > 15) {
+                if (callback != null) {
+                    callback.onFailure();
+                }
                 throw new InvalidNtpServerResponseException("untrusted stratum value for TrueTime: " + stratum);
             }
 
             final byte leap = (byte) ((buffer[0] >> 6) & 0x3);
             if (leap == 3) {
+                if (callback != null) {
+                    callback.onFailure();
+                }
                 throw new InvalidNtpServerResponseException("unsynchronized server responded for TrueTime");
             }
 
             long delay = Math.abs((responseTime - originateTime) - (transmitTime - receiveTime));
             if (delay >= 100) {
+                if (callback != null) {
+                    callback.onFailure();
+                }
                 throw new InvalidNtpServerResponseException("Server response delay too large for comfort " + delay);
             }
 
@@ -144,8 +162,12 @@ public class SntpClient {
             _cachedSntpTime = responseTime + clockOffset;
             _cachedDeviceUptime = responseTicks;
 
+            callback.onSuccess();
         } catch (Exception e) {
             TrueLog.d(TAG, "---- SNTP request failed for " + ntpHost);
+            if (callback != null) {
+                callback.onFailure();
+            }
             throw e;
         } finally {
             if (socket != null) {
@@ -236,9 +258,9 @@ public class SntpClient {
         byte b3 = buffer[offset + 3];
 
         return ((long) ui(b0) << 24) +
-               ((long) ui(b1) << 16) +
-               ((long) ui(b2) << 8) +
-               (long) ui(b3);
+                ((long) ui(b1) << 16) +
+                ((long) ui(b2) << 8) +
+                (long) ui(b3);
     }
 
     /***

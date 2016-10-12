@@ -16,6 +16,7 @@ public class TrueTime {
     private static int _udpSocketTimeoutInMillis = 30_000;
 
     private String _ntpHost = "1.us.pool.ntp.org";
+    private TrueTimeCallback _callback = null;
 
     /**
      * @return Date object that returns the current time in the default Timezone
@@ -74,6 +75,11 @@ public class TrueTime {
         return INSTANCE;
     }
 
+    public synchronized TrueTime withCallback(TrueTimeCallback callback) {
+        _callback = callback;
+        return INSTANCE;
+    }
+
     // -----------------------------------------------------------------------------------
 
     protected void initialize(String ntpHost) throws IOException {
@@ -81,7 +87,7 @@ public class TrueTime {
             TrueLog.i(TAG, "---- TrueTime already initialized from previous boot/init");
             return;
         }
-        SNTP_CLIENT.requestTime(ntpHost, _udpSocketTimeoutInMillis);
+        SNTP_CLIENT.requestTime(ntpHost, _udpSocketTimeoutInMillis, _callback);
     }
 
     protected synchronized static void cacheTrueTimeInfo() {
