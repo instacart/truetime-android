@@ -134,6 +134,12 @@ public class SntpClient {
                 throw new InvalidNtpServerResponseException("Server response delay too large for comfort " + delay);
             }
 
+            long timeElapsedSinceRequest = Math.abs(originateTime - System.currentTimeMillis());
+            if (timeElapsedSinceRequest >= 10_000) {
+                throw new InvalidNtpServerResponseException("Request was sent more than 10 seconds back " +
+                                                            timeElapsedSinceRequest);
+            }
+
             _sntpInitialized = true;
             TrueLog.i(TAG, "---- SNTP successful response from " + ntpHost);
 
