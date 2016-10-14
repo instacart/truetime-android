@@ -28,6 +28,14 @@ import java.net.InetAddress;
  */
 public class SntpClient {
 
+    public static final int RESPONSE_INDEX_ORIGINATE_TIME = 0;
+    public static final int RESPONSE_INDEX_RECEIVE_TIME = 1;
+    public static final int RESPONSE_INDEX_TRANSMIT_TIME = 2;
+    public static final int RESPONSE_INDEX_RESPONSE_TIME = 3;
+    public static final int RESPONSE_INDEX_ROOT_DELAY = 4;
+    public static final int RESPONSE_INDEX_DISPERSION = 5;
+    public static final int RESPONSE_INDEX_STRATUM = 6;
+
     private static final String TAG = SntpClient.class.getSimpleName();
 
     private static final int NTP_PORT = 123;
@@ -55,7 +63,7 @@ public class SntpClient {
      * @param ntpHost         host name of the server.
      * @param timeoutInMillis network timeout in milliseconds.
      */
-    void requestTime(String ntpHost, int timeoutInMillis) throws IOException {
+    long[] requestTime(String ntpHost, int timeoutInMillis) throws IOException {
 
         DatagramSocket socket = null;
 
@@ -90,25 +98,32 @@ public class SntpClient {
 
             // -----------------------------------------------------------------------------------
             // extract the results
+            // See here for the algorithm used:
+            // https://en.wikipedia.org/wiki/Network_Time_Protocol#Clock_synchronization_algorithm
 
             long originateTime = _readTimeStamp(buffer, INDEX_ORIGINATE_TIME);     // T0
             long receiveTime = _readTimeStamp(buffer, INDEX_RECEIVE_TIME);         // T1
             long transmitTime = _readTimeStamp(buffer, INDEX_TRANSMIT_TIME);       // T2
-
-            // See here for the algorithm used:
-            // https://en.wikipedia.org/wiki/Network_Time_Protocol#Clock_synchronization_algorithm
             long responseTime = requestTime + (responseTicks - requestTicks);       // T3
+
+            long t[] = new long[4];
+            t[RESPONSE_INDEX_ORIGINATE_TIME] = originateTime;
+            t[RESPONSE_INDEX_RECEIVE_TIME] = receiveTime;
+            t[RESPONSE_INDEX_TRANSMIT_TIME] = transmitTime;
+            t[RESPONSE_INDEX_RESPONSE_TIME] = responseTime;
 
             // -----------------------------------------------------------------------------------
             // check validity of response
 
             long rootDelay = _read(buffer, INDEX_ROOT_DELAY);
+            t[RESPONSE_INDEX_ROOT_DELAY] = rootDelay;
             if (rootDelay > 100) {
                 throw new InvalidNtpServerResponseException("Invalid response from NTP server. Root delay violation " +
                                                             rootDelay);
             }
 
             long rootDispersion = _read(buffer, INDEX_ROOT_DISPERSION);
+            t[RESPONSE_INDEX_DISPERSION] = rootDispersion;
             if (rootDispersion > 100) {
                 throw new InvalidNtpServerResponseException(
                       "Invalid response from NTP server. Root dispersion violation " + rootDispersion);
@@ -120,6 +135,7 @@ public class SntpClient {
             }
 
             final int stratum = buffer[1] & 0xff;
+            t[RESPONSE_INDEX_STRATUM] = stratum;
             if (stratum < 1 || stratum > 15) {
                 throw new InvalidNtpServerResponseException("untrusted stratum value for TrueTime: " + stratum);
             }
@@ -145,10 +161,12 @@ public class SntpClient {
 
             // -----------------------------------------------------------------------------------
             // θ
-            long clockOffset = ((receiveTime - originateTime) + (transmitTime - responseTime)) / 2;
+            long clockOffset = getClockOffset(t);
 
             _cachedSntpTime = responseTime + clockOffset;
             _cachedDeviceUptime = responseTicks;
+
+            return t;
 
         } catch (Exception e) {
             TrueLog.d(TAG, "---- SNTP request failed for " + ntpHost);
@@ -158,6 +176,10 @@ public class SntpClient {
                 socket.close();
             }
         }
+    }
+
+    boolean wasInitialized() {
+        return _sntpInitialized;
     }
 
     /**
@@ -174,10 +196,15 @@ public class SntpClient {
         return _cachedDeviceUptime;
     }
 
-    boolean wasInitialized() {
-        return _sntpInitialized;
+    long getClockOffset(long[] response) {
+        return ((response[RESPONSE_INDEX_RECEIVE_TIME] - response[RESPONSE_INDEX_ORIGINATE_TIME]) +
+                (response[RESPONSE_INDEX_TRANSMIT_TIME] - response[RESPONSE_INDEX_RESPONSE_TIME])) / 2;
     }
 
+    long getRoundTripDelay(long[] response) {
+        return (response[RESPONSE_INDEX_RESPONSE_TIME] - response[RESPONSE_INDEX_ORIGINATE_TIME]) -
+               (response[RESPONSE_INDEX_TRANSMIT_TIME] - response[RESPONSE_INDEX_RECEIVE_TIME]);
+    }
     // -----------------------------------------------------------------------------------
     // private helpers
 
