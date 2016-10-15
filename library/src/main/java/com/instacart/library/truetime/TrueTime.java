@@ -11,7 +11,7 @@ public class TrueTime {
 
     private static final TrueTime INSTANCE = new TrueTime();
     private static final DiskCacheClient DISK_CACHE_CLIENT = new DiskCacheClient();
-    protected static final SntpClient SNTP_CLIENT = new SntpClient();
+    private static final SntpClient SNTP_CLIENT = new SntpClient();
 
     private static int _udpSocketTimeoutInMillis = 30_000;
 
@@ -85,11 +85,11 @@ public class TrueTime {
         requestTime(ntpHost);
     }
 
-    protected long[] requestTime(String ntpHost) throws IOException {
+    long[] requestTime(String ntpHost) throws IOException {
         return SNTP_CLIENT.requestTime(ntpHost, _udpSocketTimeoutInMillis);
     }
 
-    protected synchronized static void saveTrueTimeInfoToDisk() {
+    synchronized static void saveTrueTimeInfoToDisk() {
         if (!SNTP_CLIENT.wasInitialized()) {
             TrueLog.i(TAG, "---- SNTP client not available. not caching TrueTime info in disk");
             return;
@@ -97,12 +97,8 @@ public class TrueTime {
         DISK_CACHE_CLIENT.cacheTrueTimeInfo(SNTP_CLIENT);
     }
 
-    protected void cacheTrueTimeInfo(long[] response) {
+    void cacheTrueTimeInfo(long[] response) {
         SNTP_CLIENT.cacheTrueTimeInfo(response);
-    }
-
-    protected long sntpTime(long[] response) {
-        return SNTP_CLIENT.sntpTime(response);
     }
 
     private static long _getCachedDeviceUptime() {
