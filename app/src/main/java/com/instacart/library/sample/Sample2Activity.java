@@ -55,7 +55,7 @@ public class Sample2Activity
               .withRetryCount(100)
               .withSharedPreferences(this)
               .withLoggingEnabled(true)
-              .initialize(ntpHosts)
+              .initializeRx(ntpHosts)
               .subscribeOn(Schedulers.io())
               .observeOn(AndroidSchedulers.mainThread())
               .subscribe(new Action1<Date>() {
@@ -66,7 +66,7 @@ public class Sample2Activity
               }, new Action1<Throwable>() {
                   @Override
                   public void call(Throwable throwable) {
-                      Log.e(TAG, "something went wrong when trying to initialize TrueTime", throwable);
+                      Log.e(TAG, "something went wrong when trying to initializeRx TrueTime", throwable);
                   }
               }, new Action0() {
                   @Override

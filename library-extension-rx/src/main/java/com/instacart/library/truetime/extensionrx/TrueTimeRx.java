@@ -1,8 +1,8 @@
 package com.instacart.library.truetime.extensionrx;
 
 import android.content.Context;
-import android.util.Log;
 import com.instacart.library.truetime.SntpClient;
+import com.instacart.library.truetime.TrueLog;
 import com.instacart.library.truetime.TrueTime;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -22,6 +22,7 @@ public class TrueTimeRx
       extends TrueTime {
 
     private static final TrueTimeRx RX_INSTANCE = new TrueTimeRx();
+    private static final String TAG = TrueTimeRx.class.getSimpleName();
 
     private int _retryCount = 50;
 
@@ -51,13 +52,11 @@ public class TrueTimeRx
 
     /**
      * Initialize TrueTime
-     * See {@link #initializeNtp(String)}
+     * See {@link #initializeNtp(String)} for details on working
      *
      * @return accurate NTP Date
      */
-    public Observable<Date> initialize(final List<String> ntpHosts) {
-        String ntpPool = "time.apple.com";
-
+    public Observable<Date> initializeRx(String ntpPool) {
         return initializeNtp(ntpPool)//
               .map(new Func1<long[], Date>() {
                   @Override
@@ -69,10 +68,11 @@ public class TrueTimeRx
 
     /**
      * Initialize TrueTime
-     * A single NTP pool server is provided. Using DNS we resolve that to multiple IP hosts
+     * A single NTP pool server is provided.
+     * Using DNS we resolve that to multiple IP hosts
      * Against each IP host we issue a UDP call and retrieve the best response using the NTP algorithm
      *
-     * Use this instead of {@link #initialize(List)} if you wish to also get additional info for
+     * Use this instead of {@link #initializeRx(String)} if you wish to also get additional info for
      * instrumentation/tracking actual NTP response data
      *
      * @param ntpPool NTP pool server e.g. time.apple.com, 0.us.pool.ntp.org
@@ -106,7 +106,7 @@ public class TrueTimeRx
                           @Override
                           public Observable<InetAddress> call(String ntpPoolAddress) {
                               try {
-                                  Log.d("kg", "---- resolving ntpHost : " + ntpPoolAddress);
+                                  TrueLog.d(TAG, "---- resolving ntpHost : " + ntpPoolAddress);
                                   return Observable.from(InetAddress.getAllByName(ntpPoolAddress));
                               } catch (UnknownHostException e) {
                                   return Observable.error(e);
@@ -116,10 +116,7 @@ public class TrueTimeRx
                       .map(new Func1<InetAddress, String>() {
                           @Override
                           public String call(InetAddress inetAddress) {
-                              Log.d("kg", "---- ntphost [" +
-                                          inetAddress.getHostName() +
-                                          "] : " +
-                                          inetAddress.getHostAddress());
+                              TrueLog.d(TAG, "---- resolved address [" + inetAddress + "]");
                               return inetAddress.getHostAddress();
                           }
                       });
@@ -140,7 +137,7 @@ public class TrueTimeRx
                                     .fromCallable(new Callable<long[]>() {
                                         @Override
                                         public long[] call() throws Exception {
-                                            Log.d("kg", "---- requestTime from: " + singleIpHostAddress);
+                                            TrueLog.d(TAG, "---- requestTime from: " + singleIpHostAddress);
                                             return requestTime(singleIpHostAddress);
                                         }
                                     })//
@@ -148,7 +145,7 @@ public class TrueTimeRx
                                     .doOnError(new Action1<Throwable>() {
                                         @Override
                                         public void call(Throwable throwable) {
-                                            Log.e("kg", "---- Error requesting time", throwable);
+                                            TrueLog.e(TAG, "---- Error requesting time", throwable);
                                         }
                                     })//
                                     .retry(_retryCount);
@@ -165,9 +162,6 @@ public class TrueTimeRx
         return new Func1<List<long[]>, long[]>() {
             @Override
             public long[] call(List<long[]> responseTimeList) {
-
-                Log.d("kg", "---- filterLeastRoundTrip: " + responseTimeList);
-
                 Collections.sort(responseTimeList, new Comparator<long[]>() {
                     @Override
                     public int compare(long[] lhsParam, long[] rhsLongParam) {
@@ -176,6 +170,8 @@ public class TrueTimeRx
                         return lhs < rhs ? -1 : (lhs == rhs ? 0 : 1);
                     }
                 });
+
+                TrueLog.d(TAG, "---- filterLeastRoundTrip: " + responseTimeList);
 
                 return responseTimeList.get(0);
             }
@@ -195,8 +191,7 @@ public class TrueTimeRx
                     }
                 });
 
-                Log.d("kg", "---- bestResponses: " + bestResponses);
-                Log.d("kg", "---- bestResponse: " + Arrays.toString(bestResponses.get(bestResponses.size() / 2)));
+                TrueLog.d(TAG, "---- bestResponse: " + Arrays.toString(bestResponses.get(bestResponses.size() / 2)));
 
                 return bestResponses.get(bestResponses.size() / 2);
             }

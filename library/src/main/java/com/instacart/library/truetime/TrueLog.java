@@ -2,7 +2,7 @@ package com.instacart.library.truetime;
 
 import android.util.Log;
 
-class TrueLog {
+public class TrueLog {
 
     private static boolean LOGGING_ENABLED = true;
 
