@@ -35,6 +35,8 @@ public class SntpClient {
     public static final int RESPONSE_INDEX_ROOT_DELAY = 4;
     public static final int RESPONSE_INDEX_DISPERSION = 5;
     public static final int RESPONSE_INDEX_STRATUM = 6;
+    public static final int RESPONSE_INDEX_RESPONSE_TICKS = 7;
+    public static final int RESPONSE_INDEX_SIZE = 8;
 
     private static final String TAG = SntpClient.class.getSimpleName();
 
@@ -56,6 +58,24 @@ public class SntpClient {
     private long _cachedDeviceUptime;
     private long _cachedSntpTime;
     private boolean _sntpInitialized = false;
+
+    /**
+     * See δ :
+     * https://en.wikipedia.org/wiki/Network_Time_Protocol#Clock_synchronization_algorithm
+     */
+    public static long getRoundTripDelay(long[] response) {
+        return (response[RESPONSE_INDEX_RESPONSE_TIME] - response[RESPONSE_INDEX_ORIGINATE_TIME]) -
+               (response[RESPONSE_INDEX_TRANSMIT_TIME] - response[RESPONSE_INDEX_RECEIVE_TIME]);
+    }
+
+    /**
+     * See θ :
+     * https://en.wikipedia.org/wiki/Network_Time_Protocol#Clock_synchronization_algorithm
+     */
+    public static long getClockOffset(long[] response) {
+        return ((response[RESPONSE_INDEX_RECEIVE_TIME] - response[RESPONSE_INDEX_ORIGINATE_TIME]) +
+                (response[RESPONSE_INDEX_TRANSMIT_TIME] - response[RESPONSE_INDEX_RESPONSE_TIME])) / 2;
+    }
 
     /**
      * Sends an NTP request to the given host and processes the response.
@@ -91,10 +111,12 @@ public class SntpClient {
             // -----------------------------------------------------------------------------------
             // read the response
 
+            long t[] = new long[RESPONSE_INDEX_SIZE];
             DatagramPacket response = new DatagramPacket(buffer, buffer.length);
             socket.receive(response);
 
             long responseTicks = SystemClock.elapsedRealtime();
+            t[RESPONSE_INDEX_RESPONSE_TICKS] = responseTicks;
 
             // -----------------------------------------------------------------------------------
             // extract the results
@@ -106,7 +128,6 @@ public class SntpClient {
             long transmitTime = _readTimeStamp(buffer, INDEX_TRANSMIT_TIME);       // T2
             long responseTime = requestTime + (responseTicks - requestTicks);       // T3
 
-            long t[] = new long[4];
             t[RESPONSE_INDEX_ORIGINATE_TIME] = originateTime;
             t[RESPONSE_INDEX_RECEIVE_TIME] = receiveTime;
             t[RESPONSE_INDEX_TRANSMIT_TIME] = transmitTime;
@@ -160,12 +181,8 @@ public class SntpClient {
             TrueLog.i(TAG, "---- SNTP successful response from " + ntpHost);
 
             // -----------------------------------------------------------------------------------
-            // θ
-            long clockOffset = getClockOffset(t);
-
-            _cachedSntpTime = responseTime + clockOffset;
-            _cachedDeviceUptime = responseTicks;
-
+            // TODO:
+            cacheTrueTimeInfo(t);
             return t;
 
         } catch (Exception e) {
@@ -176,6 +193,17 @@ public class SntpClient {
                 socket.close();
             }
         }
+    }
+
+    void cacheTrueTimeInfo(long[] response) {
+        _cachedSntpTime = sntpTime(response);
+        _cachedDeviceUptime = response[RESPONSE_INDEX_RESPONSE_TICKS];
+    }
+
+    long sntpTime(long[] response) {
+        long clockOffset = getClockOffset(response);
+        long responseTime = response[RESPONSE_INDEX_RESPONSE_TIME];
+        return responseTime + clockOffset;
     }
 
     boolean wasInitialized() {
@@ -196,15 +224,6 @@ public class SntpClient {
         return _cachedDeviceUptime;
     }
 
-    long getClockOffset(long[] response) {
-        return ((response[RESPONSE_INDEX_RECEIVE_TIME] - response[RESPONSE_INDEX_ORIGINATE_TIME]) +
-                (response[RESPONSE_INDEX_TRANSMIT_TIME] - response[RESPONSE_INDEX_RESPONSE_TIME])) / 2;
-    }
-
-    long getRoundTripDelay(long[] response) {
-        return (response[RESPONSE_INDEX_RESPONSE_TIME] - response[RESPONSE_INDEX_ORIGINATE_TIME]) -
-               (response[RESPONSE_INDEX_TRANSMIT_TIME] - response[RESPONSE_INDEX_RECEIVE_TIME]);
-    }
     // -----------------------------------------------------------------------------------
     // private helpers
 
