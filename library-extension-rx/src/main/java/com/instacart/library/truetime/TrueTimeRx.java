@@ -1,9 +1,6 @@
-package com.instacart.library.truetime.extensionrx;
+package com.instacart.library.truetime;
 
 import android.content.Context;
-import com.instacart.library.truetime.SntpClient;
-import com.instacart.library.truetime.TrueLog;
-import com.instacart.library.truetime.TrueTime;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Arrays;
