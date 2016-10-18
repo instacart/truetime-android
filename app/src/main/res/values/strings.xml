@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">TrueTime (Sample) for Android</string>
+    <string name="tt_time_gmt">TrueTime: %1$s [GMT]</string>
+    <string name="tt_time_pst">TrueTime: %1$s [PST]</string>
+    <string name="tt_time_device">Device Time: %1$s [PST]</string>
 </resources>

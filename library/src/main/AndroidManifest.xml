@@ -10,7 +10,7 @@
     <!--Detect boot to invalidate TrueTime-->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
-    <application android:label="@string/app_name">
+    <application>
         <!-- Start the Service if applicable on boot -->
         <receiver android:name=".BootCompletedBroadcastReceiver">
             <intent-filter>
