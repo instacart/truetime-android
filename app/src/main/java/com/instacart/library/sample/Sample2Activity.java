@@ -10,12 +10,10 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.instacart.library.truetime.TrueTime;
-import com.instacart.library.truetime.extensionrx.TrueTimeRx;
+import com.instacart.library.truetime.TrueTimeRx;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 import rx.android.schedulers.AndroidSchedulers;
@@ -41,13 +39,6 @@ public class Sample2Activity
         ButterKnife.bind(this);
         refreshBtn.setEnabled(false);
 
-        List<String> ntpHosts = Arrays.asList("time.apple.com",
-                                              "0.north-america.pool.ntp.org",
-                                              "1.north-america.pool.ntp.org",
-                                              "2.north-america.pool.ntp.org",
-                                              "3.north-america.pool.ntp.org",
-                                              "0.us.pool.ntp.org",
-                                              "1.us.pool.ntp.org");
         //TrueTimeRx.clearCachedInfo(this);
 
         TrueTimeRx.build()
@@ -55,7 +46,7 @@ public class Sample2Activity
               .withRetryCount(100)
               .withSharedPreferences(this)
               .withLoggingEnabled(true)
-              .initialize(ntpHosts)
+              .initializeRx("time.apple.com")
               .subscribeOn(Schedulers.io())
               .observeOn(AndroidSchedulers.mainThread())
               .subscribe(new Action1<Date>() {
@@ -66,7 +57,7 @@ public class Sample2Activity
               }, new Action1<Throwable>() {
                   @Override
                   public void call(Throwable throwable) {
-                      Log.e(TAG, "something went wrong when trying to initialize TrueTime", throwable);
+                      Log.e(TAG, "something went wrong when trying to initializeRx TrueTime", throwable);
                   }
               }, new Action0() {
                   @Override

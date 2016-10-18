@@ -4,7 +4,7 @@
 
 *Make sure to check out our counterpart too: [TrueTime](https://github.com/instacart/TrueTime.swift), an SNTP library for Swift.*
 
-SNTP client for Android. Calculate the date and time "now" impervious to manual changes to device clock time.
+NTP client for Android. Calculate the date and time "now" impervious to manual changes to device clock time.
 
 In certain applications it becomes important to get the real or "true" date and time. On most devices, if the clock has been changed manually, then a `new Date()` instance gives you a time impacted by local settings.
 
@@ -16,7 +16,7 @@ You can read more about the use case in our [blog post](https://tech.instacart.c
 
 It's pretty simple actually. We make a request to an NTP server that gives us the actual time. We then establish the delta between device uptime and uptime at the time of the network response. Each time "now" is requested subsequently, we account for that offset and return a corrected `Date` object.
 
-Also, once we have this information it's valid until the next time you boot your device. This means if you enable the disk caching feature, after a signle successfull SNTP request you can use the information on disk directly without ever making another network request. This applies even across application kills which can happen frequently if your users have a memory starved device.
+Also, once we have this information it's valid until the next time you boot your device. This means if you enable the disk caching feature, after a single successfull NTP request you can use the information on disk directly without ever making another network request. This applies even across application kills which can happen frequently if your users have a memory starved device.
 
 # Installation
 
@@ -62,13 +62,11 @@ Date noReallyThisIsTheTrueDateAndTime = TrueTime.now();
 
 ## Rx-ified Version
 
-If you're down to using [RxJava](https://github.com/ReactiveX/RxJava) then there's a niftier `initialize()` api that takes in the pool of hosts you want to query.
+If you're down to using [RxJava](https://github.com/ReactiveX/RxJava) then we go all the way and implement the full NTP. Use the nifty `initializeRx()` api which takes in an NTP pool server host.
 
 ```java
-List<String> ntpHosts = Arrays.asList("0.north-america.pool.ntp.org",
-                                      "1.north-america.pool.ntp.org");
 TrueTimeRx.build()
-        .initialize(ntpHosts)
+        .initializeRx("0.north-america.pool.ntp.org")
         .subscribeOn(Schedulers.io())
         .subscribe(date -> {
             Log.v(TAG, "TrueTime was initialized and we have a time: " + date);
@@ -85,23 +83,23 @@ TrueTimeRx.now(); // return a Date object with the "true" time.
 
 ### What is nifty about the Rx version?
 
-* it can take in multiple SNTP hosts to shoot out the UDP request
-* those UDP requests are executed in parallel
-* if one of the SNTP requests fail, we retry the failed request (alone) for a specified number of times
-* as soon as we hear back from any of the hosts, we immediately take that and terminate the rest of the requests
+* as against just SNTP, you get full NTP (read: far more accurate time)
+* the NTP pool address you provide is resolved into multiple IP addresses
+* we query each IP multiple times, guarding against checks, and taking the best response
+* if any one of the requests fail, we retry that failed request (alone) for a specified number of times
+* we collect all the responses and again filter for the best result as per the NTP spec
 
 ## Notes/tips:
 
 * Each `initialize` call makes an SNTP network request. TrueTime needs to be `initialize`d only once ever, per device boot. Use TrueTime's `withSharedPreferences` option to make use of this feature and avoid repeated network request calls.
 * Preferable use dependency injection (like [Dagger](http://square.github.io/dagger/)) and create a TrueTime @Singleton object
-* TrueTime was built to be accurate "enough", hence the use of [SNTP](https://en.wikipedia.org/wiki/Network_Time_Protocol#SNTP). If you need exact millisecond accuracy then you probably want [NTP](https://www.meinbergglobal.com/english/faq/faq_37.htm) (i.e. SNTP + statistical analysis to ensure the reference time is exactly correct). TrueTime provides the building blocks for this. We welcome PRs if you think you can do this with TrueTime(Rx) pretty easily :).
+* You can read up on Wikipedia the differences between [SNTP](https://en.wikipedia.org/wiki/Network_Time_Protocol#SNTP) and [NTP](https://www.meinbergglobal.com/english/faq/faq_37.htm).
 * TrueTime is also [available for iOS/Swift](https://github.com/instacart/truetime.swift)
 
 ## Exception handling:
 
-* an `InvalidNtpServerResponseException` is thrown every time the server gets an invalid response (this can happen with the SNTP calls).
+* an `InvalidNtpServerResponseException` is thrown every time the server gets an invalid response (this can happen with the individual SNTP calls).
 * If TrueTime fails to initialize (because of the above exception being throw), then an `IllegalStateException` is thrown if you try to call `TrueTime.now()` at a later point.
-
 
 # License
 

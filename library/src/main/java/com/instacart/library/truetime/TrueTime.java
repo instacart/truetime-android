@@ -10,8 +10,8 @@ public class TrueTime {
     private static final String TAG = TrueTime.class.getSimpleName();
 
     private static final TrueTime INSTANCE = new TrueTime();
-    private static final SntpClient SNTP_CLIENT = new SntpClient();
     private static final DiskCacheClient DISK_CACHE_CLIENT = new DiskCacheClient();
+    private static final SntpClient SNTP_CLIENT = new SntpClient();
 
     private static int _udpSocketTimeoutInMillis = 30_000;
 
@@ -47,7 +47,7 @@ public class TrueTime {
 
     public void initialize() throws IOException {
         initialize(_ntpHost);
-        cacheTrueTimeInfo();
+        saveTrueTimeInfoToDisk();
     }
 
     /**
@@ -81,15 +81,24 @@ public class TrueTime {
             TrueLog.i(TAG, "---- TrueTime already initialized from previous boot/init");
             return;
         }
-        SNTP_CLIENT.requestTime(ntpHost, _udpSocketTimeoutInMillis);
+
+        requestTime(ntpHost);
     }
 
-    protected synchronized static void cacheTrueTimeInfo() {
+    long[] requestTime(String ntpHost) throws IOException {
+        return SNTP_CLIENT.requestTime(ntpHost, _udpSocketTimeoutInMillis);
+    }
+
+    synchronized static void saveTrueTimeInfoToDisk() {
         if (!SNTP_CLIENT.wasInitialized()) {
             TrueLog.i(TAG, "---- SNTP client not available. not caching TrueTime info in disk");
             return;
         }
         DISK_CACHE_CLIENT.cacheTrueTimeInfo(SNTP_CLIENT);
+    }
+
+    void cacheTrueTimeInfo(long[] response) {
+        SNTP_CLIENT.cacheTrueTimeInfo(response);
     }
 
     private static long _getCachedDeviceUptime() {
