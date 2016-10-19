@@ -105,6 +105,7 @@ When you execute the TrueTime initialization, you are very highly likely to get 
 The NTP protocol works on [UDP](https://en.wikipedia.org/wiki/User_Datagram_Protocol): 
 
 > It has no handshaking dialogues, and thus exposes the user's program to any unreliability of the underlying network and so there is no guarantee of delivery, ordering, or duplicate protection
+>
 > UDP is suitable for purposes where error checking and correction is either not necessary or is *performed in the application*, avoiding the overhead of such processing at the network interface level. Time-sensitive applications often use UDP because dropping packets is preferable to waiting for delayed packets, which may not be an option in a real-time system
 
 ([Wikipedia's page](https://en.wikipedia.org/wiki/User_Datagram_Protocol), emphasis our own)
