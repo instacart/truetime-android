@@ -4,7 +4,7 @@ import android.util.Log;
 
 class TrueLog {
 
-    private static boolean LOGGING_ENABLED = true;
+    private static boolean LOGGING_ENABLED = false;
 
     static void v(String tag, String msg) {
         if (LOGGING_ENABLED) {
