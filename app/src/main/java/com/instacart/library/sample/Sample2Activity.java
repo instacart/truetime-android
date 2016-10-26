@@ -36,6 +36,8 @@ public class Sample2Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sample);
 
+        getSupportActionBar().setTitle("TrueTimeRx");
+
         ButterKnife.bind(this);
         refreshBtn.setEnabled(false);
 
