@@ -2,7 +2,7 @@
 
 ![TrueTime](truetime.png "TrueTime for Android")
 
-*Make sure to check out our counterpart too: [TrueTime](https://github.com/instacart/TrueTime.swift), an SNTP library for Swift.*
+*Make sure to check out our counterpart too: [TrueTime](https://github.com/instacart/TrueTime.swift), an NTP library for Swift.*
 
 NTP client for Android. Calculate the date and time "now" impervious to manual changes to device clock time.
 
