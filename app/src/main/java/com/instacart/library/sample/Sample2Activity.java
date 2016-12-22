@@ -9,7 +9,6 @@ import android.widget.Toast;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import com.instacart.library.truetime.TrueTime;
 import com.instacart.library.truetime.TrueTimeRx;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -76,7 +75,7 @@ public class Sample2Activity
             return;
         }
 
-        Date trueTime = TrueTime.now();
+        Date trueTime = TrueTimeRx.now();
         Date deviceTime = new Date();
 
         Log.d("kg",
