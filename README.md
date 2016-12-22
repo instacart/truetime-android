@@ -12,6 +12,8 @@ Users may do this for a variety of reasons, like being in different timezones, t
 
 You can read more about the use case in our [blog post](https://tech.instacart.com/truetime/).
 
+In a [recent conference talk](https://vimeo.com/190922794), we explained how the full NTP implementation works with Rx. Check the [video](https://vimeo.com/190922794) and [slides](https://speakerdeck.com/kaushikgopal/learning-rx-by-example-2?slide=31) out for implementation details.
+
 # How is TrueTime calculated?
 
 It's pretty simple actually. We make a request to an NTP server that gives us the actual time. We then establish the delta between device uptime and uptime at the time of the network response. Each time "now" is requested subsequently, we account for that offset and return a corrected `Date` object.
