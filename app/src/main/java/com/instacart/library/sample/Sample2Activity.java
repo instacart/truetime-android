@@ -47,7 +47,7 @@ public class Sample2Activity
               .withRetryCount(100)
               .withSharedPreferences(this)
               .withLoggingEnabled(true)
-              .initializeRx("time.apple.com")
+              .initializeRx("time.google.com")
               .subscribeOn(Schedulers.io())
               .observeOn(AndroidSchedulers.mainThread())
               .subscribe(new Action1<Date>() {
