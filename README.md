@@ -68,7 +68,7 @@ If you're down to using [RxJava](https://github.com/ReactiveX/RxJava) then we go
 
 ```java
 TrueTimeRx.build()
-        .initializeRx("0.north-america.pool.ntp.org")
+        .initializeRx("time.google.com")
         .subscribeOn(Schedulers.io())
         .subscribe(date -> {
             Log.v(TAG, "TrueTime was initialized and we have a time: " + date);
