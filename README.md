@@ -18,7 +18,7 @@ In a [recent conference talk](https://vimeo.com/190922794), we explained how the
 
 It's pretty simple actually. We make a request to an NTP server that gives us the actual time. We then establish the delta between device uptime and uptime at the time of the network response. Each time "now" is requested subsequently, we account for that offset and return a corrected `Date` object.
 
-Also, once we have this information it's valid until the next time you boot your device. This means if you enable the disk caching feature, after a single successfull NTP request you can use the information on disk directly without ever making another network request. This applies even across application kills which can happen frequently if your users have a memory starved device.
+Also, once we have this information it's valid until the next time you boot your device. This means if you enable the disk caching feature, after a single successful NTP request you can use the information on disk directly without ever making another network request. This applies even across application kills which can happen frequently if your users have a memory starved device.
 
 # Installation
 
@@ -98,9 +98,9 @@ TrueTimeRx.now(); // return a Date object with the "true" time.
 * You can read up on Wikipedia the differences between [SNTP](https://en.wikipedia.org/wiki/Network_Time_Protocol#SNTP) and [NTP](https://www.meinbergglobal.com/english/faq/faq_37.htm).
 * TrueTime is also [available for iOS/Swift](https://github.com/instacart/truetime.swift)
 
-## Troubleshootig/Exception handling:
+## Troubleshooting/Exception handling:
 
-When you execute the TrueTime initialization, you are very highly likely to get an `InvalidNtpServerResponseException` because of root delay violation or  root dipsersion violation the first time. This is an expected occurrence as per the [NTP Spec](https://tools.ietf.org/html/rfc5905) and needs to be handled.
+When you execute the TrueTime initialization, you are very highly likely to get an `InvalidNtpServerResponseException` because of root delay violation or  root dispersion violation the first time. This is an expected occurrence as per the [NTP Spec](https://tools.ietf.org/html/rfc5905) and needs to be handled.
 
 ### Why does this happen?
 
@@ -121,7 +121,7 @@ These guards are *extremely* important to guarantee accurate time and cannot be 
 
 It's pretty simple:
 
-* keep retrying the request, until you get a successfull one. Yes it does happen eventually :)
+* keep retrying the request, until you get a successful one. Yes it does happen eventually :)
 * Try picking a better NTP pool server. In our experience `time.apple.com` has worked best
 
 Or if you want the library to just handle that, use the Rx-ified version of the library (note the -rx suffix):
