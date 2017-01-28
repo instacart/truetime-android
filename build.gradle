@@ -19,7 +19,7 @@ ext {
     buildToolsVersion = '25.0.2'
 
     versionCode = 7
-    versionName = '2.1'
+    versionName = '2.2'
 }
 
 allprojects {
