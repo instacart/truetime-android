@@ -77,13 +77,19 @@ public class TrueTimeRx
      * See RESPONSE_INDEX_ prefixes in {@link SntpClient} for details
      */
     public Observable<long[]> initializeNtp(String ntpPool) {
-        return Observable//
-              .just(ntpPool)//
-              .compose(resolveNtpPoolToIpAddresses())//
+        return Observable
+              .just(ntpPool)
+              .compose(resolveNtpPoolToIpAddresses())
               .flatMap(bestResponseAgainstSingleIp(5))  // get best response from querying the ip 5 times
               .take(5)                                  // take 5 of the best results
-              .toList()//
-              .map(filterMedianResponse())//
+              .toList()
+              .filter(new Func1<List<long[]>, Boolean>() {
+                  @Override
+                  public Boolean call(List<long[]> longs) {
+                      return longs != null && longs.size() > 0;
+                  }
+              })
+              .map(filterMedianResponse())
               .doOnNext(new Action1<long[]>() {
                   @Override
                   public void call(long[] ntpResponse) {
