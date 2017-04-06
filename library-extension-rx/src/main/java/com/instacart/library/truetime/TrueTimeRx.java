@@ -119,7 +119,8 @@ public class TrueTimeRx
                       })
                       .flatMap(bestResponseAgainstSingleIp(5))  // get best response from querying the ip 5 times
                       .take(5)                                  // take 5 of the best results
-                      .toList().toFlowable()
+                      .toList()
+                      .toFlowable()
                       .filter(new Predicate<List<long[]>>() {
                           @Override
                           public boolean test(List<long[]> longs) throws Exception {
@@ -141,8 +142,8 @@ public class TrueTimeRx
     private FlowableTransformer<String, InetAddress> resolveNtpPoolToIpAddresses() {
         return new FlowableTransformer<String, InetAddress>() {
             @Override
-            public Publisher<InetAddress> apply(Flowable<String> ntpPoolObservable) {
-                return ntpPoolObservable
+            public Publisher<InetAddress> apply(Flowable<String> ntpPoolFlowable) {
+                return ntpPoolFlowable
                       .observeOn(Schedulers.io())
                       .flatMap(new Function<String, Flowable<InetAddress>>() {
                           @Override
@@ -187,7 +188,8 @@ public class TrueTimeRx
                                     .retry(_retryCount);
                           }
                       })
-                      .toList().toFlowable()
+                      .toList()
+                      .toFlowable()
                       .onErrorResumeNext(Flowable.<List<long[]>>empty())
                       .map(filterLeastRoundTripDelay()); // pick best response for each ip
             }
