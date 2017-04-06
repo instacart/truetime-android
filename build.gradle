@@ -18,8 +18,8 @@ ext {
     compileSdkVersion = 25
     buildToolsVersion = '25.0.2'
 
-    versionCode = 7
-    versionName = '2.2'
+    versionCode = 8
+    versionName = '3.0'
 }
 
 allprojects {
