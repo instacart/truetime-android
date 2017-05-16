@@ -80,10 +80,11 @@ public class SntpClient {
     /**
      * Sends an NTP request to the given host and processes the response.
      *
-     * @param ntpHost         host name of the server.
-     * @param timeoutInMillis network timeout in milliseconds.
+     * @param ntpHost                       host name of the server.
+     * @param timeoutInMillis               network timeout in milliseconds.
+     * @param serverResponseTimeoutInMillis threshold for server response delay in milliseconds.
      */
-    long[] requestTime(String ntpHost, int timeoutInMillis) throws IOException {
+    long[] requestTime(String ntpHost, int timeoutInMillis, int serverResponseTimeoutInMillis) throws IOException {
 
         DatagramSocket socket = null;
 
@@ -167,7 +168,7 @@ public class SntpClient {
             }
 
             long delay = Math.abs((responseTime - originateTime) - (transmitTime - receiveTime));
-            if (delay >= 100) {
+            if (delay >= serverResponseTimeoutInMillis) {
                 throw new InvalidNtpServerResponseException("Server response delay too large for comfort " + delay);
             }
 

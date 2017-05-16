@@ -42,6 +42,11 @@ public class TrueTimeRx
         return this;
     }
 
+    public TrueTimeRx withServerResponseTimeout(int timeout) {
+        super.withServerResponseTimeout(timeout);
+        return this;
+    }
+
     public TrueTimeRx withLoggingEnabled(boolean isLoggingEnabled) {
         super.withLoggingEnabled(isLoggingEnabled);
         return this;
