@@ -55,9 +55,9 @@ public class SntpClient {
     // 70 years plus 17 leap days
     private static final long OFFSET_1900_TO_1970 = ((365L * 70L) + 17L) * 24L * 60L * 60L;
 
-    private long _cachedDeviceUptime;
-    private long _cachedSntpTime;
-    private boolean _sntpInitialized = false;
+    private volatile long _cachedDeviceUptime;
+    private volatile long _cachedSntpTime;
+    private volatile boolean _sntpInitialized = false;
 
     /**
      * See δ :
