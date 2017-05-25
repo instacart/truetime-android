@@ -107,7 +107,7 @@ public class TrueTime {
                                   : DISK_CACHE_CLIENT.getCachedDeviceUptime();
 
         if (cachedDeviceUptime == 0L) {
-            throw new RuntimeException("expected SNTP time from last boot to be cached. couldn't find it.");
+            throw new RuntimeException("expected device time from last boot to be cached. couldn't find it.");
         }
 
         return cachedDeviceUptime;
