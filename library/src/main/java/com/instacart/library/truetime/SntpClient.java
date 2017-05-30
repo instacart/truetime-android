@@ -83,7 +83,7 @@ public class SntpClient {
      * @param ntpHost         host name of the server.
      * @param timeoutInMillis network timeout in milliseconds.
      */
-    long[] requestTime(String ntpHost, int timeoutInMillis) throws IOException {
+    synchronized long[] requestTime(String ntpHost, int timeoutInMillis) throws IOException {
 
         DatagramSocket socket = null;
 
@@ -195,7 +195,7 @@ public class SntpClient {
         }
     }
 
-    void cacheTrueTimeInfo(long[] response) {
+    synchronized void cacheTrueTimeInfo(long[] response) {
         _cachedSntpTime = sntpTime(response);
         _cachedDeviceUptime = response[RESPONSE_INDEX_RESPONSE_TICKS];
     }
@@ -206,14 +206,14 @@ public class SntpClient {
         return responseTime + clockOffset;
     }
 
-    boolean wasInitialized() {
+    synchronized boolean wasInitialized() {
         return _sntpInitialized;
     }
 
     /**
      * @return time value computed from NTP server response
      */
-    long getCachedSntpTime() {
+    synchronized long getCachedSntpTime() {
         return _cachedSntpTime;
     }
 
