@@ -14,6 +14,7 @@ public class TrueTime {
     private static final SntpClient SNTP_CLIENT = new SntpClient();
 
     private static int _udpSocketTimeoutInMillis = 30_000;
+    private static int _serverResponseDelayMax = 200;
 
     private String _ntpHost = "1.us.pool.ntp.org";
 
@@ -64,6 +65,11 @@ public class TrueTime {
         return INSTANCE;
     }
 
+    public synchronized TrueTime withServerResponseDelayMax(int serverResponseDelayInMillis) {
+        _serverResponseDelayMax = serverResponseDelayInMillis;
+        return INSTANCE;
+    }
+
     public synchronized TrueTime withNtpHost(String ntpHost) {
         _ntpHost = ntpHost;
         return INSTANCE;
@@ -86,7 +92,8 @@ public class TrueTime {
     }
 
     long[] requestTime(String ntpHost) throws IOException {
-        return SNTP_CLIENT.requestTime(ntpHost, _udpSocketTimeoutInMillis);
+        return SNTP_CLIENT
+            .requestTime(ntpHost, _udpSocketTimeoutInMillis, _serverResponseDelayMax);
     }
 
     synchronized static void saveTrueTimeInfoToDisk() {

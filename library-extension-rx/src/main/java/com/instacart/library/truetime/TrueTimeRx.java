@@ -42,6 +42,11 @@ public class TrueTimeRx
         return this;
     }
 
+    public TrueTimeRx withServerResponseDelayMax(int serverResponseDelayInMillis) {
+        super.withServerResponseDelayMax(serverResponseDelayInMillis);
+        return this;
+    }
+
     public TrueTimeRx withLoggingEnabled(boolean isLoggingEnabled) {
         super.withLoggingEnabled(isLoggingEnabled);
         return this;

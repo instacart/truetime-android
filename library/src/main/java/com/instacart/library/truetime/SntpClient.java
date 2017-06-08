@@ -56,7 +56,6 @@ public class SntpClient {
     private static final long OFFSET_1900_TO_1970 = ((365L * 70L) + 17L) * 24L * 60L * 60L;
     private static final int ROOT_DELAY = 200;
     private static final int ROOT_DISPERSION = ROOT_DELAY;
-    private static final int SERVER_RESPONSE_DELAY = ROOT_DELAY;
 
     private long _cachedDeviceUptime;
     private long _cachedSntpTime;
@@ -86,7 +85,8 @@ public class SntpClient {
      * @param ntpHost         host name of the server.
      * @param timeoutInMillis network timeout in milliseconds.
      */
-    synchronized long[] requestTime(String ntpHost, int timeoutInMillis) throws IOException {
+    synchronized long[] requestTime(String ntpHost, int timeoutInMillis, int serverResponseDelay)
+        throws IOException {
 
         DatagramSocket socket = null;
 
@@ -170,7 +170,7 @@ public class SntpClient {
             }
 
             long delay = Math.abs((responseTime - originateTime) - (transmitTime - receiveTime));
-            if (delay >= SERVER_RESPONSE_DELAY) {
+            if (delay >= serverResponseDelay) {
                 throw new InvalidNtpServerResponseException("Server response delay too large for comfort " + delay);
             }
 
