@@ -54,6 +54,9 @@ public class SntpClient {
 
     // 70 years plus 17 leap days
     private static final long OFFSET_1900_TO_1970 = ((365L * 70L) + 17L) * 24L * 60L * 60L;
+    private static final int ROOT_DELAY = 200;
+    private static final int ROOT_DISPERSION = ROOT_DELAY;
+    private static final int SERVER_RESPONSE_DELAY = ROOT_DELAY;
 
     private volatile long _cachedDeviceUptime;
     private volatile long _cachedSntpTime;
@@ -138,14 +141,14 @@ public class SntpClient {
 
             t[RESPONSE_INDEX_ROOT_DELAY] = read(buffer, INDEX_ROOT_DELAY);
             double rootDelay = doubleMillis(t[RESPONSE_INDEX_ROOT_DELAY]);
-            if (rootDelay > 100) {
+            if (rootDelay > ROOT_DELAY) {
                 throw new InvalidNtpServerResponseException("Invalid response from NTP server. Root delay violation " +
                                                             rootDelay);
             }
 
             t[RESPONSE_INDEX_DISPERSION] = read(buffer, INDEX_ROOT_DISPERSION);
             double rootDispersion = doubleMillis(t[RESPONSE_INDEX_DISPERSION]);
-            if (rootDispersion > 100) {
+            if (rootDispersion > ROOT_DISPERSION) {
                 throw new InvalidNtpServerResponseException(
                       "Invalid response from NTP server. Root dispersion violation " + rootDispersion);
             }
@@ -167,7 +170,7 @@ public class SntpClient {
             }
 
             long delay = Math.abs((responseTime - originateTime) - (transmitTime - receiveTime));
-            if (delay >= 100) {
+            if (delay >= SERVER_RESPONSE_DELAY) {
                 throw new InvalidNtpServerResponseException("Server response delay too large for comfort " + delay);
             }
 
