@@ -54,8 +54,6 @@ public class SntpClient {
 
     // 70 years plus 17 leap days
     private static final long OFFSET_1900_TO_1970 = ((365L * 70L) + 17L) * 24L * 60L * 60L;
-    private static final int ROOT_DELAY = 200;
-    private static final int ROOT_DISPERSION = ROOT_DELAY;
 
     private long _cachedDeviceUptime;
     private long _cachedSntpTime;
@@ -82,10 +80,14 @@ public class SntpClient {
     /**
      * Sends an NTP request to the given host and processes the response.
      *
-     * @param ntpHost         host name of the server.
-     * @param timeoutInMillis network timeout in milliseconds.
+     * @param ntpHost           host name of the server.
      */
-    synchronized long[] requestTime(String ntpHost, int timeoutInMillis, int serverResponseDelay)
+    synchronized long[] requestTime(String ntpHost,
+        int rootDelayMax,
+        int rootDispersionMax,
+        int serverResponseDelayMax,
+        int timeoutInMillis
+    )
         throws IOException {
 
         DatagramSocket socket = null;
@@ -141,14 +143,14 @@ public class SntpClient {
 
             t[RESPONSE_INDEX_ROOT_DELAY] = read(buffer, INDEX_ROOT_DELAY);
             double rootDelay = doubleMillis(t[RESPONSE_INDEX_ROOT_DELAY]);
-            if (rootDelay > ROOT_DELAY) {
+            if (rootDelay > rootDelayMax) {
                 throw new InvalidNtpServerResponseException("Invalid response from NTP server. Root delay violation " +
                                                             rootDelay);
             }
 
             t[RESPONSE_INDEX_DISPERSION] = read(buffer, INDEX_ROOT_DISPERSION);
             double rootDispersion = doubleMillis(t[RESPONSE_INDEX_DISPERSION]);
-            if (rootDispersion > ROOT_DISPERSION) {
+            if (rootDispersion > rootDispersionMax) {
                 throw new InvalidNtpServerResponseException(
                       "Invalid response from NTP server. Root dispersion violation " + rootDispersion);
             }
@@ -170,7 +172,7 @@ public class SntpClient {
             }
 
             long delay = Math.abs((responseTime - originateTime) - (transmitTime - receiveTime));
-            if (delay >= serverResponseDelay) {
+            if (delay >= serverResponseDelayMax) {
                 throw new InvalidNtpServerResponseException("Server response delay too large for comfort " + delay);
             }
 

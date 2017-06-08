@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.SystemClock;
 import java.io.IOException;
 import java.util.Date;
+import java.util.Locale;
 
 public class TrueTime {
 
@@ -13,8 +14,10 @@ public class TrueTime {
     private static final DiskCacheClient DISK_CACHE_CLIENT = new DiskCacheClient();
     private static final SntpClient SNTP_CLIENT = new SntpClient();
 
-    private static int _udpSocketTimeoutInMillis = 30_000;
+    private static int _rootDelayMax = 100;
+    private static int _rootDispersionMax = 100;
     private static int _serverResponseDelayMax = 200;
+    private static int _udpSocketTimeoutInMillis = 30_000;
 
     private String _ntpHost = "1.us.pool.ntp.org";
 
@@ -64,6 +67,30 @@ public class TrueTime {
         _udpSocketTimeoutInMillis = timeoutInMillis;
         return INSTANCE;
     }
+  
+    public synchronized TrueTime withRootDelayMax(int rootDelayMax) {
+        if (rootDelayMax > _rootDelayMax) {
+          String log = String.format(Locale.getDefault(),
+              "The recommended max rootDelay value is %d. You are setting it at %d",
+              _rootDelayMax, rootDelayMax);
+          TrueLog.w(TAG, log);
+        }
+
+        _rootDelayMax = rootDelayMax;
+        return INSTANCE;
+    }
+
+    public synchronized TrueTime withRootDispersionMax(int rootDispersionMax) {
+      if (rootDispersionMax > _rootDispersionMax) {
+        String log = String.format(Locale.getDefault(),
+            "The recommended max rootDispersion value is %d. You are setting it at %d",
+            _rootDispersionMax, rootDispersionMax);
+        TrueLog.w(TAG, log);
+      }
+
+      _rootDispersionMax = rootDispersionMax;
+      return INSTANCE;
+    }
 
     public synchronized TrueTime withServerResponseDelayMax(int serverResponseDelayInMillis) {
         _serverResponseDelayMax = serverResponseDelayInMillis;
@@ -92,8 +119,11 @@ public class TrueTime {
     }
 
     long[] requestTime(String ntpHost) throws IOException {
-        return SNTP_CLIENT
-            .requestTime(ntpHost, _udpSocketTimeoutInMillis, _serverResponseDelayMax);
+        return SNTP_CLIENT.requestTime(ntpHost,
+            _rootDelayMax,
+            _rootDispersionMax,
+            _serverResponseDelayMax,
+            _udpSocketTimeoutInMillis);
     }
 
     synchronized static void saveTrueTimeInfoToDisk() {

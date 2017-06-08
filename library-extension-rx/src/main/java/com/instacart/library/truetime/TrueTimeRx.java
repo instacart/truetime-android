@@ -42,6 +42,16 @@ public class TrueTimeRx
         return this;
     }
 
+    public TrueTimeRx withRootDelayMax(int rootDelay) {
+        super.withRootDelayMax(rootDelay);
+        return this;
+    }
+
+    public TrueTimeRx withRootDispersionMax(int rootDispersion) {
+        super.withRootDispersionMax(rootDispersion);
+        return this;
+    }
+
     public TrueTimeRx withServerResponseDelayMax(int serverResponseDelayInMillis) {
         super.withServerResponseDelayMax(serverResponseDelayInMillis);
         return this;
