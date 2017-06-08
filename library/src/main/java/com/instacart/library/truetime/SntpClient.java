@@ -58,9 +58,9 @@ public class SntpClient {
     private static final int ROOT_DISPERSION = ROOT_DELAY;
     private static final int SERVER_RESPONSE_DELAY = ROOT_DELAY;
 
-    private volatile long _cachedDeviceUptime;
-    private volatile long _cachedSntpTime;
-    private volatile boolean _sntpInitialized = false;
+    private long _cachedDeviceUptime;
+    private long _cachedSntpTime;
+    private boolean _sntpInitialized = false;
 
     /**
      * See δ :
