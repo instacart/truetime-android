@@ -14,8 +14,8 @@ public class TrueTime {
     private static final DiskCacheClient DISK_CACHE_CLIENT = new DiskCacheClient();
     private static final SntpClient SNTP_CLIENT = new SntpClient();
 
-    private static int _rootDelayMax = 100;
-    private static int _rootDispersionMax = 100;
+    private static float _rootDelayMax = 100;
+    private static float _rootDispersionMax = 100;
     private static int _serverResponseDelayMax = 200;
     private static int _udpSocketTimeoutInMillis = 30_000;
 
@@ -67,11 +67,11 @@ public class TrueTime {
         _udpSocketTimeoutInMillis = timeoutInMillis;
         return INSTANCE;
     }
-  
-    public synchronized TrueTime withRootDelayMax(int rootDelayMax) {
+
+    public synchronized TrueTime withRootDelayMax(float rootDelayMax) {
         if (rootDelayMax > _rootDelayMax) {
           String log = String.format(Locale.getDefault(),
-              "The recommended max rootDelay value is %d. You are setting it at %d",
+              "The recommended max rootDelay value is %f. You are setting it at %f",
               _rootDelayMax, rootDelayMax);
           TrueLog.w(TAG, log);
         }
@@ -80,10 +80,10 @@ public class TrueTime {
         return INSTANCE;
     }
 
-    public synchronized TrueTime withRootDispersionMax(int rootDispersionMax) {
+    public synchronized TrueTime withRootDispersionMax(float rootDispersionMax) {
       if (rootDispersionMax > _rootDispersionMax) {
         String log = String.format(Locale.getDefault(),
-            "The recommended max rootDispersion value is %d. You are setting it at %d",
+            "The recommended max rootDispersion value is %f. You are setting it at %f",
             _rootDispersionMax, rootDispersionMax);
         TrueLog.w(TAG, log);
       }

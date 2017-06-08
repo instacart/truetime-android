@@ -42,12 +42,12 @@ public class TrueTimeRx
         return this;
     }
 
-    public TrueTimeRx withRootDelayMax(int rootDelay) {
+    public TrueTimeRx withRootDelayMax(float rootDelay) {
         super.withRootDelayMax(rootDelay);
         return this;
     }
 
-    public TrueTimeRx withRootDispersionMax(int rootDispersion) {
+    public TrueTimeRx withRootDispersionMax(float rootDispersion) {
         super.withRootDispersionMax(rootDispersion);
         return this;
     }

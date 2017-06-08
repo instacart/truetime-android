@@ -83,8 +83,8 @@ public class SntpClient {
      * @param ntpHost           host name of the server.
      */
     synchronized long[] requestTime(String ntpHost,
-        int rootDelayMax,
-        int rootDispersionMax,
+        float rootDelayMax,
+        float rootDispersionMax,
         int serverResponseDelayMax,
         int timeoutInMillis
     )
@@ -144,15 +144,21 @@ public class SntpClient {
             t[RESPONSE_INDEX_ROOT_DELAY] = read(buffer, INDEX_ROOT_DELAY);
             double rootDelay = doubleMillis(t[RESPONSE_INDEX_ROOT_DELAY]);
             if (rootDelay > rootDelayMax) {
-                throw new InvalidNtpServerResponseException("Invalid response from NTP server. Root delay violation " +
-                                                            rootDelay);
+                throw new InvalidNtpServerResponseException(
+                    "Invalid response from NTP server. %s violation. %f [actual] > %f [expected]",
+                    "root_delay",
+                    (float) rootDelay,
+                    rootDelayMax);
             }
 
             t[RESPONSE_INDEX_DISPERSION] = read(buffer, INDEX_ROOT_DISPERSION);
             double rootDispersion = doubleMillis(t[RESPONSE_INDEX_DISPERSION]);
             if (rootDispersion > rootDispersionMax) {
                 throw new InvalidNtpServerResponseException(
-                      "Invalid response from NTP server. Root dispersion violation " + rootDispersion);
+                    "Invalid response from NTP server. %s violation. %f [actual] > %f [expected]",
+                    "root_dispersion",
+                    (float) rootDispersion,
+                    rootDispersionMax);
             }
 
             final byte mode = (byte) (buffer[0] & 0x7);
@@ -171,9 +177,13 @@ public class SntpClient {
                 throw new InvalidNtpServerResponseException("unsynchronized server responded for TrueTime");
             }
 
-            long delay = Math.abs((responseTime - originateTime) - (transmitTime - receiveTime));
+            double delay = Math.abs((responseTime - originateTime) - (transmitTime - receiveTime));
             if (delay >= serverResponseDelayMax) {
-                throw new InvalidNtpServerResponseException("Server response delay too large for comfort " + delay);
+                throw new InvalidNtpServerResponseException(
+                    "%s too large for comfort %f [actual] >= %f [expected]",
+                    "server_response_delay",
+                    (float) delay,
+                    serverResponseDelayMax);
             }
 
             long timeElapsedSinceRequest = Math.abs(originateTime - System.currentTimeMillis());
