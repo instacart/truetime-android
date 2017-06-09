@@ -215,7 +215,6 @@ public class TrueTimeRx
                       })
                       .toList()
                       .toFlowable()
-                      .onErrorResumeNext(Flowable.<List<long[]>>empty())
                       .map(filterLeastRoundTripDelay()); // pick best response for each ip
             }
         };
