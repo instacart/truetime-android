@@ -33,8 +33,8 @@ dependencies {
     compile project(path: ':library-extension-rx')
 //    compile 'com.github.instacart.truetime-android:library-extension-rx:master-SNAPSHOT'
 
-    compile 'com.android.support:appcompat-v7:23.4.0'
-    compile 'com.android.support.constraint:constraint-layout:1.0.0'
+    compile 'com.android.support:appcompat-v7:25.3.0'
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.jakewharton:butterknife:7.0.1'
     compile "io.reactivex.rxjava2:rxandroid:2.0.1"
 
