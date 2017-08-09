@@ -6,16 +6,19 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
-import butterknife.Bind;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
+
 import com.instacart.library.truetime.TrueTime;
+
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class SampleActivity
       extends AppCompatActivity {
@@ -69,7 +72,7 @@ public class SampleActivity
             try {
                 TrueTime.build()
                       //.withSharedPreferences(SampleActivity.this)
-                      .withNtpHost("0.north-america.pool.ntp.org")
+                      .withNtpHost("time.google.com")
                       .withLoggingEnabled(false)
                       .withConnectionTimeout(3_1428)
                       .initialize();
