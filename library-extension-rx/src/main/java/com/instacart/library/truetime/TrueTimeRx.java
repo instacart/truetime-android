@@ -80,12 +80,14 @@ public class TrueTimeRx
      * @return accurate NTP Date
      */
     public Flowable<Date> initializeRx(String ntpPoolAddress) {
-        return initializeNtp(ntpPoolAddress).map(new Function<long[], Date>() {
-            @Override
-            public Date apply(long[] longs) throws Exception {
-                return now();
-            }
-        });
+        return isInitialized()
+                ? Flowable.just(now())
+                : initializeNtp(ntpPoolAddress).map(new Function<long[], Date>() {
+                    @Override
+                    public Date apply(long[] longs) throws Exception {
+                        return now();
+                    }
+                });
      }
 
     /**
