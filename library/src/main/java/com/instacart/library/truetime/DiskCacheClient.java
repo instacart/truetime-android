@@ -17,12 +17,29 @@ class DiskCacheClient {
         this.cacheInterface = new SharedPreferenceCacheImpl(context);
     }
 
+
+    void clearCachedInfo(Context context) {
+        new SharedPreferenceCacheImpl(context).clear();
+    }
+
+    /**
+     * Provide your own cache interface to cache the true time information.
+     * Please be noted that if you provide such cache interface, it is also your own responsibility
+     * to clear the cache on device reboot. This is a must.
+     * @param cacheInterface the customized cache interface to save the true time data.
+     */
     void enableCacheInterface(CacheInterface cacheInterface) {
         this.cacheInterface = cacheInterface;
     }
 
-    void clearCachedInfo(Context context) {
-        this.cacheInterface.clear();
+    /**
+     * Clear the cache cache when the device is rebooted.
+     * @param cacheInterface the customized cache interface to save the true time data.
+     */
+    void clearCachedInfo(CacheInterface cacheInterface) {
+        if (cacheInterface != null) {
+            cacheInterface.clear();
+        }
     }
 
     void cacheTrueTimeInfo(SntpClient sntpClient) {

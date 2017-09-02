@@ -38,8 +38,14 @@ public class TrueTimeRx
         return this;
     }
 
-    public TrueTimeRx withCustomizedCacheInterface(CacheInterface cacheInterface) {
-        super.withCustomizedCacheInterface(cacheInterface);
+    /**
+     * Provide your own cache interface to cache the true time information.
+     * Please be noted that if you provide such cache interface, it is also your own responsibility
+     * to clear the cache on device reboot. This is a must.
+     * @param cacheInterface the customized cache interface to save the true time data.
+     */
+    public TrueTimeRx withCustomizedCache(CacheInterface cacheInterface) {
+        super.withCustomizedCache(cacheInterface);
         return this;
     }
 

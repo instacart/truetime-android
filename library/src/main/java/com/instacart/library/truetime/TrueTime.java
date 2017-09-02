@@ -66,9 +66,17 @@ public class TrueTime {
     /**
      * Customized TrueTime Cache implementation.
      */
-    public synchronized TrueTime withCustomizedCacheInterface(CacheInterface cacheInterface) {
+    public synchronized TrueTime withCustomizedCache(CacheInterface cacheInterface) {
         DISK_CACHE_CLIENT.enableCacheInterface(cacheInterface);
         return INSTANCE;
+    }
+
+    /**
+     * Clear the cache cache when the device is rebooted.
+     * @param cacheInterface the customized cache interface to save the true time data.
+     */
+    public static void clearCachedInfo(CacheInterface cacheInterface) {
+        DISK_CACHE_CLIENT.clearCachedInfo(cacheInterface);
     }
 
     public synchronized TrueTime withConnectionTimeout(int timeoutInMillis) {
