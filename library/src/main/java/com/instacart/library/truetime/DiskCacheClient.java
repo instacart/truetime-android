@@ -1,32 +1,28 @@
 package com.instacart.library.truetime;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.SystemClock;
 
-import static android.content.Context.MODE_PRIVATE;
+import static com.instacart.library.truetime.CacheInterface.KEY_CACHED_BOOT_TIME;
+import static com.instacart.library.truetime.CacheInterface.KEY_CACHED_DEVICE_UPTIME;
+import static com.instacart.library.truetime.CacheInterface.KEY_CACHED_SNTP_TIME;
 
 class DiskCacheClient {
 
-    private static final String KEY_CACHED_SHARED_PREFS = "com.instacart.library.truetime.shared_preferences";
-    private static final String KEY_CACHED_BOOT_TIME = "com.instacart.library.truetime.cached_boot_time";
-    private static final String KEY_CACHED_DEVICE_UPTIME = "com.instacart.library.truetime.cached_device_uptime";
-    private static final String KEY_CACHED_SNTP_TIME = "com.instacart.library.truetime.cached_sntp_time";
-
     private static final String TAG = DiskCacheClient.class.getSimpleName();
 
-    private SharedPreferences _sharedPreferences = null;
+    private CacheInterface cacheInterface = null;
 
-    void enableDiskCaching(Context context) {
-        _sharedPreferences = context.getSharedPreferences(KEY_CACHED_SHARED_PREFS, MODE_PRIVATE);
+    void enableSharedPreferenceCaching(Context context) {
+        this.cacheInterface = new SharedPreferenceCacheImpl(context);
+    }
+
+    void enableCacheInterface(CacheInterface cacheInterface) {
+        this.cacheInterface = cacheInterface;
     }
 
     void clearCachedInfo(Context context) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences(KEY_CACHED_SHARED_PREFS, MODE_PRIVATE);
-        if (sharedPreferences == null) {
-            return;
-        }
-        sharedPreferences.edit().clear().apply();
+        this.cacheInterface.clear();
     }
 
     void cacheTrueTimeInfo(SntpClient sntpClient) {
@@ -39,14 +35,14 @@ class DiskCacheClient {
         long bootTime = cachedSntpTime - cachedDeviceUptime;
 
         TrueLog.d(TAG,
-                  String.format("Caching true time info to disk sntp [%s] device [%s] boot [%s]",
-                                cachedSntpTime,
-                                cachedDeviceUptime,
-                                bootTime));
+                String.format("Caching true time info to disk sntp [%s] device [%s] boot [%s]",
+                        cachedSntpTime,
+                        cachedDeviceUptime,
+                        bootTime));
 
-        _sharedPreferences.edit().putLong(DiskCacheClient.KEY_CACHED_BOOT_TIME, bootTime).apply();
-        _sharedPreferences.edit().putLong(DiskCacheClient.KEY_CACHED_DEVICE_UPTIME, cachedDeviceUptime).apply();
-        _sharedPreferences.edit().putLong(DiskCacheClient.KEY_CACHED_SNTP_TIME, cachedSntpTime).apply();
+        cacheInterface.put(KEY_CACHED_BOOT_TIME, bootTime);
+        cacheInterface.put(KEY_CACHED_DEVICE_UPTIME, cachedDeviceUptime);
+        cacheInterface.put(KEY_CACHED_SNTP_TIME, cachedSntpTime);
 
     }
 
@@ -55,7 +51,7 @@ class DiskCacheClient {
             return false;
         }
 
-        long cachedBootTime = _sharedPreferences.getLong(DiskCacheClient.KEY_CACHED_BOOT_TIME, 0L);
+        long cachedBootTime = cacheInterface.get(KEY_CACHED_BOOT_TIME, 0L);
         if (cachedBootTime == 0) {
             return false;
         }
@@ -71,7 +67,7 @@ class DiskCacheClient {
             return 0L;
         }
 
-        return _sharedPreferences.getLong(DiskCacheClient.KEY_CACHED_DEVICE_UPTIME, 0L);
+        return cacheInterface.get(KEY_CACHED_DEVICE_UPTIME, 0L);
     }
 
     long getCachedSntpTime() {
@@ -79,14 +75,14 @@ class DiskCacheClient {
             return 0L;
         }
 
-        return _sharedPreferences.getLong(DiskCacheClient.KEY_CACHED_SNTP_TIME, 0L);
+        return cacheInterface.get(KEY_CACHED_SNTP_TIME, 0L);
     }
 
     // -----------------------------------------------------------------------------------
 
     private boolean sharedPreferencesUnavailable() {
-        if (_sharedPreferences == null) {
-            TrueLog.w(TAG, "Cannot use disk caching strategy for TrueTime. SharedPreferences unavailable");
+        if (cacheInterface == null) {
+            TrueLog.w(TAG, "Cannot use disk caching strategy for TrueTime. CacheInterface unavailable");
             return true;
         }
         return false;

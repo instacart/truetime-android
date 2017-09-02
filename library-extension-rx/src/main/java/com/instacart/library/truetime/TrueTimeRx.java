@@ -33,8 +33,13 @@ public class TrueTimeRx
         return RX_INSTANCE;
     }
 
-    public TrueTimeRx withSharedPreferences(Context context) {
-        super.withSharedPreferences(context);
+    public TrueTimeRx withSharedPreferencesCache(Context context) {
+        super.withSharedPreferencesCache(context);
+        return this;
+    }
+
+    public TrueTimeRx withCustomizedCacheInterface(CacheInterface cacheInterface) {
+        super.withCustomizedCacheInterface(cacheInterface);
         return this;
     }
 

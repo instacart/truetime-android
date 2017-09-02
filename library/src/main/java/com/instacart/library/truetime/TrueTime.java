@@ -58,8 +58,16 @@ public class TrueTime {
      * Cache TrueTime initialization information in SharedPreferences
      * This can help avoid additional TrueTime initialization on app kills
      */
-    public synchronized TrueTime withSharedPreferences(Context context) {
-        DISK_CACHE_CLIENT.enableDiskCaching(context);
+    public synchronized TrueTime withSharedPreferencesCache(Context context) {
+        DISK_CACHE_CLIENT.enableSharedPreferenceCaching(context);
+        return INSTANCE;
+    }
+
+    /**
+     * Customized TrueTime Cache implementation.
+     */
+    public synchronized TrueTime withCustomizedCacheInterface(CacheInterface cacheInterface) {
+        DISK_CACHE_CLIENT.enableCacheInterface(cacheInterface);
         return INSTANCE;
     }
 
