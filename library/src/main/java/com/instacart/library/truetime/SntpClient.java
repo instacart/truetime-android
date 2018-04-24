@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Simple SNTP client class for retrieving network time.
@@ -57,7 +58,7 @@ public class SntpClient {
 
     private long _cachedDeviceUptime;
     private long _cachedSntpTime;
-    private boolean _sntpInitialized = false;
+    private AtomicBoolean _sntpInitialized = new AtomicBoolean(false);
 
     /**
      * See δ :
@@ -192,7 +193,7 @@ public class SntpClient {
                                                             timeElapsedSinceRequest);
             }
 
-            _sntpInitialized = true;
+            _sntpInitialized.set(true);
             TrueLog.i(TAG, "---- SNTP successful response from " + ntpHost);
 
             // -----------------------------------------------------------------------------------
@@ -221,8 +222,8 @@ public class SntpClient {
         return responseTime + clockOffset;
     }
 
-    synchronized boolean wasInitialized() {
-        return _sntpInitialized;
+    boolean wasInitialized() {
+        return _sntpInitialized.get();
     }
 
     /**
