@@ -48,7 +48,7 @@ public class Sample2Activity
         TrueTimeRx.build()
               .withConnectionTimeout(31_428)
               .withRetryCount(100)
-              .withSharedPreferences(this)
+              .withSharedPreferencesCache(getApplicationContext())
               .withLoggingEnabled(true)
               .initializeRx("time.google.com")
               .subscribeOn(Schedulers.io())
@@ -61,6 +61,7 @@ public class Sample2Activity
               }, new Consumer<Throwable>() {
                   @Override
                   public void accept(Throwable throwable) {
+                      updateTime();
                       Log.e(TAG, "something went wrong when trying to initializeRx TrueTime", throwable);
                   }
               }, new Action() {
@@ -73,11 +74,15 @@ public class Sample2Activity
 
     @OnClick(R.id.tt_btn_refresh)
     public void onBtnRefresh() {
+        updateTime();
+    }
+
+    private void updateTime() {
         if (!TrueTimeRx.isInitialized()) {
             Toast.makeText(this, "Sorry TrueTime not yet initialized.", Toast.LENGTH_SHORT).show();
             return;
         }
-
+        refreshBtn.setEnabled(true);
         Date trueTime = TrueTimeRx.now();
         Date deviceTime = new Date();
 

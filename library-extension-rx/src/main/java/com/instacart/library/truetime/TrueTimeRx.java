@@ -33,8 +33,19 @@ public class TrueTimeRx
         return RX_INSTANCE;
     }
 
-    public TrueTimeRx withSharedPreferences(Context context) {
-        super.withSharedPreferences(context);
+    public TrueTimeRx withSharedPreferencesCache(Context context) {
+        super.withSharedPreferencesCache(context);
+        return this;
+    }
+
+    /**
+     * Provide your own cache interface to cache the true time information.
+     * Please be noted that if you provide such cache interface, it is also your own responsibility
+     * to clear the cache on device reboot. This is a must.
+     * @param cacheInterface the customized cache interface to save the true time data.
+     */
+    public TrueTimeRx withCustomizedCache(CacheInterface cacheInterface) {
+        super.withCustomizedCache(cacheInterface);
         return this;
     }
 
@@ -75,12 +86,14 @@ public class TrueTimeRx
      * @return accurate NTP Date
      */
     public Flowable<Date> initializeRx(String ntpPoolAddress) {
-        return initializeNtp(ntpPoolAddress).map(new Function<long[], Date>() {
-            @Override
-            public Date apply(long[] longs) throws Exception {
-                return now();
-            }
-        });
+        return isInitialized()
+                ? Flowable.just(now())
+                : initializeNtp(ntpPoolAddress).map(new Function<long[], Date>() {
+                    @Override
+                    public Date apply(long[] longs) throws Exception {
+                        return now();
+                    }
+                });
      }
 
     /**
