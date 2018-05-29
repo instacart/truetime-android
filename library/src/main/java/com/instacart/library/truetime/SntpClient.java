@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Simple SNTP client class for retrieving network time.
@@ -55,9 +57,9 @@ public class SntpClient {
     // 70 years plus 17 leap days
     private static final long OFFSET_1900_TO_1970 = ((365L * 70L) + 17L) * 24L * 60L * 60L;
 
-    private long _cachedDeviceUptime;
-    private long _cachedSntpTime;
-    private boolean _sntpInitialized = false;
+    private AtomicLong _cachedDeviceUptime = new AtomicLong();
+    private AtomicLong _cachedSntpTime = new AtomicLong();
+    private AtomicBoolean _sntpInitialized = new AtomicBoolean(false);
 
     /**
      * See δ :
@@ -192,7 +194,7 @@ public class SntpClient {
                                                             timeElapsedSinceRequest);
             }
 
-            _sntpInitialized = true;
+            _sntpInitialized.set(true);
             TrueLog.i(TAG, "---- SNTP successful response from " + ntpHost);
 
             // -----------------------------------------------------------------------------------
@@ -210,9 +212,9 @@ public class SntpClient {
         }
     }
 
-    synchronized void cacheTrueTimeInfo(long[] response) {
-        _cachedSntpTime = sntpTime(response);
-        _cachedDeviceUptime = response[RESPONSE_INDEX_RESPONSE_TICKS];
+    void cacheTrueTimeInfo(long[] response) {
+        _cachedSntpTime.set(sntpTime(response));
+        _cachedDeviceUptime.set(response[RESPONSE_INDEX_RESPONSE_TICKS]);
     }
 
     long sntpTime(long[] response) {
@@ -221,22 +223,22 @@ public class SntpClient {
         return responseTime + clockOffset;
     }
 
-    synchronized boolean wasInitialized() {
-        return _sntpInitialized;
+    boolean wasInitialized() {
+        return _sntpInitialized.get();
     }
 
     /**
      * @return time value computed from NTP server response
      */
-    synchronized long getCachedSntpTime() {
-        return _cachedSntpTime;
+    long getCachedSntpTime() {
+        return _cachedSntpTime.get();
     }
 
     /**
      * @return device uptime computed at time of executing the NTP request
      */
     long getCachedDeviceUptime() {
-        return _cachedDeviceUptime;
+        return _cachedDeviceUptime.get();
     }
 
     // -----------------------------------------------------------------------------------
