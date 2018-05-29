@@ -23,10 +23,13 @@ import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
-public class Sample2Activity
+/**
+ * this is a sample to demonstrate how to use customized cache interface to cache your true time data.
+ */
+public class Sample3Activity
       extends AppCompatActivity {
 
-    private static final String TAG = Sample2Activity.class.getSimpleName();
+    private static final String TAG = Sample3Activity.class.getSimpleName();
 
     @Bind(R.id.tt_btn_refresh) Button refreshBtn;
     @Bind(R.id.tt_time_gmt) TextView timeGMT;
@@ -48,7 +51,7 @@ public class Sample2Activity
         TrueTimeRx.build()
               .withConnectionTimeout(31_428)
               .withRetryCount(100)
-              .withSharedPreferencesCache(getApplicationContext())
+              .withCustomizedCache(new CustomizedSharedPreferenceCacheImpl(getApplication()))
               .withLoggingEnabled(true)
               .initializeRx("time.google.com")
               .subscribeOn(Schedulers.io())
