@@ -14,8 +14,6 @@ class DiskCacheClient {
 
     /**
      * Provide your own cache interface to cache the true time information.
-     * Please be noted that if you provide such cache interface, it is also your own responsibility
-     * to clear the cache on device reboot. This is a must.
      * @param cacheInterface the customized cache interface to save the true time data.
      */
     void enableCacheInterface(CacheInterface cacheInterface) {
