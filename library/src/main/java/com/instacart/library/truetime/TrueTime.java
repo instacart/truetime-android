@@ -45,10 +45,6 @@ public class TrueTime {
         return INSTANCE;
     }
 
-    public static void clearCachedInfo(Context context) {
-        DISK_CACHE_CLIENT.clearCachedInfo(context);
-    }
-
     public void initialize() throws IOException {
         initialize(_ntpHost);
         saveTrueTimeInfoToDisk();
@@ -59,7 +55,7 @@ public class TrueTime {
      * This can help avoid additional TrueTime initialization on app kills
      */
     public synchronized TrueTime withSharedPreferencesCache(Context context) {
-        DISK_CACHE_CLIENT.enableSharedPreferenceCaching(context);
+        DISK_CACHE_CLIENT.enableCacheInterface(new SharedPreferenceCacheImpl(context));
         return INSTANCE;
     }
 
@@ -72,11 +68,10 @@ public class TrueTime {
     }
 
     /**
-     * Clear the cache cache when the device is rebooted.
-     * @param cacheInterface the customized cache interface to save the true time data.
+     * clear the cached TrueTime info on device reboot.
      */
-    public static void clearCachedInfo(CacheInterface cacheInterface) {
-        DISK_CACHE_CLIENT.clearCachedInfo(cacheInterface);
+    public static void clearCachedInfo() {
+        DISK_CACHE_CLIENT.clearCachedInfo();
     }
 
     public synchronized TrueTime withConnectionTimeout(int timeoutInMillis) {

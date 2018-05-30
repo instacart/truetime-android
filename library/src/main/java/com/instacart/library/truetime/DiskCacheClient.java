@@ -1,6 +1,5 @@
 package com.instacart.library.truetime;
 
-import android.content.Context;
 import android.os.SystemClock;
 
 import static com.instacart.library.truetime.CacheInterface.KEY_CACHED_BOOT_TIME;
@@ -11,16 +10,7 @@ class DiskCacheClient {
 
     private static final String TAG = DiskCacheClient.class.getSimpleName();
 
-    private CacheInterface cacheInterface = null;
-
-    void enableSharedPreferenceCaching(Context context) {
-        this.cacheInterface = new SharedPreferenceCacheImpl(context);
-    }
-
-
-    void clearCachedInfo(Context context) {
-        new SharedPreferenceCacheImpl(context).clear();
-    }
+    private CacheInterface _cacheInterface = null;
 
     /**
      * Provide your own cache interface to cache the true time information.
@@ -29,7 +19,11 @@ class DiskCacheClient {
      * @param cacheInterface the customized cache interface to save the true time data.
      */
     void enableCacheInterface(CacheInterface cacheInterface) {
-        this.cacheInterface = cacheInterface;
+        this._cacheInterface = cacheInterface;
+    }
+
+    void clearCachedInfo() {
+        clearCachedInfo(this._cacheInterface);
     }
 
     /**
@@ -57,9 +51,9 @@ class DiskCacheClient {
                         cachedDeviceUptime,
                         bootTime));
 
-        cacheInterface.put(KEY_CACHED_BOOT_TIME, bootTime);
-        cacheInterface.put(KEY_CACHED_DEVICE_UPTIME, cachedDeviceUptime);
-        cacheInterface.put(KEY_CACHED_SNTP_TIME, cachedSntpTime);
+        _cacheInterface.put(KEY_CACHED_BOOT_TIME, bootTime);
+        _cacheInterface.put(KEY_CACHED_DEVICE_UPTIME, cachedDeviceUptime);
+        _cacheInterface.put(KEY_CACHED_SNTP_TIME, cachedSntpTime);
 
     }
 
@@ -68,7 +62,7 @@ class DiskCacheClient {
             return false;
         }
 
-        long cachedBootTime = cacheInterface.get(KEY_CACHED_BOOT_TIME, 0L);
+        long cachedBootTime = _cacheInterface.get(KEY_CACHED_BOOT_TIME, 0L);
         if (cachedBootTime == 0) {
             return false;
         }
@@ -84,7 +78,7 @@ class DiskCacheClient {
             return 0L;
         }
 
-        return cacheInterface.get(KEY_CACHED_DEVICE_UPTIME, 0L);
+        return _cacheInterface.get(KEY_CACHED_DEVICE_UPTIME, 0L);
     }
 
     long getCachedSntpTime() {
@@ -92,13 +86,13 @@ class DiskCacheClient {
             return 0L;
         }
 
-        return cacheInterface.get(KEY_CACHED_SNTP_TIME, 0L);
+        return _cacheInterface.get(KEY_CACHED_SNTP_TIME, 0L);
     }
 
     // -----------------------------------------------------------------------------------
 
     private boolean sharedPreferencesUnavailable() {
-        if (cacheInterface == null) {
+        if (_cacheInterface == null) {
             TrueLog.w(TAG, "Cannot use disk caching strategy for TrueTime. CacheInterface unavailable");
             return true;
         }
