@@ -126,9 +126,10 @@ public class TrueTimeRx
      * @return Observable of detailed long[] containing most important parts of the actual NTP response
      * See RESPONSE_INDEX_ prefixes in {@link SntpClient} for details
      */
-    public Flowable<long[]> initializeNtp(List<InetAddress> resolvedNtpAddresses) {
+    public Single<long[]> initializeNtp(List<InetAddress> resolvedNtpAddresses) {
         return Flowable.fromIterable(resolvedNtpAddresses)
-               .compose(performNtpAlgorithm());
+               .compose(performNtpAlgorithm())
+               .firstOrError();
     }
 
     /**
