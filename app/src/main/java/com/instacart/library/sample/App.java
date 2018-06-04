@@ -33,7 +33,7 @@ public class App extends Application {
     }
 
     // a little part of me died, having to use this
-    private static class InitTrueTimeAsyncTask extends AsyncTask<Void, Void, Void> {
+    private class InitTrueTimeAsyncTask extends AsyncTask<Void, Void, Void> {
 
         protected Void doInBackground(Void... params) {
             try {
@@ -41,6 +41,7 @@ public class App extends Application {
                         //.withSharedPreferences(SampleActivity.this)
                         .withNtpHost("time.google.com")
                         .withLoggingEnabled(false)
+                        .withSharedPreferencesCache(App.this)
                         .withConnectionTimeout(3_1428)
                         .initialize();
             } catch (IOException e) {
@@ -58,7 +59,7 @@ public class App extends Application {
         DisposableSingleObserver<Date> disposable = TrueTimeRx.build()
                 .withConnectionTimeout(31_428)
                 .withRetryCount(100)
-                .withSharedPreferencesCache(getApplicationContext())
+                .withSharedPreferencesCache(this)
                 .withLoggingEnabled(true)
                 .initializeRx("time.google.com")
                 .subscribeOn(Schedulers.io())
