@@ -47,12 +47,13 @@ dependencies {
 ## Vanilla version
 
 Importing `'com.github.instacart.truetime-android:library:<release-version>'` should be sufficient for this.
+
 Then you must initialize it in ```onCreate()``` in your class that extends```android.app.Application```.
 ```java
 TrueTime.build().initialize();
 ```
 
-`initialize` must be run on a background thread. If you run it on the main thread, you will get a [`NetworkOnMainThreadException`](https://developer.android.com/reference/android/os/NetworkOnMainThreadException.html)
+`initialize` also must be run on a background thread. If you run it on the main thread, you will get a [`NetworkOnMainThreadException`](https://developer.android.com/reference/android/os/NetworkOnMainThreadException.html)
 
 You can then use:
 
@@ -65,6 +66,7 @@ Date noReallyThisIsTheTrueDateAndTime = TrueTime.now();
 ## Rx-ified Version
 
 If you're down to using [RxJava](https://github.com/ReactiveX/RxJava) then we go all the way and implement the full NTP. Use the nifty `initializeRx()` api which takes in an NTP pool server host.
+
 Again, you must initialize it in ```onCreate()``` in your class that extends```android.app.Application```.
 
 ```java
