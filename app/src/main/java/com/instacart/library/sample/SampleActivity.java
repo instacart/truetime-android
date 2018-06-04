@@ -1,15 +1,13 @@
 package com.instacart.library.sample;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.instacart.library.truetime.TrueTime;
 
-import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -23,8 +21,7 @@ import butterknife.OnClick;
 public class SampleActivity
       extends AppCompatActivity {
 
-    private static final String TAG = SampleActivity.class.getSimpleName();
-
+    @Bind(R.id.tt_btn_refresh) Button refreshBtn;
     @Bind(R.id.tt_time_gmt) TextView timeGMT;
     @Bind(R.id.tt_time_pst) TextView timePST;
     @Bind(R.id.tt_time_device) TextView timeDeviceTime;
@@ -33,17 +30,14 @@ public class SampleActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sample);
-
-        new InitTrueTimeAsyncTask().execute();
-
         ButterKnife.bind(this);
+        refreshBtn.setEnabled(TrueTime.isInitialized());
     }
 
     @OnClick(R.id.tt_btn_refresh)
     public void onBtnRefresh() {
         if (!TrueTime.isInitialized()) {
             Toast.makeText(this, "Sorry TrueTime not yet initialized. Trying again.", Toast.LENGTH_SHORT).show();
-            new InitTrueTimeAsyncTask().execute();
             return;
         }
 
@@ -62,26 +56,6 @@ public class SampleActivity
         DateFormat format = new SimpleDateFormat(pattern, Locale.ENGLISH);
         format.setTimeZone(timeZone);
         return format.format(date);
-    }
-
-    // a little part of me died, having to use this
-    private class InitTrueTimeAsyncTask
-          extends AsyncTask<Void, Void, Void> {
-
-        protected Void doInBackground(Void... params) {
-            try {
-                TrueTime.build()
-                      //.withSharedPreferences(SampleActivity.this)
-                      .withNtpHost("time.google.com")
-                      .withLoggingEnabled(false)
-                      .withConnectionTimeout(3_1428)
-                      .initialize();
-            } catch (IOException e) {
-                e.printStackTrace();
-                Log.e(TAG, "Exception when trying to get TrueTime", e);
-            }
-            return null;
-        }
     }
 
 }

@@ -6,6 +6,7 @@ import io.reactivex.Flowable;
 import io.reactivex.FlowableEmitter;
 import io.reactivex.FlowableOnSubscribe;
 import io.reactivex.FlowableTransformer;
+import io.reactivex.Single;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
@@ -33,8 +34,17 @@ public class TrueTimeRx
         return RX_INSTANCE;
     }
 
-    public TrueTimeRx withSharedPreferences(Context context) {
-        super.withSharedPreferences(context);
+    public TrueTimeRx withSharedPreferencesCache(Context context) {
+        super.withSharedPreferencesCache(context);
+        return this;
+    }
+
+    /**
+     * Provide your own cache interface to cache the true time information.
+     * @param cacheInterface the customized cache interface to save the true time data.
+     */
+    public TrueTimeRx withCustomizedCache(CacheInterface cacheInterface) {
+        super.withCustomizedCache(cacheInterface);
         return this;
     }
 
@@ -74,13 +84,15 @@ public class TrueTimeRx
      *
      * @return accurate NTP Date
      */
-    public Flowable<Date> initializeRx(String ntpPoolAddress) {
-        return initializeNtp(ntpPoolAddress).map(new Function<long[], Date>() {
-            @Override
-            public Date apply(long[] longs) throws Exception {
-                return now();
-            }
-        });
+    public Single<Date> initializeRx(String ntpPoolAddress) {
+        return isInitialized()
+                ? Single.just(now())
+                : initializeNtp(ntpPoolAddress).map(new Function<long[], Date>() {
+                    @Override
+                    public Date apply(long[] longs) throws Exception {
+                        return now();
+                    }
+                });
      }
 
     /**
@@ -95,11 +107,12 @@ public class TrueTimeRx
      * @return Observable of detailed long[] containing most important parts of the actual NTP response
      * See RESPONSE_INDEX_ prefixes in {@link SntpClient} for details
      */
-    public Flowable<long[]> initializeNtp(String ntpPool) {
+    public Single<long[]> initializeNtp(String ntpPool) {
         return Flowable
               .just(ntpPool)
               .compose(resolveNtpPoolToIpAddresses())
-              .compose(performNtpAlgorithm());
+              .compose(performNtpAlgorithm())
+              .firstOrError();
     }
 
     /**

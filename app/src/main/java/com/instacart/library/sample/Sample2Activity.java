@@ -18,15 +18,9 @@ import java.util.TimeZone;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Action;
-import io.reactivex.functions.Consumer;
-import io.reactivex.schedulers.Schedulers;
 
 public class Sample2Activity
       extends AppCompatActivity {
-
-    private static final String TAG = Sample2Activity.class.getSimpleName();
 
     @Bind(R.id.tt_btn_refresh) Button refreshBtn;
     @Bind(R.id.tt_time_gmt) TextView timeGMT;
@@ -41,43 +35,20 @@ public class Sample2Activity
         getSupportActionBar().setTitle("TrueTimeRx");
 
         ButterKnife.bind(this);
-        refreshBtn.setEnabled(false);
-
-        //TrueTimeRx.clearCachedInfo(this);
-
-        TrueTimeRx.build()
-              .withConnectionTimeout(31_428)
-              .withRetryCount(100)
-              .withSharedPreferences(this)
-              .withLoggingEnabled(true)
-              .initializeRx("time.google.com")
-              .subscribeOn(Schedulers.io())
-              .observeOn(AndroidSchedulers.mainThread())
-              .subscribe(new Consumer<Date>() {
-                  @Override
-                  public void accept(Date date) {
-                      onBtnRefresh();
-                  }
-              }, new Consumer<Throwable>() {
-                  @Override
-                  public void accept(Throwable throwable) {
-                      Log.e(TAG, "something went wrong when trying to initializeRx TrueTime", throwable);
-                  }
-              }, new Action() {
-                  @Override
-                  public void run() {
-                      refreshBtn.setEnabled(true);
-                  }
-              });
+        refreshBtn.setEnabled(TrueTimeRx.isInitialized());
     }
 
     @OnClick(R.id.tt_btn_refresh)
     public void onBtnRefresh() {
+        updateTime();
+    }
+
+    private void updateTime() {
         if (!TrueTimeRx.isInitialized()) {
             Toast.makeText(this, "Sorry TrueTime not yet initialized.", Toast.LENGTH_SHORT).show();
             return;
         }
-
+        refreshBtn.setEnabled(true);
         Date trueTime = TrueTimeRx.now();
         Date deviceTime = new Date();
 

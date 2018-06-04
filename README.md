@@ -48,11 +48,12 @@ dependencies {
 
 Importing `'com.github.instacart.truetime-android:library:<release-version>'` should be sufficient for this.
 
+Then you must initialize it in ```onCreate()``` in your class that extends```android.app.Application```.
 ```java
 TrueTime.build().initialize();
 ```
 
-`initialize` must be run on a background thread. If you run it on the main thread, you will get a [`NetworkOnMainThreadException`](https://developer.android.com/reference/android/os/NetworkOnMainThreadException.html)
+`initialize` also must be run on a background thread. If you run it on the main thread, you will get a [`NetworkOnMainThreadException`](https://developer.android.com/reference/android/os/NetworkOnMainThreadException.html)
 
 You can then use:
 
@@ -65,6 +66,8 @@ Date noReallyThisIsTheTrueDateAndTime = TrueTime.now();
 ## Rx-ified Version
 
 If you're down to using [RxJava](https://github.com/ReactiveX/RxJava) then we go all the way and implement the full NTP. Use the nifty `initializeRx()` api which takes in an NTP pool server host.
+
+Again, you must initialize it in ```onCreate()``` in your class that extends```android.app.Application```.
 
 ```java
 TrueTimeRx.build()
@@ -93,7 +96,7 @@ TrueTimeRx.now(); // return a Date object with the "true" time.
 
 ## Notes/tips:
 
-* Each `initialize` call makes an SNTP network request. TrueTime needs to be `initialize`d only once ever, per device boot. Use TrueTime's `withSharedPreferences` option to make use of this feature and avoid repeated network request calls.
+* Each `initialize` call makes an SNTP network request. TrueTime needs to be `initialize`d only once ever, per device boot. Use TrueTime's `withSharedPreferencesCache` option to make use of this feature and avoid repeated network request calls.
 * Preferable use dependency injection (like [Dagger](http://square.github.io/dagger/)) and create a TrueTime @Singleton object
 * You can read up on Wikipedia the differences between [SNTP](https://en.wikipedia.org/wiki/Network_Time_Protocol#SNTP) and [NTP](https://www.meinbergglobal.com/english/faq/faq_37.htm).
 * TrueTime is also [available for iOS/Swift](https://github.com/instacart/truetime.swift)
