@@ -19,8 +19,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Action;
-import io.reactivex.functions.Consumer;
+import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 
 public class Sample2Activity
@@ -53,23 +52,19 @@ public class Sample2Activity
               .initializeRx("time.google.com")
               .subscribeOn(Schedulers.io())
               .observeOn(AndroidSchedulers.mainThread())
-              .subscribe(new Consumer<Date>() {
-                  @Override
-                  public void accept(Date date) {
-                      onBtnRefresh();
-                  }
-              }, new Consumer<Throwable>() {
-                  @Override
-                  public void accept(Throwable throwable) {
-                      updateTime();
-                      Log.e(TAG, "something went wrong when trying to initializeRx TrueTime", throwable);
-                  }
-              }, new Action() {
-                  @Override
-                  public void run() {
-                      refreshBtn.setEnabled(true);
-                  }
-              });
+              .subscribeWith(new DisposableSingleObserver<Date>() {
+                    @Override
+                    public void onSuccess(Date date) {
+                        onBtnRefresh();
+                        refreshBtn.setEnabled(true);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        updateTime();
+                        Log.e(TAG, "something went wrong when trying to initializeRx TrueTime", e);
+                    }
+        });
     }
 
     @OnClick(R.id.tt_btn_refresh)
