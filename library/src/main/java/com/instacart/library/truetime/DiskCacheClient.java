@@ -35,7 +35,7 @@ class DiskCacheClient {
     }
 
     void cacheTrueTimeInfo(SntpClient sntpClient) {
-        if (sharedPreferencesUnavailable()) {
+        if (cacheUnavailable()) {
             return;
         }
 
@@ -56,7 +56,7 @@ class DiskCacheClient {
     }
 
     boolean isTrueTimeCachedFromAPreviousBoot() {
-        if (sharedPreferencesUnavailable()) {
+        if (cacheUnavailable()) {
             return false;
         }
 
@@ -72,7 +72,7 @@ class DiskCacheClient {
     }
 
     long getCachedDeviceUptime() {
-        if (sharedPreferencesUnavailable()) {
+        if (cacheUnavailable()) {
             return 0L;
         }
 
@@ -80,7 +80,7 @@ class DiskCacheClient {
     }
 
     long getCachedSntpTime() {
-        if (sharedPreferencesUnavailable()) {
+        if (cacheUnavailable()) {
             return 0L;
         }
 
@@ -89,7 +89,7 @@ class DiskCacheClient {
 
     // -----------------------------------------------------------------------------------
 
-    private boolean sharedPreferencesUnavailable() {
+    private boolean cacheUnavailable() {
         if (_cacheInterface == null) {
             TrueLog.w(TAG, "Cannot use disk caching strategy for TrueTime. CacheInterface unavailable");
             return true;

@@ -47,7 +47,6 @@ public class TrueTime {
 
     public void initialize() throws IOException {
         initialize(_ntpHost);
-        saveTrueTimeInfoToDisk();
     }
 
     /**
@@ -127,6 +126,7 @@ public class TrueTime {
         }
 
         requestTime(ntpHost);
+        saveTrueTimeInfoToDisk();
     }
 
     long[] requestTime(String ntpHost) throws IOException {
