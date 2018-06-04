@@ -18,14 +18,9 @@ import java.util.TimeZone;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.observers.DisposableSingleObserver;
-import io.reactivex.schedulers.Schedulers;
 
 public class Sample2Activity
       extends AppCompatActivity {
-
-    private static final String TAG = Sample2Activity.class.getSimpleName();
 
     @Bind(R.id.tt_btn_refresh) Button refreshBtn;
     @Bind(R.id.tt_time_gmt) TextView timeGMT;
@@ -40,31 +35,7 @@ public class Sample2Activity
         getSupportActionBar().setTitle("TrueTimeRx");
 
         ButterKnife.bind(this);
-        refreshBtn.setEnabled(false);
-
-        //TrueTimeRx.clearCachedInfo(this);
-
-        TrueTimeRx.build()
-              .withConnectionTimeout(31_428)
-              .withRetryCount(100)
-              .withSharedPreferencesCache(getApplicationContext())
-              .withLoggingEnabled(true)
-              .initializeRx("time.google.com")
-              .subscribeOn(Schedulers.io())
-              .observeOn(AndroidSchedulers.mainThread())
-              .subscribeWith(new DisposableSingleObserver<Date>() {
-                    @Override
-                    public void onSuccess(Date date) {
-                        onBtnRefresh();
-                        refreshBtn.setEnabled(true);
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        updateTime();
-                        Log.e(TAG, "something went wrong when trying to initializeRx TrueTime", e);
-                    }
-        });
+        refreshBtn.setEnabled(TrueTimeRx.isInitialized());
     }
 
     @OnClick(R.id.tt_btn_refresh)
