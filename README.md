@@ -22,7 +22,9 @@ Also, once we have this information it's valid until the next time you boot your
 
 # Installation
 
-We use [Jitpack](https://jitpack.io) to host the library.
+We use [JitPack](https://jitpack.io) to host the library.
+
+[![](https://jitpack.io/v/instacart/truetime-android.svg)](https://jitpack.io/#instacart/truetime-android)
 
 Add this to your application's `build.gradle` file:
 
@@ -35,10 +37,10 @@ repositories {
 
 dependencies {
     // ...
-    compile 'com.github.instacart.truetime-android:library-extension-rx:<release-version>'
+    implementation 'com.github.instacart.truetime-android:library-extension-rx:<release-version>'
 
     // or if you want the vanilla version of Truetime:
-    compile 'com.github.instacart.truetime-android:library:<release-version>'
+    implementation 'com.github.instacart.truetime-android:library:<release-version>'
 }
 ```
 
@@ -130,7 +132,7 @@ It's pretty simple:
 Or if you want the library to just handle that, use the Rx-ified version of the library (note the -rx suffix):
 
 ```
-    compile 'com.github.instacart.truetime-android:library-extension-rx:<release-version>'
+    implementation 'com.github.instacart.truetime-android:library-extension-rx:<release-version>'
 ```
 
 With TrueTimeRx, we go the whole nine yards and implement the complete NTP Spec (we resolve the DNS for the provided NTP host to single IP addresses, shoot multiple requests to that single IP, guard against the above mentioned checks, retry every single failed request, filter the best response and persist that to disk). If you don't use TrueTimeRx, you don't get these benefits.
