@@ -12,6 +12,8 @@ public class BootCompletedBroadcastReceiver
     @Override
     public void onReceive(Context context, Intent intent) {
         TrueLog.i(TAG, "---- clearing TrueTime disk cache as we've detected a boot");
-        TrueTime.clearCachedInfo();
+        if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
+            TrueTime.clearCachedInfo();
+        }
     }
 }
