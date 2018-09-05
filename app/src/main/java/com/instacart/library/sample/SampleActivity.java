@@ -14,17 +14,17 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class SampleActivity
       extends AppCompatActivity {
 
-    @Bind(R.id.tt_btn_refresh) Button refreshBtn;
-    @Bind(R.id.tt_time_gmt) TextView timeGMT;
-    @Bind(R.id.tt_time_pst) TextView timePST;
-    @Bind(R.id.tt_time_device) TextView timeDeviceTime;
+    @BindView(R.id.tt_btn_refresh) Button refreshBtn;
+    @BindView(R.id.tt_time_gmt) TextView timeGMT;
+    @BindView(R.id.tt_time_pst) TextView timePST;
+    @BindView(R.id.tt_time_device) TextView timeDeviceTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
