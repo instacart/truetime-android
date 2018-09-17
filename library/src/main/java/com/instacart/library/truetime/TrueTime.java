@@ -1,10 +1,16 @@
 package com.instacart.library.truetime;
 
 import android.content.Context;
+import android.os.Build;
 import android.os.SystemClock;
+import android.provider.Settings;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Locale;
+import java.util.logging.Logger;
 
 public class TrueTime {
 
@@ -55,6 +61,7 @@ public class TrueTime {
      */
     public synchronized TrueTime withSharedPreferencesCache(Context context) {
         DISK_CACHE_CLIENT.enableCacheInterface(new SharedPreferenceCacheImpl(context));
+        checkBootId(context);
         return INSTANCE;
     }
 
@@ -171,6 +178,52 @@ public class TrueTime {
         }
 
         return cachedSntpTime;
+    }
+
+    public void checkBootId(Context context) {
+        String cachedBootId = DISK_CACHE_CLIENT.getCachedBootId();
+
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
+            try {
+                String bootId = String.valueOf(Settings.Global.getInt(context.getContentResolver(),
+                        Settings.Global.BOOT_COUNT));
+
+                if (cachedBootId == null || !cachedBootId.equals(bootId)) {
+                    DISK_CACHE_CLIENT.cacheBootId(bootId);
+                    clearCachedInfo();
+                }
+            } catch (Settings.SettingNotFoundException e) {
+                clearCachedInfo();
+            }
+        } else {
+            BufferedReader bufferedReader = null;
+
+            try {
+                bufferedReader = new BufferedReader(
+                        new FileReader("proc/sys/kernel/random/boot_id"));
+
+                StringBuilder bootId = new StringBuilder();
+                String line;
+
+                while ((line = bufferedReader.readLine()) != null) {
+                    bootId.append(line);
+                }
+
+                if (cachedBootId == null || !cachedBootId.equals(bootId.toString())) {
+                    DISK_CACHE_CLIENT.cacheBootId(bootId.toString());
+                    clearCachedInfo();
+                }
+            } catch (IOException e) {
+                clearCachedInfo();
+            } finally {
+                if (bufferedReader != null) {
+                    try {
+                        bufferedReader.close();
+                    } catch (IOException e) {
+                    }
+                }
+            }
+        }
     }
 
 }
