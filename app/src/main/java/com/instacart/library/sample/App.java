@@ -60,6 +60,7 @@ public class App extends Application {
                 .withConnectionTimeout(31_428)
                 .withRetryCount(100)
                 .withSharedPreferencesCache(this)
+                .withoutIpV6()
                 .withLoggingEnabled(true)
                 .initializeRx("time.google.com")
                 .subscribeOn(Schedulers.io())
