@@ -11,12 +11,21 @@ import java.io.IOException;
 import java.util.Date;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 
 public class App extends Application {
 
     private static final String TAG = App.class.getSimpleName();
+
+    private int successResponseCounter = 0;
+    private Consumer<long[]> successResponseListener = new Consumer<long[]>() {
+        @Override
+        public void accept(long[] longs) throws Exception {
+            successResponseCounter++;
+        }
+    };
 
     @Override
     public void onCreate() {
@@ -61,6 +70,7 @@ public class App extends Application {
                 .withRetryCount(100)
                 .withSharedPreferencesCache(this)
                 .withLoggingEnabled(true)
+                .withSuccessResponseListener(successResponseListener)
                 .initializeRx("time.google.com")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -77,5 +87,7 @@ public class App extends Application {
                 });
     }
 
-
+    public int getSuccessResponseCounter() {
+        return successResponseCounter;
+    }
 }

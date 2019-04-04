@@ -1,6 +1,18 @@
 package com.instacart.library.truetime;
 
 import android.content.Context;
+
+import org.reactivestreams.Publisher;
+
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.FlowableEmitter;
@@ -12,15 +24,6 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.Schedulers;
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import org.reactivestreams.Publisher;
 
 public class TrueTimeRx
       extends TrueTime {
@@ -29,6 +32,10 @@ public class TrueTimeRx
     private static final String TAG = TrueTimeRx.class.getSimpleName();
 
     private int _retryCount = 50;
+    @NonNull private Consumer<long[]> _successResponseListener = new Consumer<long[]>() {
+        @Override
+        public void accept(long[] longs) throws Exception { /* By default do nothing*/ }
+    };
 
     public static TrueTimeRx build() {
         return RX_INSTANCE;
@@ -75,6 +82,13 @@ public class TrueTimeRx
 
     public TrueTimeRx withRetryCount(int retryCount) {
         _retryCount = retryCount;
+        return this;
+    }
+
+    public TrueTimeRx withSuccessResponseListener(@NonNull Consumer<long[]> successResponseListener) {
+        if (successResponseListener !=  null) {
+            _successResponseListener = successResponseListener;
+        }
         return this;
     }
 
@@ -225,6 +239,7 @@ public class TrueTimeRx
                                     .retry(_retryCount);
                           }
                       })
+                      .doOnNext(_successResponseListener)
                       .toList()
                       .toFlowable()
                       .map(filterLeastRoundTripDelay()); // pick best response for each ip
