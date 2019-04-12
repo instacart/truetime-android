@@ -1,0 +1,53 @@
+package com.instacart.library.sample
+
+import android.os.Bundle
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import com.instacart.library.truetime.TrueTime
+import kotlinx.android.synthetic.main.activity_sample.*
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
+
+class SampleActivity : AppCompatActivity() {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_sample)
+        refreshBtn.isEnabled = TrueTime.isInitialized()
+        refreshBtn.setOnClickListener {
+            updateTime()
+        }
+    }
+
+    private fun updateTime() {
+        if (!TrueTime.isInitialized()) {
+            Toast.makeText(this, "Sorry TrueTime not yet initialized. Trying again.", Toast.LENGTH_SHORT)
+                .show()
+            return
+        }
+
+        val trueTime = TrueTime.now()
+        val deviceTime = Date()
+
+        timeGMT.text = getString(
+            R.string.tt_time_gmt,
+            _formatDate(trueTime, "yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("GMT"))
+        )
+        timePST.text = getString(
+            R.string.tt_time_pst,
+            _formatDate(trueTime, "yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("GMT-07:00"))
+        )
+        timeDeviceTime.text = getString(
+            R.string.tt_time_device,
+            _formatDate(deviceTime, "yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("GMT-07:00"))
+        )
+    }
+
+    private fun _formatDate(date: Date, pattern: String, timeZone: TimeZone): String {
+        val format = SimpleDateFormat(pattern, Locale.ENGLISH)
+        format.timeZone = timeZone
+        return format.format(date)
+    }
+}
