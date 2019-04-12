@@ -28,7 +28,7 @@ class TrueTimeRx : TrueTime() {
         }
 
         fun isInitialized(): Boolean {
-            return TrueTime.isInitialized
+            return TrueTime.isInitialized()
         }
 
         fun build(): TrueTimeRx {
@@ -36,7 +36,7 @@ class TrueTimeRx : TrueTime() {
         }
     }
 
-    private var _retryCount = 50
+    private var retryCount = 50
 
     override fun withSharedPreferencesCache(context: Context): TrueTimeRx {
         super.withSharedPreferencesCache(context)
@@ -78,7 +78,7 @@ class TrueTimeRx : TrueTime() {
     }
 
     fun withRetryCount(retryCount: Int): TrueTimeRx {
-        _retryCount = retryCount
+        this.retryCount = retryCount
         return this
     }
 
@@ -89,10 +89,11 @@ class TrueTimeRx : TrueTime() {
      * @return accurate NTP Date
      */
     fun initializeRx(ntpPoolAddress: String): Single<Date> {
-        return if (TrueTime.isInitialized)
+        return if (TrueTime.isInitialized()) {
             Single.just(TrueTime.now())
-        else
+        } else {
             initializeNtp(ntpPoolAddress).map { TrueTime.now() }
+        }
     }
 
     /**
@@ -188,7 +189,7 @@ class TrueTimeRx : TrueTime() {
                     }, BackpressureStrategy.BUFFER)
                         .subscribeOn(Schedulers.io())
                         .doOnError { throwable -> TrueLog.e(TAG, "---- Error requesting time", throwable) }
-                        .retry(_retryCount.toLong())
+                        .retry(retryCount.toLong())
                 }
                 .toList()
                 .toFlowable()

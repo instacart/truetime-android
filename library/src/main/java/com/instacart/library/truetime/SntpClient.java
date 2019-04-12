@@ -28,6 +28,8 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * Simple SNTP client class for retrieving network time.
  * Original source: https://android.googlesource.com/platform/frameworks/base/+/master/core/java/android/net/SntpClient.java
+ *
+ * Intentionally keeping this Java for easier diffing and keeping up to date with platform
  */
 public class SntpClient {
 

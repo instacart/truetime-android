@@ -25,7 +25,7 @@ open class TrueTime {
          * @return Date object that returns the current time in the default Timezone
          */
         fun now(): Date {
-            if (!isInitialized) {
+            if (!isInitialized()) {
                 throw IllegalStateException("You need to call init() on TrueTime at least once.")
             }
 
@@ -37,8 +37,7 @@ open class TrueTime {
             return Date(now)
         }
 
-        val isInitialized: Boolean
-            get() = SNTP_CLIENT.wasInitialized() || DISK_CACHE_CLIENT.isTrueTimeCachedFromAPreviousBoot()
+        fun isInitialized(): Boolean = SNTP_CLIENT.wasInitialized() || DISK_CACHE_CLIENT.isTrueTimeCachedFromAPreviousBoot()
 
         fun build(): TrueTime {
             return INSTANCE
@@ -162,7 +161,7 @@ open class TrueTime {
 
     @Throws(IOException::class)
     protected fun initialize(ntpHost: String) {
-        if (isInitialized) {
+        if (isInitialized()) {
             TrueLog.i(TAG, "---- TrueTime already initialized from previous boot/init")
             return
         }
