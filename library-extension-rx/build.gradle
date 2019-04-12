@@ -1,4 +1,5 @@
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
 apply plugin: 'com.github.dcendents.android-maven'
 
 android {
@@ -27,6 +28,7 @@ android {
 }
 
 dependencies {
+    api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     api 'io.reactivex.rxjava2:rxjava:2.2.8'
     api project(path: ':library')
 }
