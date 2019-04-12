@@ -1,6 +1,7 @@
 package com.instacart.library.sample
 
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.instacart.library.truetime.TrueTime
@@ -15,10 +16,14 @@ class SampleActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sample)
+
+        supportActionBar?.title = "TrueTimeRx"
+
         refreshBtn.isEnabled = TrueTime.isInitialized()
         refreshBtn.setOnClickListener {
             updateTime()
         }
+        nonRxBtn.visibility = View.GONE
     }
 
     private fun updateTime() {
@@ -33,19 +38,19 @@ class SampleActivity : AppCompatActivity() {
 
         timeGMT.text = getString(
             R.string.tt_time_gmt,
-            _formatDate(trueTime, "yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("GMT"))
+            formatDate(trueTime, "yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("GMT"))
         )
         timePST.text = getString(
             R.string.tt_time_pst,
-            _formatDate(trueTime, "yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("GMT-07:00"))
+            formatDate(trueTime, "yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("GMT-07:00"))
         )
         timeDeviceTime.text = getString(
             R.string.tt_time_device,
-            _formatDate(deviceTime, "yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("GMT-07:00"))
+            formatDate(deviceTime, "yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("GMT-07:00"))
         )
     }
 
-    private fun _formatDate(date: Date, pattern: String, timeZone: TimeZone): String {
+    private fun formatDate(date: Date, pattern: String, timeZone: TimeZone): String {
         val format = SimpleDateFormat(pattern, Locale.ENGLISH)
         format.timeZone = timeZone
         return format.format(date)
