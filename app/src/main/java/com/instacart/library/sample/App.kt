@@ -24,7 +24,7 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         initRxTrueTime()
-        //        initTrueTime();
+        //initTrueTime()
     }
 
     /**
