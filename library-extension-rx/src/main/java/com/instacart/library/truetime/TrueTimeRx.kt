@@ -23,15 +23,15 @@ class TrueTimeRx : TrueTime() {
         private val RX_INSTANCE = TrueTimeRx()
         private val TAG = TrueTimeRx::class.java.simpleName
 
-        fun now(): Date {
+        @JvmStatic fun now(): Date {
             return TrueTime.now()
         }
 
-        fun isInitialized(): Boolean {
+        @JvmStatic fun isInitialized(): Boolean {
             return TrueTime.isInitialized()
         }
 
-        fun build(): TrueTimeRx {
+        @JvmStatic fun build(): TrueTimeRx {
             return RX_INSTANCE
         }
     }

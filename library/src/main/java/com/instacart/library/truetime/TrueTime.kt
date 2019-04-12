@@ -24,7 +24,7 @@ open class TrueTime {
         /**
          * @return Date object that returns the current time in the default Timezone
          */
-        fun now(): Date {
+        @JvmStatic fun now(): Date {
             if (!isInitialized()) {
                 throw IllegalStateException("You need to call init() on TrueTime at least once.")
             }
@@ -37,20 +37,20 @@ open class TrueTime {
             return Date(now)
         }
 
-        fun isInitialized(): Boolean = SNTP_CLIENT.wasInitialized() || DISK_CACHE_CLIENT.isTrueTimeCachedFromAPreviousBoot()
+        @JvmStatic fun isInitialized(): Boolean = SNTP_CLIENT.wasInitialized() || DISK_CACHE_CLIENT.isTrueTimeCachedFromAPreviousBoot()
 
-        fun build(): TrueTime {
+        @JvmStatic fun build(): TrueTime {
             return INSTANCE
         }
 
         /**
          * clear the cached TrueTime info on device reboot.
          */
-        fun clearCachedInfo() {
+        @JvmStatic fun clearCachedInfo() {
             DISK_CACHE_CLIENT.clearCachedInfo()
         }
 
-        @Synchronized fun saveTrueTimeInfoToDisk() {
+        @Synchronized @JvmStatic fun saveTrueTimeInfoToDisk() {
             if (!SNTP_CLIENT.wasInitialized()) {
                 TrueLog.i(TAG, "---- SNTP client not available. not caching TrueTime info in disk")
                 return
