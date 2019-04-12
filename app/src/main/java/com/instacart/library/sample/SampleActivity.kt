@@ -15,14 +15,14 @@ class SampleActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sample)
-        refreshBtn.isEnabled = TrueTime.isInitialized()
+        refreshBtn.isEnabled = TrueTime.isInitialized
         refreshBtn.setOnClickListener {
             updateTime()
         }
     }
 
     private fun updateTime() {
-        if (!TrueTime.isInitialized()) {
+        if (!TrueTime.isInitialized) {
             Toast.makeText(this, "Sorry TrueTime not yet initialized. Trying again.", Toast.LENGTH_SHORT)
                 .show()
             return

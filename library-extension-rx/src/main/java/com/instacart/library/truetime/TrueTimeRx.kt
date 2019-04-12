@@ -3,25 +3,19 @@ package com.instacart.library.truetime
 import android.content.Context
 import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
-import io.reactivex.FlowableEmitter
 import io.reactivex.FlowableOnSubscribe
 import io.reactivex.FlowableTransformer
 import io.reactivex.Single
-import io.reactivex.annotations.NonNull
-import io.reactivex.functions.Consumer
 import io.reactivex.functions.Function
-import io.reactivex.functions.Predicate
 import io.reactivex.schedulers.Schedulers
 import java.io.IOException
 import java.net.InetAddress
 import java.net.UnknownHostException
 import java.util.Arrays
 import java.util.Collections
-import java.util.Comparator
 import java.util.Date
-import org.reactivestreams.Publisher
 
-@Suppress("MemberVisibilityCanBePrivate")
+@Suppress("MemberVisibilityCanBePrivate", "unused")
 class TrueTimeRx : TrueTime() {
 
     companion object {
@@ -34,7 +28,7 @@ class TrueTimeRx : TrueTime() {
         }
 
         fun isInitialized(): Boolean {
-            return TrueTime.isInitialized()
+            return TrueTime.isInitialized
         }
 
         fun build(): TrueTimeRx {
@@ -58,18 +52,18 @@ class TrueTimeRx : TrueTime() {
         return this
     }
 
-    override fun withConnectionTimeout(timeout: Int): TrueTimeRx {
-        super.withConnectionTimeout(timeout)
+    override fun withConnectionTimeout(timeoutInMillis: Int): TrueTimeRx {
+        super.withConnectionTimeout(timeoutInMillis)
         return this
     }
 
-    override fun withRootDelayMax(rootDelay: Float): TrueTimeRx {
-        super.withRootDelayMax(rootDelay)
+    override fun withRootDelayMax(rootDelayMax: Float): TrueTimeRx {
+        super.withRootDelayMax(rootDelayMax)
         return this
     }
 
-    override fun withRootDispersionMax(rootDispersion: Float): TrueTimeRx {
-        super.withRootDispersionMax(rootDispersion)
+    override fun withRootDispersionMax(rootDispersionMax: Float): TrueTimeRx {
+        super.withRootDispersionMax(rootDispersionMax)
         return this
     }
 
@@ -95,7 +89,7 @@ class TrueTimeRx : TrueTime() {
      * @return accurate NTP Date
      */
     fun initializeRx(ntpPoolAddress: String): Single<Date> {
-        return if (TrueTime.isInitialized())
+        return if (TrueTime.isInitialized)
             Single.just(TrueTime.now())
         else
             initializeNtp(ntpPoolAddress).map { TrueTime.now() }
