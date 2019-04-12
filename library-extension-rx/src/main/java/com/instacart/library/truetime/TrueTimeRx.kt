@@ -12,7 +12,6 @@ import java.io.IOException
 import java.net.InetAddress
 import java.net.UnknownHostException
 import java.util.Arrays
-import java.util.Collections
 import java.util.Date
 
 @Suppress("MemberVisibilityCanBePrivate", "unused")
@@ -199,29 +198,25 @@ class TrueTimeRx : TrueTime() {
 
     private fun filterLeastRoundTripDelay(): Function<List<LongArray>, LongArray> {
         return Function { responseTimeList ->
-            Collections.sort(responseTimeList) { lhsParam, rhsLongParam ->
-                val lhs = SntpClient.getRoundTripDelay(lhsParam)
-                val rhs = SntpClient.getRoundTripDelay(rhsLongParam)
-                if (lhs < rhs) -1 else if (lhs == rhs) 0 else 1
+            val sorted = responseTimeList.sortedBy {
+                SntpClient.getRoundTripDelay(it)
             }
 
-            TrueLog.d(TAG, "---- filterLeastRoundTrip: $responseTimeList")
+            TrueLog.d(TAG, "---- filterLeastRoundTrip: $sorted")
 
-            responseTimeList[0]
+            sorted.first()
         }
     }
 
     private fun filterMedianResponse(): Function<List<LongArray>, LongArray> {
         return Function { bestResponses ->
-            Collections.sort(bestResponses) { lhsParam, rhsParam ->
-                val lhs = SntpClient.getClockOffset(lhsParam)
-                val rhs = SntpClient.getClockOffset(rhsParam)
-                if (lhs < rhs) -1 else if (lhs == rhs) 0 else 1
+            val sorted = bestResponses.sortedBy {
+                SntpClient.getClockOffset(it)
             }
 
-            TrueLog.d(TAG, "---- bestResponse: " + Arrays.toString(bestResponses[bestResponses.size / 2]))
+            TrueLog.d(TAG, "---- bestResponse: " + Arrays.toString(sorted[sorted.size / 2]))
 
-            bestResponses[bestResponses.size / 2]
+            sorted[sorted.size / 2]
         }
     }
 }
