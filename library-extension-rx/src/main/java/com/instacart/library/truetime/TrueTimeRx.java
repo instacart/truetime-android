@@ -1,6 +1,19 @@
 package com.instacart.library.truetime;
 
 import android.content.Context;
+
+import org.reactivestreams.Publisher;
+
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.Callable;
+
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.FlowableEmitter;
@@ -12,15 +25,6 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.Schedulers;
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import org.reactivestreams.Publisher;
 
 public class TrueTimeRx
       extends TrueTime {
@@ -86,7 +90,12 @@ public class TrueTimeRx
      */
     public Single<Date> initializeRx(String ntpPoolAddress) {
         return isInitialized()
-                ? Single.just(now())
+                ? Single.fromCallable(new Callable<Date>() {
+                    @Override
+                    public Date call() throws Exception {
+                        return now();
+                    }
+                })
                 : initializeNtp(ntpPoolAddress).map(new Function<long[], Date>() {
                     @Override
                     public Date apply(long[] longs) throws Exception {
@@ -211,7 +220,7 @@ public class TrueTimeRx
                                               o.onNext(requestTime(singleIpHostAddress));
                                               o.onComplete();
                                           } catch (IOException e) {
-                                              o.tryOnError(e);
+                                              o.onError(e);
                                           }
                                       }
                                   }, BackpressureStrategy.BUFFER)
