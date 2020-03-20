@@ -46,7 +46,11 @@ public class TrueTime {
     }
 
     public void initialize() throws IOException {
-        initialize(_ntpHost);
+        initialize(_ntpHost, false);
+    }
+
+    public void reInitialize() throws IOException {
+        reInitialize(_ntpHost, true);
     }
 
     /**
@@ -119,8 +123,8 @@ public class TrueTime {
 
     // -----------------------------------------------------------------------------------
 
-    protected void initialize(String ntpHost) throws IOException {
-        if (isInitialized()) {
+    protected void initialize(String ntpHost, boolean forceResync) throws IOException {
+        if (isInitialized() && !forceResync) {
             TrueLog.i(TAG, "---- TrueTime already initialized from previous boot/init");
             return;
         }
