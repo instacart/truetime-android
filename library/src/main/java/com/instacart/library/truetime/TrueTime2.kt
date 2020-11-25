@@ -18,7 +18,10 @@ interface TrueTime2 {
 data class TrueTimeParameters(
     val showLogs: Boolean = false,
     val ntpHostPool: String = "time.google.com",
-    val connectionTimeoutInMillis: Long = 30_000,
+    val rootDelayMax: Float = 100f,
+    val rootDispersionMax: Float = 100f,
+    val serverResponseDelayMax: Int = 750,
+    val connectionTimeoutInMillis: Int = 30_000,
     val cacheProvider: TrueTimeCacheProvider? = null
 )
 

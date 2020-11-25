@@ -16,6 +16,7 @@ class TrueTimeImpl(private val sntpClient: Sntp) : TrueTime2 {
 
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
 
+    // TODO: change this to a data class result value object
     private var initialized: AtomicBoolean = AtomicBoolean(false)
 
     override fun initialize(with: TrueTimeParameters) {
@@ -66,9 +67,18 @@ class TrueTimeImpl(private val sntpClient: Sntp) : TrueTime2 {
         with: TrueTimeParameters,
         ipHostAddress: String,
     ): LongArray = withContext(Dispatchers.IO) {
-        // request Time
         // retrying upto 50 times if necessary
-        TODO("Not yet implemented")
+         repeat(50 - 1) {
+             try {
+                 // request Time
+                 return@withContext sntpClient.requestTime(with, ipHostAddress)
+             } catch (e: Exception) {
+                 TrueLog.e(TAG, "---- Error requesting time", e)
+             }
+        }
+
+        // last attempt
+        sntpClient.requestTime(with, ipHostAddress)
     }
 
     private fun List<LongArray>.filterLeastRoundTripDelay(): LongArray {
