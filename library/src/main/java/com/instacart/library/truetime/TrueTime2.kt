@@ -17,7 +17,7 @@ interface TrueTime2 {
 
 data class TrueTimeParameters(
     val showLogs: Boolean = false,
-    val ntpHost: String = "time.google.com",
+    val ntpHostPool: String = "time.google.com",
     val connectionTimeoutInMillis: Long = 30_000,
     val cacheProvider: TrueTimeCacheProvider? = null
 )
