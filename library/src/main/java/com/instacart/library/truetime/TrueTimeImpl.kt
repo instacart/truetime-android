@@ -2,7 +2,6 @@ package com.instacart.library.truetime
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
 import java.net.InetAddress
 import java.util.Date
@@ -36,19 +35,48 @@ class TrueTimeImpl : TrueTime2 {
     private suspend fun initUsing(with: TrueTimeParameters): LongArray {
 
         // resolve NTP pool -> single IPs
-
-        // for each IP resolved
-            // 5 times against each IP
-                // request Time
-                    // retrying upto 50 times if necessary
-            // collect 5 results to list
-            // filter least round trip delay
-            //  get single result for IP
-
-        // collect max 5 of the IPs in a list
-        // filter median clock offset
-        //  get single long array
-
-        TODO()
+        return resolveNtpHostToIPs(with.ntpHostPool)
+            // for each IP resolved
+            .map { ipHost ->
+                // 5 times against each IP
+                (1..5)
+                    .map { requestTime(with, ipHost) }
+                    // collect the 5 results to list
+                    .toList()
+                    // filter least round trip delay to get single Result
+                    .filterLeastRoundTripDelay()
+            }
+            // collect max 5 of the IPs in a list
+            .take(5)
+            // filter median clock offset to get single Result
+            .filterMedianClockOffset()
     }
+
+    /**
+     * resolve ntp host pool address to single IPs
+     */
+    @Suppress("BlockingMethodInNonBlockingContext")
+    private suspend fun resolveNtpHostToIPs(ntpHost: String): List<String> = withContext(Dispatchers.IO) {
+        TrueLog.d(TAG, "---- resolving ntpHost : $ntpHost")
+        InetAddress.getAllByName(ntpHost).map { it.hostAddress }
+    }
+
+    private suspend fun requestTime(
+        with: TrueTimeParameters,
+        ipHostAddress: String,
+    ): LongArray = withContext(Dispatchers.IO) {
+        // request Time
+        // retrying upto 50 times if necessary
+        TODO("Not yet implemented")
+    }
+}
+
+private fun List<LongArray>.filterLeastRoundTripDelay(): LongArray {
+
+    TODO("Not yet implemented")
+}
+
+private fun List<LongArray>.filterMedianClockOffset(): LongArray {
+    val sortedList = this.sortedBy { SntpClient.getClockOffset(it) }
+    return sortedList[sortedList.size / 2]
 }
