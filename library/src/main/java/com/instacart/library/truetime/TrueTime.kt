@@ -2,6 +2,7 @@ package com.instacart.library.truetime
 
 import android.content.Context
 import android.os.SystemClock
+import com.instacart.library.truetime.sntp.SntpClient
 import java.io.IOException
 import java.util.Date
 import java.util.Locale
