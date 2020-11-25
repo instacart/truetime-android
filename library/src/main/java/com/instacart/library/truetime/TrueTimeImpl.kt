@@ -1,5 +1,6 @@
 package com.instacart.library.truetime
 
+import com.instacart.library.truetime.sntp.Sntp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -7,7 +8,7 @@ import java.net.InetAddress
 import java.util.Date
 import java.util.concurrent.atomic.AtomicBoolean
 
-class TrueTimeImpl : TrueTime2 {
+class TrueTimeImpl(private val sntpClient: Sntp) : TrueTime2 {
 
     companion object {
         private const val TAG: String = "TrueTime"
@@ -69,14 +70,14 @@ class TrueTimeImpl : TrueTime2 {
         // retrying upto 50 times if necessary
         TODO("Not yet implemented")
     }
-}
 
-private fun List<LongArray>.filterLeastRoundTripDelay(): LongArray {
+    private fun List<LongArray>.filterLeastRoundTripDelay(): LongArray {
+        return minByOrNull { sntpClient.getRoundTripDelay(it) }
+            ?: throw IllegalStateException("Could not find any results from requestingTime")
+    }
 
-    TODO("Not yet implemented")
-}
-
-private fun List<LongArray>.filterMedianClockOffset(): LongArray {
-    val sortedList = this.sortedBy { SntpClient.getClockOffset(it) }
-    return sortedList[sortedList.size / 2]
+    private fun List<LongArray>.filterMedianClockOffset(): LongArray {
+        val sortedList = this.sortedBy { sntpClient.getClockOffset(it) }
+        return sortedList[sortedList.size / 2]
+    }
 }
