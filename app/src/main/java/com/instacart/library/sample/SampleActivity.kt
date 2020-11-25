@@ -17,7 +17,7 @@ class SampleActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sample)
 
-        supportActionBar?.title = "TrueTimeRx"
+        supportActionBar?.title = "TrueTime"
 
         refreshBtn.isEnabled = TrueTime.isInitialized()
         refreshBtn.setOnClickListener {
