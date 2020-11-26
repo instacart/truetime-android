@@ -1,6 +1,7 @@
-package com.instacart.library.truetime
+package com.instacart.library.truetime.cache
 
 import android.os.SystemClock
+import com.instacart.library.truetime.TrueLog
 import com.instacart.library.truetime.sntp.SntpClient
 
 internal class DiskCacheClient {

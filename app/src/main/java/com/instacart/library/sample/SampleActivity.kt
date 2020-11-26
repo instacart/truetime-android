@@ -4,11 +4,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.instacart.library.truetime.TrueTime
-import com.instacart.library.truetime.TrueTime2
-import com.instacart.library.truetime.TrueTimeImpl
-import com.instacart.library.truetime.TrueTimeParameters
-import com.instacart.library.truetime.sntp.SntpClient
+import com.instacart.library.truetime.time.TrueTime
 import kotlinx.android.synthetic.main.activity_sample.*
 import java.text.SimpleDateFormat
 import java.util.Date

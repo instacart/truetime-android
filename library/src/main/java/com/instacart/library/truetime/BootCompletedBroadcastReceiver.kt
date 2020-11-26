@@ -1,9 +1,9 @@
 package com.instacart.library.truetime
 
 import android.content.BroadcastReceiver
-import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
+import com.instacart.library.truetime.time.TrueTime
 
 class BootCompletedBroadcastReceiver : BroadcastReceiver() {
 

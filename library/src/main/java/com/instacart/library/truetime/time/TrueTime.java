@@ -1,8 +1,12 @@
-package com.instacart.library.truetime;
+package com.instacart.library.truetime.time;
 
 
 import android.content.Context;
 import android.os.SystemClock;
+import com.instacart.library.truetime.cache.CacheInterface;
+import com.instacart.library.truetime.cache.DiskCacheClient;
+import com.instacart.library.truetime.cache.SharedPreferenceCacheImpl;
+import com.instacart.library.truetime.TrueLog;
 import com.instacart.library.truetime.sntp.SntpClient;
 import java.io.IOException;
 import java.util.Date;

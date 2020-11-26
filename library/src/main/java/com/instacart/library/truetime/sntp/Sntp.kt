@@ -1,6 +1,6 @@
 package com.instacart.library.truetime.sntp
 
-import com.instacart.library.truetime.TrueTimeParameters
+import com.instacart.library.truetime.time.TrueTimeParameters
 import java.io.IOException
 
 interface Sntp {

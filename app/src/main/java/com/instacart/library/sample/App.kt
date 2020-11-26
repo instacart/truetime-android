@@ -4,11 +4,11 @@ import android.annotation.SuppressLint
 import android.app.Application
 import android.os.AsyncTask
 import android.util.Log
-import com.instacart.library.truetime.TrueTime
-import com.instacart.library.truetime.TrueTime2
-import com.instacart.library.truetime.TrueTimeImpl
-import com.instacart.library.truetime.TrueTimeParameters
-import com.instacart.library.truetime.TrueTimeRx
+import com.instacart.library.truetime.time.TrueTime
+import com.instacart.library.truetime.time.TrueTime2
+import com.instacart.library.truetime.time.TrueTimeImpl
+import com.instacart.library.truetime.time.TrueTimeParameters
+import com.instacart.library.truetime.time.TrueTimeRx
 import com.instacart.library.truetime.sntp.SntpClient
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers

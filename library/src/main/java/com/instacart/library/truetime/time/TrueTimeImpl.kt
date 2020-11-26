@@ -1,5 +1,6 @@
-package com.instacart.library.truetime
+package com.instacart.library.truetime.time
 
+import com.instacart.library.truetime.TrueLog
 import com.instacart.library.truetime.sntp.Sntp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

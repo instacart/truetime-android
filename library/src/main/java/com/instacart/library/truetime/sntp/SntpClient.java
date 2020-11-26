@@ -20,14 +20,13 @@ package com.instacart.library.truetime.sntp;
 import android.os.SystemClock;
 import com.instacart.library.truetime.InvalidNtpServerResponseException;
 import com.instacart.library.truetime.TrueLog;
-import com.instacart.library.truetime.TrueTimeParameters;
+import com.instacart.library.truetime.time.TrueTimeParameters;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
-import kotlin.coroutines.Continuation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
