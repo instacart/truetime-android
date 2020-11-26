@@ -3,38 +3,49 @@ package com.instacart.library.truetime
 import com.instacart.library.truetime.sntp.Sntp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.net.InetAddress
 import java.util.Date
-import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicReference
 
 class TrueTimeImpl(private val sntpClient: Sntp) : TrueTime2 {
 
     companion object {
-        private const val TAG: String = "TrueTime"
+        private const val TAG: String = "XXX-TrueTime"
     }
 
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
-
-    // TODO: change this to a data class result value object
-    private var initialized: AtomicBoolean = AtomicBoolean(false)
+    private var ttResult: AtomicReference<TrueTimeResult> = AtomicReference()
 
     override fun initialize(with: TrueTimeParameters) {
-        TODO("Not yet implemented")
+        coroutineScope.launch {
+            val ntpResult = init(with)
+            val now = Date(sntpClient.sntpTime(ntpResult))
+            ttResult.set(TrueTimeResult(ntpResult, now))
+        }
     }
 
     override fun now(): Date {
-        TODO("Not yet implemented")
+        if (ttResult.get() == null) throw IllegalStateException("TrueTime was not initialized successfully yet")
+        return ttResult.get().ntpTimeResult.let { Date(sntpClient.sntpTime(it)) }
     }
 
-    override fun nowSafely(): Date = if (initialized.get()) now() else Date()
+    override fun nowSafely(): Date {
+        return if (ttResult.get() != null) {
+            now()
+        } else {
+            TrueLog.d(TAG, "TrueTime not yet initialized")
+            Date()
+        }
+    }
 
     /**
      * Initialize TrueTime with an ntp pool server address
      *
      * @param ntpHost NTP pool server (time.apple.com, 0.us.pool.ntp.org, time.google.com)
      */
-    private suspend fun initUsing(with: TrueTimeParameters): LongArray {
+    private suspend fun init(with: TrueTimeParameters): LongArray {
 
         // resolve NTP pool -> single IPs
         return resolveNtpHostToIPs(with.ntpHostPool)
@@ -68,13 +79,13 @@ class TrueTimeImpl(private val sntpClient: Sntp) : TrueTime2 {
         ipHostAddress: String,
     ): LongArray = withContext(Dispatchers.IO) {
         // retrying upto 50 times if necessary
-         repeat(50 - 1) {
-             try {
-                 // request Time
-                 return@withContext sntpClient.requestTime(with, ipHostAddress)
-             } catch (e: Exception) {
-                 TrueLog.e(TAG, "---- Error requesting time", e)
-             }
+        repeat(50 - 1) {
+            try {
+                // request Time
+                return@withContext sntpClient.requestTime(with, ipHostAddress)
+            } catch (e: Exception) {
+                TrueLog.e(TAG, "---- Error requesting time", e)
+            }
         }
 
         // last attempt
@@ -90,4 +101,9 @@ class TrueTimeImpl(private val sntpClient: Sntp) : TrueTime2 {
         val sortedList = this.sortedBy { sntpClient.getClockOffset(it) }
         return sortedList[sortedList.size / 2]
     }
+
+    private data class TrueTimeResult(
+        val ntpTimeResult: LongArray,
+        val initializeTime: Date,
+    )
 }
