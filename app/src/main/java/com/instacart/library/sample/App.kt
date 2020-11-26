@@ -1,30 +1,33 @@
 package com.instacart.library.sample
 
+import android.annotation.SuppressLint
 import android.app.Application
 import android.os.AsyncTask
 import android.util.Log
-
 import com.instacart.library.truetime.TrueTime
+import com.instacart.library.truetime.TrueTime2
+import com.instacart.library.truetime.TrueTimeImpl
+import com.instacart.library.truetime.TrueTimeParameters
 import com.instacart.library.truetime.TrueTimeRx
-
-import java.io.IOException
-import java.util.Date
-
+import com.instacart.library.truetime.sntp.SntpClient
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
+import java.io.IOException
 
 @Suppress("unused")
 class App : Application() {
 
     companion object {
         private val TAG = App::class.java.simpleName
+        val trueTime2: TrueTime2 = TrueTimeImpl(SntpClient())
     }
 
     override fun onCreate() {
         super.onCreate()
+
+        trueTime2.initialize(with = TrueTimeParameters())
         initRxTrueTime()
-        //initTrueTime()
+//        initTrueTime()
     }
 
     /**
@@ -58,8 +61,9 @@ class App : Application() {
     /**
      * Initialize the TrueTime using RxJava.
      */
+    @SuppressLint("CheckResult")
     private fun initRxTrueTime() {
-        val disposable = TrueTimeRx.build()
+        TrueTimeRx.build()
             .withConnectionTimeout(31428)
             .withRetryCount(100)
             .withSharedPreferencesCache(this)

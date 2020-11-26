@@ -17,7 +17,7 @@ import java.util.TimeZone
 
 class SampleActivity : AppCompatActivity() {
 
-    val tt2: TrueTime2 = TrueTimeImpl(SntpClient())
+    private val tt2 = App.trueTime2 // dirty DI
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,7 +59,6 @@ class SampleActivity : AppCompatActivity() {
     }
 
     private fun testing() {
-        tt2.initialize(TrueTimeParameters())
         Toast.makeText(this, "tt2 ${tt2.nowSafely()}", Toast.LENGTH_SHORT)
             .show()
     }
