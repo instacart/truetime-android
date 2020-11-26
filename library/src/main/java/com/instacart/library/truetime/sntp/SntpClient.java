@@ -20,23 +20,17 @@ package com.instacart.library.truetime.sntp;
 import android.os.SystemClock;
 import com.instacart.library.truetime.InvalidNtpServerResponseException;
 import com.instacart.library.truetime.TrueLog;
-import com.instacart.library.truetime.time.TrueTimeParameters;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Simple SNTP client class for retrieving network time.
- * Original source: https://android.googlesource.com/platform/frameworks/base/+/master/core/java/android/net/SntpClient.java
- *
- * Intentionally keeping this Java for easier diffing and keeping up to date with platform
  */
-public class SntpClient implements Sntp {
+public class SntpClient {
 
     public static final int RESPONSE_INDEX_ORIGINATE_TIME = 0;
     public static final int RESPONSE_INDEX_RECEIVE_TIME = 1;
@@ -73,37 +67,18 @@ public class SntpClient implements Sntp {
      * See δ :
      * https://en.wikipedia.org/wiki/Network_Time_Protocol#Clock_synchronization_algorithm
      */
-    @Override
-    public long getRoundTripDelay(long[] response) {
+    public static long getRoundTripDelay(long[] response) {
         return (response[RESPONSE_INDEX_RESPONSE_TIME] - response[RESPONSE_INDEX_ORIGINATE_TIME]) -
-               (response[RESPONSE_INDEX_TRANSMIT_TIME] - response[RESPONSE_INDEX_RECEIVE_TIME]);
+            (response[RESPONSE_INDEX_TRANSMIT_TIME] - response[RESPONSE_INDEX_RECEIVE_TIME]);
     }
 
     /**
      * See θ :
      * https://en.wikipedia.org/wiki/Network_Time_Protocol#Clock_synchronization_algorithm
      */
-    @Override
-    public long getClockOffset(long[] response) {
+    public static long getClockOffset(long[] response) {
         return ((response[RESPONSE_INDEX_RECEIVE_TIME] - response[RESPONSE_INDEX_ORIGINATE_TIME]) +
-                (response[RESPONSE_INDEX_TRANSMIT_TIME] - response[RESPONSE_INDEX_RESPONSE_TIME])) / 2;
-    }
-
-    @NotNull
-    @Override
-    public long[] requestTime(@NotNull TrueTimeParameters with, @Nullable String ntpHostAddress) throws IOException {
-        String hostAdd = with.getNtpHostPool();
-        if (ntpHostAddress != null || !ntpHostAddress.isEmpty()) {
-            hostAdd = ntpHostAddress;
-        }
-
-        return requestTime(
-           hostAdd,
-           with.getRootDelayMax(),
-           with.getRootDispersionMax(),
-           with.getServerResponseDelayMax(),
-           with.getConnectionTimeoutInMillis()
-        );
+            (response[RESPONSE_INDEX_TRANSMIT_TIME] - response[RESPONSE_INDEX_RESPONSE_TIME])) / 2;
     }
 
     /**
@@ -111,13 +86,13 @@ public class SntpClient implements Sntp {
      *
      * @param ntpHost           host name of the server.
      */
-    @NotNull
-    public synchronized long[] requestTime(String ntpHost,
+    synchronized long[] requestTime(String ntpHost,
         float rootDelayMax,
         float rootDispersionMax,
         int serverResponseDelayMax,
         int timeoutInMillis
-    ) throws IOException {
+    )
+        throws IOException {
 
         DatagramSocket socket = null;
 
@@ -218,11 +193,11 @@ public class SntpClient implements Sntp {
             long timeElapsedSinceRequest = Math.abs(originateTime - System.currentTimeMillis());
             if (timeElapsedSinceRequest >= 10_000) {
                 throw new InvalidNtpServerResponseException("Request was sent more than 10 seconds back " +
-                                                            timeElapsedSinceRequest);
+                    timeElapsedSinceRequest);
             }
 
             _sntpInitialized.set(true);
-            TrueLog.INSTANCE.i(TAG, "---- SNTP successful response from " + ntpHost);
+            TrueLog.i(TAG, "---- SNTP successful response from " + ntpHost);
 
             // -----------------------------------------------------------------------------------
             // TODO:
@@ -230,7 +205,7 @@ public class SntpClient implements Sntp {
             return t;
 
         } catch (Exception e) {
-            TrueLog.INSTANCE.d(TAG, "---- SNTP request failed for " + ntpHost);
+            TrueLog.d(TAG, "---- SNTP request failed for " + ntpHost);
             throw e;
         } finally {
             if (socket != null) {
@@ -239,37 +214,32 @@ public class SntpClient implements Sntp {
         }
     }
 
-    // TODO
-    public void cacheTrueTimeInfo(long[] response) {
+    void cacheTrueTimeInfo(long[] response) {
         _cachedSntpTime.set(sntpTime(response));
         _cachedDeviceUptime.set(response[RESPONSE_INDEX_RESPONSE_TICKS]);
     }
 
-    @Override
-    public long sntpTime(long[] response) {
+    long sntpTime(long[] response) {
         long clockOffset = getClockOffset(response);
         long responseTime = response[RESPONSE_INDEX_RESPONSE_TIME];
         return responseTime + clockOffset;
     }
 
-    // TODO
-    public boolean wasInitialized() {
+    boolean wasInitialized() {
         return _sntpInitialized.get();
     }
 
     /**
-     * TODO
      * @return time value computed from NTP server response
      */
-    public long getCachedSntpTime() {
+    long getCachedSntpTime() {
         return _cachedSntpTime.get();
     }
 
     /**
-     * TODO
      * @return device uptime computed at time of executing the NTP request
      */
-    public long getCachedDeviceUptime() {
+    long getCachedDeviceUptime() {
         return _cachedDeviceUptime.get();
     }
 
@@ -340,9 +310,9 @@ public class SntpClient implements Sntp {
         byte b3 = buffer[offset + 3];
 
         return ((long) ui(b0) << 24) +
-               ((long) ui(b1) << 16) +
-               ((long) ui(b2) << 8) +
-               (long) ui(b3);
+            ((long) ui(b1) << 16) +
+            ((long) ui(b2) << 8) +
+            (long) ui(b3);
     }
 
     /***
@@ -370,5 +340,4 @@ public class SntpClient implements Sntp {
     private double doubleMillis(long fix) {
         return fix / 65.536D;
     }
-
 }
