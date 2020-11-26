@@ -5,6 +5,10 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.instacart.library.truetime.TrueTime
+import com.instacart.library.truetime.TrueTime2
+import com.instacart.library.truetime.TrueTimeImpl
+import com.instacart.library.truetime.TrueTimeParameters
+import com.instacart.library.truetime.sntp.SntpClient
 import kotlinx.android.synthetic.main.activity_sample.*
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -12,6 +16,8 @@ import java.util.Locale
 import java.util.TimeZone
 
 class SampleActivity : AppCompatActivity() {
+
+    val tt2: TrueTime2 = TrueTimeImpl(SntpClient())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,6 +39,8 @@ class SampleActivity : AppCompatActivity() {
             return
         }
 
+        testing()
+
         val trueTime = TrueTime.now()
         val deviceTime = Date()
 
@@ -48,6 +56,12 @@ class SampleActivity : AppCompatActivity() {
             R.string.tt_time_device,
             formatDate(deviceTime, "yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("GMT-07:00"))
         )
+    }
+
+    private fun testing() {
+        tt2.initialize(TrueTimeParameters())
+        Toast.makeText(this, "tt2 ${tt2.nowSafely()}", Toast.LENGTH_SHORT)
+            .show()
     }
 
     private fun formatDate(date: Date, pattern: String, timeZone: TimeZone): String {

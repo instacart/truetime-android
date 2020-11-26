@@ -20,12 +20,16 @@ package com.instacart.library.truetime.sntp;
 import android.os.SystemClock;
 import com.instacart.library.truetime.InvalidNtpServerResponseException;
 import com.instacart.library.truetime.TrueLog;
+import com.instacart.library.truetime.TrueTimeParameters;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
+import kotlin.coroutines.Continuation;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Simple SNTP client class for retrieving network time.
@@ -33,7 +37,7 @@ import java.util.concurrent.atomic.AtomicLong;
  *
  * Intentionally keeping this Java for easier diffing and keeping up to date with platform
  */
-public class SntpClient {
+public class SntpClient implements Sntp {
 
     public static final int RESPONSE_INDEX_ORIGINATE_TIME = 0;
     public static final int RESPONSE_INDEX_RECEIVE_TIME = 1;
@@ -70,7 +74,8 @@ public class SntpClient {
      * See δ :
      * https://en.wikipedia.org/wiki/Network_Time_Protocol#Clock_synchronization_algorithm
      */
-    public static long getRoundTripDelay(long[] response) {
+    @Override
+    public long getRoundTripDelay(long[] response) {
         return (response[RESPONSE_INDEX_RESPONSE_TIME] - response[RESPONSE_INDEX_ORIGINATE_TIME]) -
                (response[RESPONSE_INDEX_TRANSMIT_TIME] - response[RESPONSE_INDEX_RECEIVE_TIME]);
     }
@@ -79,9 +84,27 @@ public class SntpClient {
      * See θ :
      * https://en.wikipedia.org/wiki/Network_Time_Protocol#Clock_synchronization_algorithm
      */
-    public static long getClockOffset(long[] response) {
+    @Override
+    public long getClockOffset(long[] response) {
         return ((response[RESPONSE_INDEX_RECEIVE_TIME] - response[RESPONSE_INDEX_ORIGINATE_TIME]) +
                 (response[RESPONSE_INDEX_TRANSMIT_TIME] - response[RESPONSE_INDEX_RESPONSE_TIME])) / 2;
+    }
+
+    @NotNull
+    @Override
+    public long[] requestTime(@NotNull TrueTimeParameters with, @Nullable String ntpHostAddress) throws IOException {
+        String hostAdd = with.getNtpHostPool();
+        if (ntpHostAddress != null || !ntpHostAddress.isEmpty()) {
+            hostAdd = ntpHostAddress;
+        }
+
+        return requestTime(
+           hostAdd,
+           with.getRootDelayMax(),
+           with.getRootDispersionMax(),
+           with.getServerResponseDelayMax(),
+           with.getConnectionTimeoutInMillis()
+        );
     }
 
     /**
@@ -89,13 +112,13 @@ public class SntpClient {
      *
      * @param ntpHost           host name of the server.
      */
-    synchronized long[] requestTime(String ntpHost,
+    @NotNull
+    public synchronized long[] requestTime(String ntpHost,
         float rootDelayMax,
         float rootDispersionMax,
         int serverResponseDelayMax,
         int timeoutInMillis
-    )
-        throws IOException {
+    ) throws IOException {
 
         DatagramSocket socket = null;
 
@@ -217,32 +240,37 @@ public class SntpClient {
         }
     }
 
-    void cacheTrueTimeInfo(long[] response) {
+    // TODO
+    public void cacheTrueTimeInfo(long[] response) {
         _cachedSntpTime.set(sntpTime(response));
         _cachedDeviceUptime.set(response[RESPONSE_INDEX_RESPONSE_TICKS]);
     }
 
-    long sntpTime(long[] response) {
+    @Override
+    public long sntpTime(long[] response) {
         long clockOffset = getClockOffset(response);
         long responseTime = response[RESPONSE_INDEX_RESPONSE_TIME];
         return responseTime + clockOffset;
     }
 
-    boolean wasInitialized() {
+    // TODO
+    public boolean wasInitialized() {
         return _sntpInitialized.get();
     }
 
     /**
+     * TODO
      * @return time value computed from NTP server response
      */
-    long getCachedSntpTime() {
+    public long getCachedSntpTime() {
         return _cachedSntpTime.get();
     }
 
     /**
+     * TODO
      * @return device uptime computed at time of executing the NTP request
      */
-    long getCachedDeviceUptime() {
+    public long getCachedDeviceUptime() {
         return _cachedDeviceUptime.get();
     }
 
@@ -343,4 +371,5 @@ public class SntpClient {
     private double doubleMillis(long fix) {
         return fix / 65.536D;
     }
+
 }

@@ -15,7 +15,7 @@ open class TrueTime {
 
         private val INSTANCE = TrueTime()
         private val DISK_CACHE_CLIENT = DiskCacheClient()
-        private val SNTP_CLIENT = SntpClient()
+        val SNTP_CLIENT = SntpClient()
 
         private var rootDelayMax = 100f
         private var rootDispersionMax = 100f
@@ -38,7 +38,7 @@ open class TrueTime {
             return Date(now)
         }
 
-        @JvmStatic fun isInitialized(): Boolean = SNTP_CLIENT.wasInitialized() || DISK_CACHE_CLIENT.isTrueTimeCachedFromAPreviousBoot()
+        @JvmStatic fun isInitialized(): Boolean = SNTP_CLIENT.wasInitialized() // || DISK_CACHE_CLIENT.isTrueTimeCachedFromAPreviousBoot()
 
         @JvmStatic fun build(): TrueTime {
             return INSTANCE

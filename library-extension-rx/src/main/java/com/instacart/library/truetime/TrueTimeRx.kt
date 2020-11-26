@@ -176,7 +176,8 @@ class TrueTimeRx : TrueTime() {
                         "---- requestTime from: $singleIpHostAddress"
                     )
                     try {
-                        o.onNext(requestTime(singleIpHostAddress))
+                        val testing = requestTime(singleIpHostAddress)
+                        o.onNext(testing)
                         o.onComplete()
                     } catch (e: IOException) {
                         o.tryOnError(e)
@@ -194,7 +195,7 @@ class TrueTimeRx : TrueTime() {
     private fun filterLeastRoundTripDelay(): Function<List<LongArray>, LongArray> {
         return Function { responseTimeList ->
             val sorted = responseTimeList.sortedBy {
-                SntpClient.getRoundTripDelay(it)
+                SNTP_CLIENT.getRoundTripDelay(it)
             }
 
             TrueLog.d(TAG, "---- filterLeastRoundTrip: $sorted")
@@ -206,7 +207,7 @@ class TrueTimeRx : TrueTime() {
     private fun filterMedianResponse(): Function<List<LongArray>, LongArray> {
         return Function { bestResponses ->
             val sorted = bestResponses.sortedBy {
-                SntpClient.getClockOffset(it)
+                SNTP_CLIENT.getClockOffset(it)
             }
 
             TrueLog.d(TAG, "---- bestResponse: " + Arrays.toString(sorted[sorted.size / 2]))

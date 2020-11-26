@@ -1,6 +1,7 @@
 package com.instacart.library.truetime.sntp
 
 import com.instacart.library.truetime.TrueTimeParameters
+import java.io.IOException
 
 interface Sntp {
     /**
@@ -20,7 +21,8 @@ interface Sntp {
      *
      * @param ntpHostAddress    host name of the server.
      */
-    suspend fun requestTime(
+    @Throws(IOException::class)
+    fun requestTime(
         with: TrueTimeParameters,
         ntpHostAddress: String? = null,
     ): LongArray = requestTime(
@@ -31,11 +33,14 @@ interface Sntp {
         with.connectionTimeoutInMillis
     )
 
-    suspend fun requestTime(
+    @Throws(IOException::class)
+    fun requestTime(
         ntpHostAddress: String,
         rootDelayMax: Float,
         rootDispersionMax: Float,
         serverResponseDelayMax: Int,
         timeoutInMillis: Int,
     ): LongArray
+
+    fun sntpTime(ntpTimeResult: LongArray): Long
 }
