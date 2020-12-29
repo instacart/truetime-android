@@ -2,6 +2,7 @@ package com.instacart.library.truetime.sntp
 
 import com.instacart.library.truetime.time.TrueTimeParameters
 import java.io.IOException
+import java.util.Date
 
 interface Sntp {
 
@@ -50,5 +51,4 @@ interface Sntp {
         serverResponseDelayMax: Int,
         timeoutInMillis: Int,
     ): LongArray
-
 }

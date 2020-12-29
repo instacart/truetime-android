@@ -1,34 +1,32 @@
 package com.instacart.library.truetime.time
 
-import android.os.SystemClock
 import com.instacart.library.truetime.legacy.TrueLog
 import com.instacart.library.truetime.sntp.Sntp
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.net.InetAddress
 import java.util.Date
-import java.util.concurrent.atomic.AtomicReference
 
-class TrueTimeImpl(private val sntpClient: Sntp) : TrueTime2 {
+class TrueTimeImpl(
+    private val sntpClient: Sntp
+) : TrueTime2 {
+
+    private val timeKeeper: TimeKeeper = TimeKeeperImpl(sntpClient)
 
     companion object {
         private const val TAG: String = "XXX-TrueTime"
     }
 
-    private var ttResult: AtomicReference<TrueTimeResult> = AtomicReference()
-
-    override fun initialized(): Boolean = ttResult.get() != null
+    override fun initialized(): Boolean = timeKeeper.hasTheTime()
 
     override suspend fun initialize(with: TrueTimeParameters): Date = withContext(Dispatchers.IO) {
         val ntpResult = init(with)
-        val trueTimeResult = TrueTimeResult(ntpResult)
-        ttResult.set(trueTimeResult)
-
-        Date(trueTimeResult.timeSntp(sntpClient))
+        timeKeeper.save(ntpResult = ntpResult)
+        timeKeeper.now()
     }
 
     override fun nowSafely(): Date {
-        return if (ttResult.get() != null) {
+        return if (timeKeeper.hasTheTime()) {
             nowForced()
         } else {
             TrueLog.d(TAG, "TrueTime not yet initialized")
@@ -38,7 +36,7 @@ class TrueTimeImpl(private val sntpClient: Sntp) : TrueTime2 {
 
     override fun nowForced(): Date {
         if (!initialized()) throw IllegalStateException("TrueTime was not initialized successfully yet")
-        return ttResult.get().timeNow(sntpClient)
+        return timeKeeper.now()
     }
 
     /**
@@ -100,32 +98,4 @@ class TrueTimeImpl(private val sntpClient: Sntp) : TrueTime2 {
         return sortedList[sortedList.size / 2]
     }
 
-    private data class TrueTimeResult(
-        val ntpResult: LongArray
-    ) {
-        fun timeSntp(sntpClient: Sntp): Long = sntpClient.sntpTime(ntpResult)
-
-        fun timeNow(sntpClient: Sntp): Date {
-            val savedSntpTime: Long = timeSntp(sntpClient)
-            val savedDeviceTime: Long = sntpClient.deviceTime(ntpResult)
-            val currentDeviceTime: Long = SystemClock.elapsedRealtime()
-
-            return Date(savedSntpTime + (currentDeviceTime - savedDeviceTime))
-        }
-
-        override fun equals(other: Any?): Boolean {
-            if (this === other) return true
-            if (javaClass != other?.javaClass) return false
-
-            other as TrueTimeResult
-
-            if (!ntpResult.contentEquals(other.ntpResult)) return false
-
-            return true
-        }
-
-        override fun hashCode(): Int {
-            return ntpResult.contentHashCode()
-        }
-    }
 }

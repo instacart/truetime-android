@@ -4,9 +4,6 @@ import java.util.Date
 
 interface TrueTime2 {
 
-    // TODO: [TrueTimeResult] or LongArray retrieval
-
-
     suspend fun initialize(with: TrueTimeParameters = TrueTimeParameters()): Date
 
     /**
