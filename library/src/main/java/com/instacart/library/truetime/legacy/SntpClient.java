@@ -1,4 +1,4 @@
-package com.instacart.library.truetime.sntp;
+package com.instacart.library.truetime.legacy;
 
 /*
  * Original work Copyright (C) 2008 The Android Open Source Project
@@ -19,7 +19,6 @@ package com.instacart.library.truetime.sntp;
 
 import android.os.SystemClock;
 import com.instacart.library.truetime.InvalidNtpServerResponseException;
-import com.instacart.library.truetime.TrueLog;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;

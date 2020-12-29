@@ -1,6 +1,6 @@
 package com.instacart.library.truetime.time
 
-import com.instacart.library.truetime.TrueLog
+import com.instacart.library.truetime.legacy.TrueLog
 import com.instacart.library.truetime.sntp.Sntp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -43,8 +43,6 @@ class TrueTimeImpl(private val sntpClient: Sntp) : TrueTime2 {
 
     /**
      * Initialize TrueTime with an ntp pool server address
-     *
-     * @param ntpHost NTP pool server (time.apple.com, 0.us.pool.ntp.org, time.google.com)
      */
     private suspend fun init(with: TrueTimeParameters): LongArray {
 

@@ -3,7 +3,9 @@ package com.instacart.library.truetime.time
 import com.instacart.library.truetime.cache.TrueTimeCacheProvider
 
 data class TrueTimeParameters(
+    // TODO: provide a logger interface
     val showLogs: Boolean = false,
+
     val ntpHostPool: String = "time.google.com",
     val rootDelayMax: Float = 100f,
     val rootDispersionMax: Float = 100f,

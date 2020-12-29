@@ -4,12 +4,13 @@ import android.annotation.SuppressLint
 import android.app.Application
 import android.os.AsyncTask
 import android.util.Log
-import com.instacart.library.truetime.time.TrueTime
+import com.instacart.library.truetime.legacy.TrueTime
 import com.instacart.library.truetime.time.TrueTime2
 import com.instacart.library.truetime.time.TrueTimeImpl
 import com.instacart.library.truetime.time.TrueTimeParameters
-import com.instacart.library.truetime.time.TrueTimeRx
-import com.instacart.library.truetime.sntp.SntpClient
+import com.instacart.library.truetime.legacy.TrueTimeRx
+import com.instacart.library.truetime.legacy.SntpClient
+import com.instacart.library.truetime.sntp.SntpImpl
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import java.io.IOException
@@ -19,7 +20,7 @@ class App : Application() {
 
     companion object {
         private val TAG = App::class.java.simpleName
-        val trueTime2: TrueTime2 = TrueTimeImpl(SntpClient())
+        val trueTime2: TrueTime2 = TrueTimeImpl(SntpImpl())
     }
 
     override fun onCreate() {

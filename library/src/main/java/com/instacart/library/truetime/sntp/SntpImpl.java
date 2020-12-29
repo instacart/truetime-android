@@ -19,7 +19,8 @@ package com.instacart.library.truetime.sntp;
 
 import android.os.SystemClock;
 import com.instacart.library.truetime.InvalidNtpServerResponseException;
-import com.instacart.library.truetime.TrueLog;
+import com.instacart.library.truetime.legacy.SntpClient;
+import com.instacart.library.truetime.legacy.TrueLog;
 import com.instacart.library.truetime.time.TrueTimeParameters;
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -35,7 +36,7 @@ import org.jetbrains.annotations.Nullable;
  * <p>
  * Intentionally keeping this Java for easier diffing and keeping up to date with platform
  */
-class SntpImpl implements Sntp {
+public class SntpImpl implements Sntp {
 
   public static final int RESPONSE_INDEX_ORIGINATE_TIME = 0;
   public static final int RESPONSE_INDEX_RECEIVE_TIME = 1;

@@ -1,9 +1,7 @@
-package com.instacart.library.truetime.time;
+package com.instacart.library.truetime.legacy;
 
 import android.content.Context;
 import com.instacart.library.truetime.cache.CacheInterface;
-import com.instacart.library.truetime.TrueLog;
-import com.instacart.library.truetime.sntp.SntpClient;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.FlowableEmitter;
@@ -107,7 +105,7 @@ public class TrueTimeRx
    *
    * @param ntpPool NTP pool server e.g. time.apple.com, 0.us.pool.ntp.org
    * @return Observable of detailed long[] containing most important parts of the actual NTP response See
-   * RESPONSE_INDEX_ prefixes in {@link com.instacart.library.truetime.sntp.SntpClient} for details
+   * RESPONSE_INDEX_ prefixes in {@link SntpClient} for details
    */
   public Single<long[]> initializeNtp(String ntpPool) {
     return Flowable
@@ -125,7 +123,7 @@ public class TrueTimeRx
    *
    * @param resolvedNtpAddresses list of resolved IP addresses for an NTP
    * @return Observable of detailed long[] containing most important parts of the actual NTP response See
-   * RESPONSE_INDEX_ prefixes in {@link com.instacart.library.truetime.sntp.SntpClient} for details
+   * RESPONSE_INDEX_ prefixes in {@link SntpClient} for details
    */
   public Single<long[]> initializeNtp(List<InetAddress> resolvedNtpAddresses) {
     return Flowable.fromIterable(resolvedNtpAddresses)
