@@ -11,6 +11,7 @@ import com.instacart.library.truetime.legacy.TrueTimeRx
 import com.instacart.library.truetime.sntp.SntpImpl
 import com.instacart.library.truetime.time.TrueTime2
 import com.instacart.library.truetime.time.TrueTimeImpl
+import com.instacart.library.truetime.time.TrueTimeParameters
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -64,7 +65,15 @@ class SampleActivity : AppCompatActivity() {
                 trueTime = TrueTimeImpl(SntpImpl())
             }
 
-            binding.truetimeNew.text = "TrueTime (Coroutines): ${formatDate(trueTime.now())}"
+            val timeNow = trueTime.now(
+                with = TrueTimeParameters(
+                    connectionTimeoutInMillis = 31428,
+                    retryCountAgainstSingleIp = 100,
+                    ntpHostPool = "time.apple.com"
+                )
+            )
+
+            binding.truetimeNew.text = "TrueTime (Coroutines): ${formatDate(timeNow)}"
         }
     }
 
@@ -76,7 +85,7 @@ class SampleActivity : AppCompatActivity() {
             .withRetryCount(100)
 //            .withSharedPreferencesCache(this)
             .withLoggingEnabled(true)
-            .initializeRx("time.google.com")
+            .initializeRx("time.apple.com")
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ date ->

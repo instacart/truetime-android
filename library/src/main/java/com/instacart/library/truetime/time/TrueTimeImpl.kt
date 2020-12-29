@@ -82,8 +82,8 @@ class TrueTimeImpl(private val sntpClient: Sntp) : TrueTime2 {
         with: TrueTimeParameters,
         ipHostAddress: String,
     ): LongArray {
-        // retrying upto 50 times if necessary
-        repeat(50 - 1) {
+        // retrying upto (default 50) times if necessary
+        repeat(with.retryCountAgainstSingleIp - 1) {
             try {
                 // request Time
                 return sntpClient.requestTime(with, ipHostAddress)

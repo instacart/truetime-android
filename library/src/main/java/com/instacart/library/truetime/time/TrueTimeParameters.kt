@@ -5,11 +5,11 @@ import com.instacart.library.truetime.cache.TrueTimeCacheProvider
 data class TrueTimeParameters(
     // TODO: provide a logger interface
     val showLogs: Boolean = false,
-
+    val cacheProvider: TrueTimeCacheProvider? = null,
+    val connectionTimeoutInMillis: Int = 30_000,
     val ntpHostPool: String = "time.google.com",
+    val retryCountAgainstSingleIp: Int = 50,
     val rootDelayMax: Float = 100f,
     val rootDispersionMax: Float = 100f,
     val serverResponseDelayMax: Int = 750,
-    val connectionTimeoutInMillis: Int = 30_000,
-    val cacheProvider: TrueTimeCacheProvider? = null
 )
