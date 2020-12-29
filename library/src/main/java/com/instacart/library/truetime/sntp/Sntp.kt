@@ -9,21 +9,21 @@ interface Sntp {
      * See δ :
      * https://en.wikipedia.org/wiki/Network_Time_Protocol#Clock_synchronization_algorithm
      */
-    fun roundTripDelay(ntpTimeResult: LongArray): Long
+    fun roundTripDelay(ntpResult: LongArray): Long
 
     /**
      * See θ :
      * https://en.wikipedia.org/wiki/Network_Time_Protocol#Clock_synchronization_algorithm
      */
-    fun clockOffset(ntpTimeResult: LongArray): Long
+    fun clockOffset(ntpResult: LongArray): Long
 
     /**
-     * Time as derived from [ntpTimeResult].
-     * This is basically "True Time" at the instant [ntpTimeResult] was received
+     * Time as derived from [ntpResult].
+     * This is basically "True Time" at the instant [ntpResult] was received
      */
-    fun sntpTime(ntpTimeResult: LongArray): Long
+    fun sntpTime(ntpResult: LongArray): Long
 
-    fun deviceTime(ntpTimeResult: LongArray): Long
+    fun deviceTime(ntpResult: LongArray): Long
 
     /**
      * Sends an NTP request to the given host and processes the response.

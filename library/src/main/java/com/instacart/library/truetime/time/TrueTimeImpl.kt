@@ -21,10 +21,10 @@ class TrueTimeImpl(private val sntpClient: Sntp) : TrueTime2 {
 
     override suspend fun initialize(with: TrueTimeParameters): Date = withContext(Dispatchers.IO) {
         val ntpResult = init(with)
-        val now = Date(sntpClient.sntpTime(ntpResult))
+        val trueTimeResult = TrueTimeResult(ntpResult)
+        ttResult.set(trueTimeResult)
 
-        ttResult.set(TrueTimeResult(ntpTimeResult = ntpResult, initializeTime = now))
-        now
+        Date(trueTimeResult.timeSntp(sntpClient))
     }
 
     override fun nowSafely(): Date {
@@ -38,13 +38,7 @@ class TrueTimeImpl(private val sntpClient: Sntp) : TrueTime2 {
 
     override fun nowForced(): Date {
         if (!initialized()) throw IllegalStateException("TrueTime was not initialized successfully yet")
-
-        val ntpTimeResult = ttResult.get().ntpTimeResult
-        val savedSntpTime: Long = sntpClient.sntpTime(ntpTimeResult)
-        val savedDeviceTime: Long = sntpClient.deviceTime(ntpTimeResult)
-        val currentDeviceTime: Long = SystemClock.elapsedRealtime()
-
-        return Date(savedSntpTime + (currentDeviceTime - savedDeviceTime))
+        return ttResult.get().timeNow(sntpClient)
     }
 
     /**
@@ -107,25 +101,31 @@ class TrueTimeImpl(private val sntpClient: Sntp) : TrueTime2 {
     }
 
     private data class TrueTimeResult(
-        val ntpTimeResult: LongArray,
-        val initializeTime: Date,
+        val ntpResult: LongArray
     ) {
+        fun timeSntp(sntpClient: Sntp): Long = sntpClient.sntpTime(ntpResult)
+
+        fun timeNow(sntpClient: Sntp): Date {
+            val savedSntpTime: Long = timeSntp(sntpClient)
+            val savedDeviceTime: Long = sntpClient.deviceTime(ntpResult)
+            val currentDeviceTime: Long = SystemClock.elapsedRealtime()
+
+            return Date(savedSntpTime + (currentDeviceTime - savedDeviceTime))
+        }
+
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
             if (javaClass != other?.javaClass) return false
 
             other as TrueTimeResult
 
-            if (!ntpTimeResult.contentEquals(other.ntpTimeResult)) return false
-            if (initializeTime != other.initializeTime) return false
+            if (!ntpResult.contentEquals(other.ntpResult)) return false
 
             return true
         }
 
         override fun hashCode(): Int {
-            var result = ntpTimeResult.contentHashCode()
-            result = 31 * result + initializeTime.hashCode()
-            return result
+            return ntpResult.contentHashCode()
         }
     }
 }

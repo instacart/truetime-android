@@ -89,8 +89,8 @@ public class SntpImpl implements Sntp {
   }
 
   @Override
-  public long deviceTime(@NotNull long[] ntpTimeResult) {
-    return ntpTimeResult[RESPONSE_INDEX_RESPONSE_TICKS];
+  public long deviceTime(@NotNull long[] ntpResult) {
+    return ntpResult[RESPONSE_INDEX_RESPONSE_TICKS];
   }
 
   @NotNull
@@ -228,8 +228,6 @@ public class SntpImpl implements Sntp {
       _sntpInitialized.set(true);
       TrueLog.INSTANCE.i(TAG, "---- SNTP successful response from " + ntpHost);
 
-      // -----------------------------------------------------------------------------------
-      // TODO:
       cacheTrueTimeInfo(t);
       return t;
 
@@ -249,32 +247,7 @@ public class SntpImpl implements Sntp {
     _cachedDeviceUptime.set(deviceTime(response));
   }
 
-
-  // TODO
-  public boolean wasInitialized() {
-    return _sntpInitialized.get();
-  }
-
-  /**
-   * TODO
-   *
-   * @return time value computed from NTP server response
-   */
-  public long getCachedSntpTime() {
-    return _cachedSntpTime.get();
-  }
-
-  /**
-   * TODO
-   *
-   * @return device uptime computed at time of executing the NTP request
-   */
-  public long getCachedDeviceUptime() {
-    return _cachedDeviceUptime.get();
-  }
-
-  // -----------------------------------------------------------------------------------
-  // private helpers
+  //region private helpers
 
   /**
    * Writes NTP version as defined in RFC-1305
@@ -367,5 +340,6 @@ public class SntpImpl implements Sntp {
   private double doubleMillis(long fix) {
     return fix / 65.536D;
   }
+  //endregion
 
 }
