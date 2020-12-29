@@ -69,22 +69,28 @@ public class SntpImpl implements Sntp {
   private AtomicLong _cachedSntpTime = new AtomicLong();
   private AtomicBoolean _sntpInitialized = new AtomicBoolean(false);
 
-  /**
-   * See δ : https://en.wikipedia.org/wiki/Network_Time_Protocol#Clock_synchronization_algorithm
-   */
   @Override
-  public long getRoundTripDelay(long[] response) {
+  public long roundTripDelay(@NotNull long[] response) {
     return (response[RESPONSE_INDEX_RESPONSE_TIME] - response[RESPONSE_INDEX_ORIGINATE_TIME]) -
         (response[RESPONSE_INDEX_TRANSMIT_TIME] - response[RESPONSE_INDEX_RECEIVE_TIME]);
   }
 
-  /**
-   * See θ : https://en.wikipedia.org/wiki/Network_Time_Protocol#Clock_synchronization_algorithm
-   */
   @Override
-  public long getClockOffset(long[] response) {
+  public long clockOffset(@NotNull long[] response) {
     return ((response[RESPONSE_INDEX_RECEIVE_TIME] - response[RESPONSE_INDEX_ORIGINATE_TIME]) +
         (response[RESPONSE_INDEX_TRANSMIT_TIME] - response[RESPONSE_INDEX_RESPONSE_TIME])) / 2;
+  }
+
+  @Override
+  public long sntpTime(@NotNull long[] response) {
+    long clockOffset = clockOffset(response);
+    long responseTime = response[RESPONSE_INDEX_RESPONSE_TIME];
+    return responseTime + clockOffset;
+  }
+
+  @Override
+  public long deviceTime(@NotNull long[] ntpTimeResult) {
+    return ntpTimeResult[RESPONSE_INDEX_RESPONSE_TICKS];
   }
 
   @NotNull
@@ -240,15 +246,9 @@ public class SntpImpl implements Sntp {
   // TODO
   public void cacheTrueTimeInfo(long[] response) {
     _cachedSntpTime.set(sntpTime(response));
-    _cachedDeviceUptime.set(response[RESPONSE_INDEX_RESPONSE_TICKS]);
+    _cachedDeviceUptime.set(deviceTime(response));
   }
 
-  @Override
-  public long sntpTime(long[] response) {
-    long clockOffset = getClockOffset(response);
-    long responseTime = response[RESPONSE_INDEX_RESPONSE_TIME];
-    return responseTime + clockOffset;
-  }
 
   // TODO
   public boolean wasInitialized() {

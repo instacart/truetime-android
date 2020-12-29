@@ -4,17 +4,26 @@ import com.instacart.library.truetime.time.TrueTimeParameters
 import java.io.IOException
 
 interface Sntp {
+
     /**
      * See δ :
      * https://en.wikipedia.org/wiki/Network_Time_Protocol#Clock_synchronization_algorithm
      */
-    fun getRoundTripDelay(ntpTimeResult: LongArray): Long
+    fun roundTripDelay(ntpTimeResult: LongArray): Long
 
     /**
      * See θ :
      * https://en.wikipedia.org/wiki/Network_Time_Protocol#Clock_synchronization_algorithm
      */
-    fun getClockOffset(ntpTimeResult: LongArray): Long
+    fun clockOffset(ntpTimeResult: LongArray): Long
+
+    /**
+     * Time as derived from [ntpTimeResult].
+     * This is basically "True Time" at the instant [ntpTimeResult] was received
+     */
+    fun sntpTime(ntpTimeResult: LongArray): Long
+
+    fun deviceTime(ntpTimeResult: LongArray): Long
 
     /**
      * Sends an NTP request to the given host and processes the response.
@@ -42,5 +51,4 @@ interface Sntp {
         timeoutInMillis: Int,
     ): LongArray
 
-    fun sntpTime(ntpTimeResult: LongArray): Long
 }
