@@ -5,6 +5,7 @@ import com.instacart.library.truetime.cache.TrueTimeCacheProvider
 data class TrueTimeParameters(
     // TODO: log provider
     val showLogs: Boolean = false,
+
     // TODO: cache provider
     val cacheProvider: TrueTimeCacheProvider? = null,
 

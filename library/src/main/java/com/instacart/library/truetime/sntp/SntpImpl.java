@@ -26,8 +26,6 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicLong;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -64,10 +62,6 @@ public class SntpImpl implements Sntp {
 
   // 70 years plus 17 leap days
   private static final long OFFSET_1900_TO_1970 = ((365L * 70L) + 17L) * 24L * 60L * 60L;
-
-  private AtomicLong _cachedDeviceUptime = new AtomicLong();
-  private AtomicLong _cachedSntpTime = new AtomicLong();
-  private AtomicBoolean _sntpInitialized = new AtomicBoolean(false);
 
   @Override
   public long roundTripDelay(@NotNull long[] response) {
@@ -225,10 +219,8 @@ public class SntpImpl implements Sntp {
             timeElapsedSinceRequest);
       }
 
-      _sntpInitialized.set(true);
       TrueLog.INSTANCE.i(TAG, "---- SNTP successful response from " + ntpHost);
 
-      cacheTrueTimeInfo(t);
       return t;
 
     } catch (Exception e) {
@@ -239,12 +231,6 @@ public class SntpImpl implements Sntp {
         socket.close();
       }
     }
-  }
-
-  // TODO
-  public void cacheTrueTimeInfo(long[] response) {
-    _cachedSntpTime.set(sntpTime(response));
-    _cachedDeviceUptime.set(deviceTime(response));
   }
 
   //region private helpers
