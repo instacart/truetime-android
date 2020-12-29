@@ -1,91 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_main"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.instacart.library.sample.SampleActivity">
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:id="@+id/activity_main"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  tools:context="com.instacart.library.sample.SampleActivity">
 
-    <TextView
-        android:id="@+id/timePST"
+  <Button
+    android:id="@+id/btn_refresh"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/activity_vertical_margin"
 
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    android:text="Refresh"
 
-        android:text="PST time goes here"
-        android:textSize="20dp"
+    app:layout_constraintLeft_toLeftOf="@+id/activity_main"
+    app:layout_constraintRight_toRightOf="@+id/activity_main"
+    app:layout_constraintTop_toBottomOf="@+id/truetime_new" />
 
-        app:layout_constraintBottom_toBottomOf="@+id/activity_main"
-        app:layout_constraintLeft_toLeftOf="@+id/activity_main"
-        app:layout_constraintRight_toRightOf="@+id/activity_main"
-        app:layout_constraintTop_toTopOf="@+id/activity_main"
-        tools:layout_constraintBottom_creator="1"
-        tools:layout_constraintLeft_creator="1"
-        tools:layout_constraintRight_creator="1"
-        tools:layout_constraintTop_creator="1"/>
+  <TextView
+    android:id="@+id/truetime_legacy"
 
-    <TextView
-        android:id="@+id/timeGMT"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/activity_vertical_margin"
 
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    android:text="TrueTime (Rx) : "
+    android:textSize="20dp"
 
-        android:layout_marginTop="16dp"
-        android:text="GMT time goes here"
+    app:layout_constraintStart_toStartOf="@+id/activity_main"
+    app:layout_constraintTop_toBottomOf="@+id/device_time" />
 
-        android:textSize="20dp"
-        app:layout_constraintRight_toRightOf="@+id/timePST"
-        app:layout_constraintTop_toBottomOf="@+id/timePST"
-        tools:layout_constraintRight_creator="1"
-        tools:layout_constraintTop_creator="1"/>
 
-    <TextView
-        android:id="@+id/timeDeviceTime"
+  <TextView
+    android:id="@+id/truetime_new"
 
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/activity_vertical_margin"
 
-        android:text="Device time goes here"
-        android:textSize="20dp"
+    android:text="TrueTime (Coroutines): "
+    android:textSize="20dp"
 
-        app:layout_constraintBottom_toTopOf="@+id/timePST"
-        app:layout_constraintHorizontal_bias="0.47"
-        app:layout_constraintLeft_toLeftOf="@+id/activity_main"
-        app:layout_constraintRight_toRightOf="@+id/activity_main"
-        tools:layout_constraintBottom_creator="1"
-        tools:layout_constraintLeft_creator="1"
-        tools:layout_constraintRight_creator="1"/>
+    app:layout_constraintStart_toStartOf="@+id/activity_main"
+    app:layout_constraintTop_toBottomOf="@+id/truetime_legacy" />
 
-    <Button
-        android:id="@+id/refreshBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
 
-        android:layout_marginTop="16dp"
-        android:text="Get Time NOW"
-        app:layout_constraintLeft_toLeftOf="@+id/activity_main"
-        app:layout_constraintRight_toRightOf="@+id/activity_main"
-        app:layout_constraintTop_toBottomOf="@+id/timeGMT"
-        tools:layout_constraintLeft_creator="1"
-        tools:layout_constraintRight_creator="1"
-        tools:layout_constraintTop_creator="1"/>
+  <TextView
+    android:id="@+id/device_time"
 
-    <Button
-        android:id="@+id/nonRxBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/activity_vertical_margin"
 
-        android:layout_marginTop="16dp"
-        android:text="Non Rx Test"
-        app:layout_constraintLeft_toLeftOf="@+id/activity_main"
-        app:layout_constraintRight_toRightOf="@+id/activity_main"
-        app:layout_constraintTop_toBottomOf="@+id/refreshBtn"
-        tools:layout_constraintLeft_creator="1"
-        tools:layout_constraintRight_creator="1"
-        tools:layout_constraintTop_creator="1"/>
+    android:text="Device Time:"
+    android:textSize="20dp"
+
+    app:layout_constraintStart_toStartOf="@+id/activity_main"
+    app:layout_constraintTop_toTopOf="@+id/activity_main" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,67 +1,97 @@
 package com.instacart.library.sample
 
+import android.annotation.SuppressLint
+import android.os.Build
 import android.os.Bundle
-import android.view.View
-import android.widget.Toast
+import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import com.instacart.library.truetime.legacy.TrueTime
-import kotlinx.android.synthetic.main.activity_sample.*
-import java.text.SimpleDateFormat
+import com.instacart.library.sample.databinding.ActivitySampleBinding
+import com.instacart.library.truetime.legacy.TrueTimeRx
+import com.instacart.library.truetime.sntp.SntpImpl
+import com.instacart.library.truetime.time.TrueTime2
+import com.instacart.library.truetime.time.TrueTimeImpl
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import java.util.Date
-import java.util.Locale
-import java.util.TimeZone
 
+@SuppressLint("SetTextI18n")
+@RequiresApi(Build.VERSION_CODES.O)
 class SampleActivity : AppCompatActivity() {
 
-    private val tt2 = App.trueTime2 // dirty DI
+    private lateinit var binding: ActivitySampleBinding
+    private val disposables = CompositeDisposable()
+
+    private lateinit var trueTime: TrueTime2
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_sample)
+        binding = ActivitySampleBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        supportActionBar?.title = "TrueTime"
+        supportActionBar?.title = "True Time Demo"
 
-        refreshBtn.isEnabled = TrueTime.isInitialized()
-        refreshBtn.setOnClickListener {
-            updateTime()
+        binding.btnRefresh.setOnClickListener { refreshTime() }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        disposables.clear()
+    }
+
+    private fun refreshTime() {
+        binding.deviceTime.text = "Device Time: (loading...)"
+
+        kickOffTruetimeCoroutines()
+        kickOffTrueTimeRx()
+
+        binding.deviceTime.text = "Device Time: ${formatDate(Date())}"
+    }
+
+    private fun kickOffTruetimeCoroutines() {
+        binding.truetimeNew.text = "TrueTime (Coroutines): (loading...)"
+
+        CoroutineScope(Dispatchers.Main.immediate).launch {
+
+            if (!::trueTime.isInitialized) {
+                trueTime = TrueTimeImpl(SntpImpl())
+            }
+
+            binding.truetimeNew.text = "TrueTime (Coroutines): ${formatDate(trueTime.now())}"
         }
-        nonRxBtn.visibility = View.GONE
     }
 
-    private fun updateTime() {
-        if (!TrueTime.isInitialized()) {
-            Toast.makeText(this, "Sorry TrueTime not yet initialized. Trying again.", Toast.LENGTH_SHORT)
-                .show()
-            return
-        }
+    private fun kickOffTrueTimeRx() {
+        binding.truetimeLegacy.text = "TrueTime (Rx) : (loading...)"
 
-        testing()
+        val d = TrueTimeRx()
+            .withConnectionTimeout(31428)
+            .withRetryCount(100)
+//            .withSharedPreferencesCache(this)
+            .withLoggingEnabled(true)
+            .initializeRx("time.google.com")
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({ date ->
+                binding.truetimeLegacy.text = "TrueTime (Rx) : ${formatDate(date)}"
+            }, {
+                Log.e("Demo", "something went wrong when trying to initializeRx TrueTime", it)
+            })
 
-        val trueTime = TrueTime.now()
-        val deviceTime = Date()
-
-        timeGMT.text = getString(
-            R.string.tt_time_gmt,
-            formatDate(trueTime, "yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("GMT"))
-        )
-        timePST.text = getString(
-            R.string.tt_time_pst,
-            formatDate(trueTime, "yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("GMT-07:00"))
-        )
-        timeDeviceTime.text = getString(
-            R.string.tt_time_device,
-            formatDate(deviceTime, "yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone("GMT-07:00"))
-        )
+        disposables.add(d)
     }
 
-    private fun testing() {
-        Toast.makeText(this, "tt2 ${tt2.nowSafely()}", Toast.LENGTH_SHORT)
-            .show()
-    }
-
-    private fun formatDate(date: Date, pattern: String, timeZone: TimeZone): String {
-        val format = SimpleDateFormat(pattern, Locale.ENGLISH)
-        format.timeZone = timeZone
-        return format.format(date)
+    private fun formatDate(date: Date): String {
+        return Instant
+            .ofEpochMilli(date.time)
+            .atZone(ZoneId.of("America/Los_Angeles"))
+            .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
     }
 }
