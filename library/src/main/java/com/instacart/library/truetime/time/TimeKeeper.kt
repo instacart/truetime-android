@@ -5,6 +5,8 @@ import com.instacart.library.truetime.sntp.Sntp
 import java.util.Date
 import java.util.concurrent.atomic.AtomicReference
 
+// TODO: move android dependency to separate package
+
 interface TimeKeeper {
 
     fun hasTheTime(): Boolean

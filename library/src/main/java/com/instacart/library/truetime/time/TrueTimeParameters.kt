@@ -1,14 +1,12 @@
 package com.instacart.library.truetime.time
 
 import com.instacart.library.truetime.cache.TrueTimeCacheProvider
+import com.instacart.library.truetime.log.Logger
 
 data class TrueTimeParameters(
-    // TODO: log provider
-    val showLogs: Boolean = false,
 
     // TODO: cache provider
     val cacheProvider: TrueTimeCacheProvider? = null,
-
 
     val connectionTimeoutInMillis: Int = 30_000,
     val ntpHostPool: String = "time.google.com",

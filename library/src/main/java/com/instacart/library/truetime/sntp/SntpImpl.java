@@ -19,8 +19,8 @@ package com.instacart.library.truetime.sntp;
 
 import android.os.SystemClock;
 import com.instacart.library.truetime.InvalidNtpServerResponseException;
-import com.instacart.library.truetime.legacy.SntpClient;
-import com.instacart.library.truetime.legacy.TrueLog;
+import com.instacart.library.truetime.log.Logger;
+import com.instacart.library.truetime.log.LoggerNoOp;
 import com.instacart.library.truetime.time.TrueTimeParameters;
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -46,7 +46,7 @@ public class SntpImpl implements Sntp {
   public static final int RESPONSE_INDEX_RESPONSE_TICKS = 7;
   public static final int RESPONSE_INDEX_SIZE = 8;
 
-  private static final String TAG = SntpClient.class.getSimpleName();
+  private static final String TAG = "SntpImpl";
 
   private static final int NTP_PORT = 123;
   private static final int NTP_MODE = 3;
@@ -62,6 +62,16 @@ public class SntpImpl implements Sntp {
 
   // 70 years plus 17 leap days
   private static final long OFFSET_1900_TO_1970 = ((365L * 70L) + 17L) * 24L * 60L * 60L;
+
+  private final Logger logger;
+
+  public SntpImpl() {
+    this.logger = LoggerNoOp.INSTANCE;
+  }
+
+  public SntpImpl(Logger logger) {
+    this.logger = logger;
+  }
 
   @Override
   public long roundTripDelay(@NotNull long[] response) {
@@ -132,6 +142,8 @@ public class SntpImpl implements Sntp {
       // get current time and write it to the request packet
 
       long requestTime = System.currentTimeMillis();
+
+      // TODO: move android dependency to separate package
       long requestTicks = SystemClock.elapsedRealtime();
 
       writeTimeStamp(buffer, INDEX_TRANSMIT_TIME, requestTime);
@@ -219,12 +231,12 @@ public class SntpImpl implements Sntp {
             timeElapsedSinceRequest);
       }
 
-      TrueLog.INSTANCE.i(TAG, "---- SNTP successful response from " + ntpHost);
+      logger.i(TAG, "---- SNTP successful response from " + ntpHost);
 
       return t;
 
     } catch (Exception e) {
-      TrueLog.INSTANCE.d(TAG, "---- SNTP request failed for " + ntpHost);
+      logger.d(TAG, "---- SNTP request failed for " + ntpHost);
       throw e;
     } finally {
       if (socket != null) {
