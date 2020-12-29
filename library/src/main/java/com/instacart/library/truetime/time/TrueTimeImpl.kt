@@ -107,9 +107,25 @@ class TrueTimeImpl(private val sntpClient: Sntp) : TrueTime2 {
     }
 
     private data class TrueTimeResult(
-
         val ntpTimeResult: LongArray,
-
         val initializeTime: Date,
-    )
+    ) {
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (javaClass != other?.javaClass) return false
+
+            other as TrueTimeResult
+
+            if (!ntpTimeResult.contentEquals(other.ntpTimeResult)) return false
+            if (initializeTime != other.initializeTime) return false
+
+            return true
+        }
+
+        override fun hashCode(): Int {
+            var result = ntpTimeResult.contentHashCode()
+            result = 31 * result + initializeTime.hashCode()
+            return result
+        }
+    }
 }

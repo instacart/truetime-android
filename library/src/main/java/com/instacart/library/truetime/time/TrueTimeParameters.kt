@@ -3,9 +3,12 @@ package com.instacart.library.truetime.time
 import com.instacart.library.truetime.cache.TrueTimeCacheProvider
 
 data class TrueTimeParameters(
-    // TODO: provide a logger interface
+    // TODO: log provider
     val showLogs: Boolean = false,
+    // TODO: cache provider
     val cacheProvider: TrueTimeCacheProvider? = null,
+
+
     val connectionTimeoutInMillis: Int = 30_000,
     val ntpHostPool: String = "time.google.com",
     val retryCountAgainstSingleIp: Int = 50,
