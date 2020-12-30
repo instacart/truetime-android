@@ -1,8 +1,6 @@
 package com.instacart.library.truetime.sntp
 
-import com.instacart.library.truetime.time.TrueTimeParameters
 import java.io.IOException
-import java.util.Date
 
 interface Sntp {
 
@@ -19,30 +17,20 @@ interface Sntp {
     fun clockOffset(ntpResult: LongArray): Long
 
     /**
-     * Time as derived from [ntpResult].
-     * This is basically "True Time" at the instant [ntpResult] was received
+     * @return NTP/"true" time when NTP call was made
      */
-    fun sntpTime(ntpResult: LongArray): Long
+    fun trueTime(ntpResult: LongArray): Long
 
-    fun deviceTime(ntpResult: LongArray): Long
+    /**
+     * @return milliseconds since boot (including time spent in sleep) when NTP call was made
+     */
+    fun timeSinceBoot(ntpResult: LongArray): Long
 
     /**
      * Sends an NTP request to the given host and processes the response.
      *
      * @param ntpHostAddress    host name of the server.
      */
-    @Throws(IOException::class)
-    fun requestTime(
-        with: TrueTimeParameters,
-        ntpHostAddress: String? = null,
-    ): LongArray = requestTime(
-        ntpHostAddress = ntpHostAddress ?: with.ntpHostPool,
-        rootDelayMax = with.rootDelayMax,
-        rootDispersionMax = with.rootDispersionMax,
-        serverResponseDelayMax = with.serverResponseDelayMax,
-        with.connectionTimeoutInMillis
-    )
-
     @Throws(IOException::class)
     fun requestTime(
         ntpHostAddress: String,

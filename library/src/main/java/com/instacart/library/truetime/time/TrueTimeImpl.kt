@@ -7,14 +7,15 @@ import com.instacart.library.truetime.sntp.SntpImpl
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.net.InetAddress
+import java.net.UnknownHostException
 import java.util.Date
 
 class TrueTimeImpl(
     private val logger: Logger = LoggerNoOp,
-    private val sntpClient: Sntp = SntpImpl(logger),
 ) : TrueTime2 {
 
-    private val timeKeeper: TimeKeeper = TimeKeeperImpl(sntpClient)
+    private val sntp: Sntp = SntpImpl(logger)
+    private val timeKeeper = TimeKeeper(sntp)
 
     companion object {
         private const val TAG: String = "TrueTimeImpl"
@@ -74,6 +75,7 @@ class TrueTimeImpl(
     /**
      * resolve ntp host pool address to single IPs
      */
+    @Throws(UnknownHostException::class)
     private fun resolveNtpHostToIPs(ntpHost: String): List<String> {
         logger.v(TAG, "-- resolving ntpHost : $ntpHost")
         return InetAddress.getAllByName(ntpHost).map { it.hostAddress }
@@ -87,7 +89,7 @@ class TrueTimeImpl(
         repeat(with.retryCountAgainstSingleIp - 1) {
             try {
                 // request Time
-                return sntpClient.requestTime(with, ipHostAddress)
+                return sntpRequest(with, ipHostAddress)
             } catch (e: Exception) {
                 logger.e(TAG, "------ Error requesting time", e)
             }
@@ -95,16 +97,27 @@ class TrueTimeImpl(
 
         // last attempt
         logger.i(TAG, "---- last attempt for $ipHostAddress")
-        return sntpClient.requestTime(with, ipHostAddress)
+        return sntpRequest(with, ipHostAddress)
     }
 
+    private fun sntpRequest(
+        with: TrueTimeParameters,
+        ipHostAddress: String,
+    ): LongArray = sntp.requestTime(
+        ntpHostAddress = ipHostAddress,
+        rootDelayMax = with.rootDelayMax,
+        rootDispersionMax = with.rootDispersionMax,
+        serverResponseDelayMax = with.serverResponseDelayMax,
+        with.connectionTimeoutInMillis
+    )
+
     private fun List<LongArray>.filterLeastRoundTripDelay(): LongArray {
-        return minByOrNull { sntpClient.roundTripDelay(it) }
+        return minByOrNull { sntp.roundTripDelay(it) }
             ?: throw IllegalStateException("Could not find any results from requestingTime")
     }
 
     private fun List<LongArray>.filterMedianClockOffset(): LongArray {
-        val sortedList = this.sortedBy { sntpClient.clockOffset(it) }
+        val sortedList = this.sortedBy { sntp.clockOffset(it) }
         return sortedList[sortedList.size / 2]
     }
 }

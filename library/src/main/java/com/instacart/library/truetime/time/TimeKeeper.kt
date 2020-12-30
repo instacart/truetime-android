@@ -7,30 +7,25 @@ import java.util.concurrent.atomic.AtomicReference
 
 // TODO: move android dependency to separate package
 
-interface TimeKeeper {
-
-    fun hasTheTime(): Boolean
-
-    fun save(ntpResult: LongArray)
-
-    fun now(): Date
-}
-
-class TimeKeeperImpl(
+/**
+ * Helper class that stores the NTP [LongArray] result
+ * and derives true time from that result
+ */
+internal class TimeKeeper(
     private val sntp: Sntp
-): TimeKeeper {
+) {
     private var ttResult: AtomicReference<LongArray> = AtomicReference()
 
-    override fun hasTheTime(): Boolean = ttResult.get() != null
+    fun hasTheTime(): Boolean = ttResult.get() != null
 
-    override fun save(ntpResult: LongArray) = ttResult.set(ntpResult)
+    fun save(ntpResult: LongArray) = ttResult.set(ntpResult)
 
-    override fun now(): Date {
+    fun now(): Date {
         val ntpResult = ttResult.get()
-        val savedSntpTime: Long = sntp.sntpTime(ntpResult)
-        val savedDeviceTime: Long = sntp.deviceTime(ntpResult)
-        val currentDeviceTime: Long = SystemClock.elapsedRealtime()
+        val savedSntpTime: Long = sntp.trueTime(ntpResult)
+        val timeSinceBoot: Long = sntp.timeSinceBoot(ntpResult)
+        val currentTimeSinceBoot: Long = SystemClock.elapsedRealtime()
 
-        return Date(savedSntpTime + (currentDeviceTime - savedDeviceTime))
+        return Date(savedSntpTime + (currentTimeSinceBoot - timeSinceBoot))
     }
 }

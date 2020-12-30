@@ -21,13 +21,11 @@ import android.os.SystemClock;
 import com.instacart.library.truetime.InvalidNtpServerResponseException;
 import com.instacart.library.truetime.log.Logger;
 import com.instacart.library.truetime.log.LoggerNoOp;
-import com.instacart.library.truetime.time.TrueTimeParameters;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Simple SNTP client class for retrieving network time. Original source: https://android.googlesource.com/platform/frameworks/base/+/master/core/java/android/net/SntpClient.java
@@ -86,32 +84,15 @@ public class SntpImpl implements Sntp {
   }
 
   @Override
-  public long sntpTime(@NotNull long[] response) {
+  public long trueTime(@NotNull long[] response) {
     long clockOffset = clockOffset(response);
     long responseTime = response[RESPONSE_INDEX_RESPONSE_TIME];
     return responseTime + clockOffset;
   }
 
   @Override
-  public long deviceTime(@NotNull long[] ntpResult) {
+  public long timeSinceBoot(@NotNull long[] ntpResult) {
     return ntpResult[RESPONSE_INDEX_RESPONSE_TICKS];
-  }
-
-  @NotNull
-  @Override
-  public long[] requestTime(@NotNull TrueTimeParameters with, @Nullable String ntpHostAddress) throws IOException {
-    String hostAdd = with.getNtpHostPool();
-    if (ntpHostAddress != null || !ntpHostAddress.isEmpty()) {
-      hostAdd = ntpHostAddress;
-    }
-
-    return requestTime(
-        hostAdd,
-        with.getRootDelayMax(),
-        with.getRootDispersionMax(),
-        with.getServerResponseDelayMax(),
-        with.getConnectionTimeoutInMillis()
-    );
   }
 
   /**
@@ -120,7 +101,9 @@ public class SntpImpl implements Sntp {
    * @param ntpHost host name of the server.
    */
   @NotNull
-  public synchronized long[] requestTime(String ntpHost,
+  @Override
+  public synchronized long[] requestTime(
+      String ntpHost,
       float rootDelayMax,
       float rootDispersionMax,
       int serverResponseDelayMax,
