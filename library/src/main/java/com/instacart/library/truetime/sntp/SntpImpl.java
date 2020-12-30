@@ -231,7 +231,7 @@ public class SntpImpl implements Sntp {
             timeElapsedSinceRequest);
       }
 
-      logger.i(TAG, "---- SNTP successful response from " + ntpHost);
+      logger.v(TAG, "---- SNTP successful response from " + ntpHost);
 
       return t;
 

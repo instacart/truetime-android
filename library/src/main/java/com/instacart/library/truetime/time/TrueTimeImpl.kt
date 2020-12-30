@@ -75,7 +75,7 @@ class TrueTimeImpl(
      * resolve ntp host pool address to single IPs
      */
     private fun resolveNtpHostToIPs(ntpHost: String): List<String> {
-        logger.d(TAG, "-- resolving ntpHost : $ntpHost")
+        logger.v(TAG, "-- resolving ntpHost : $ntpHost")
         return InetAddress.getAllByName(ntpHost).map { it.hostAddress }
     }
 
@@ -94,6 +94,7 @@ class TrueTimeImpl(
         }
 
         // last attempt
+        logger.i(TAG, "---- last attempt for $ipHostAddress")
         return sntpClient.requestTime(with, ipHostAddress)
     }
 
