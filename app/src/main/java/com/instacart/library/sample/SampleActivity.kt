@@ -9,7 +9,6 @@ import androidx.appcompat.app.AppCompatActivity
 import com.instacart.library.sample.databinding.ActivitySampleBinding
 import com.instacart.library.truetime.legacy.TrueTimeRx
 import com.instacart.library.truetime.log.Logger
-import com.instacart.library.truetime.sntp.SntpImpl
 import com.instacart.library.truetime.time.TrueTime2
 import com.instacart.library.truetime.time.TrueTimeImpl
 import com.instacart.library.truetime.time.TrueTimeParameters
@@ -18,11 +17,16 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Date
+import java.util.Timer
+import kotlin.concurrent.schedule
+import kotlin.concurrent.timerTask
 
 @SuppressLint("SetTextI18n")
 @RequiresApi(Build.VERSION_CODES.O)
@@ -60,22 +64,28 @@ class SampleActivity : AppCompatActivity() {
     private fun kickOffTruetimeCoroutines() {
         binding.truetimeNew.text = "TrueTime (Coroutines): (loading...)"
 
-        CoroutineScope(Dispatchers.Main.immediate).launch {
+        val mainDispatcherScope = CoroutineScope(Dispatchers.Main.immediate)
 
-            if (!::trueTime.isInitialized) {
-                trueTime = TrueTimeImpl(logger = AndroidLogger)
-            }
-
-            val timeNow = trueTime.now(
-                with = TrueTimeParameters(
-                    connectionTimeoutInMillis = 31428,
-                    retryCountAgainstSingleIp = 100,
-                    ntpHostPool = "time.apple.com"
-                )
-            )
-
-            binding.truetimeNew.text = "TrueTime (Coroutines): ${formatDate(timeNow)}"
+        if (!::trueTime.isInitialized) {
+            trueTime = TrueTimeImpl(logger = AndroidLogger)
         }
+
+        val with = TrueTimeParameters(
+            connectionTimeoutInMillis = 31428,
+            retryCountAgainstSingleIp = 5,
+            ntpHostPool = "pool.ntp.org",
+            syncIntervalInMillis = 3_000
+        )
+
+        mainDispatcherScope.launch {
+            trueTime.sync(with)
+        }
+
+        binding.truetimeNew.text = "TrueTime (Coroutines): ${formatDate(trueTime.nowSafely())}"
+
+//        Timer("Kill Sync Job", false).schedule(12_000) {
+//            job.cancel()
+//        }
     }
 
     private fun kickOffTrueTimeRx() {
@@ -85,8 +95,8 @@ class SampleActivity : AppCompatActivity() {
             .withConnectionTimeout(31428)
             .withRetryCount(100)
 //            .withSharedPreferencesCache(this)
-            .withLoggingEnabled(true)
-            .initializeRx("time.apple.com")
+            .withLoggingEnabled(false)
+            .initializeRx("pool.ntp.org")
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ date ->
@@ -104,7 +114,6 @@ class SampleActivity : AppCompatActivity() {
             .atZone(ZoneId.of("America/Los_Angeles"))
             .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
     }
-
 
     object AndroidLogger : Logger {
         override fun v(tag: String, msg: String) {

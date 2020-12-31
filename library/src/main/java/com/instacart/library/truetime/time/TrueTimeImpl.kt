@@ -5,6 +5,9 @@ import com.instacart.library.truetime.log.LoggerNoOp
 import com.instacart.library.truetime.sntp.Sntp
 import com.instacart.library.truetime.sntp.SntpImpl
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.net.InetAddress
 import java.net.UnknownHostException
@@ -37,7 +40,7 @@ class TrueTimeImpl(
             logger.v(TAG, "TimeKeeper has the time")
             nowForced()
         } else {
-            logger.v(TAG, "TimeKeeper does NOT have time: returning device time safely")
+            logger.d(TAG, "TimeKeeper does NOT have time: returning device time safely")
             Date()
         }
     }
@@ -47,6 +50,18 @@ class TrueTimeImpl(
         logger.v(TAG, "returning Time now")
         return timeKeeper.now()
     }
+
+    override suspend fun sync(with: TrueTimeParameters): Job = withContext(Dispatchers.IO) {
+        launch {
+            while (true) {
+                init(with)
+                delay(with.syncIntervalInMillis)
+                logger.v(TAG, "- starting next resync")
+            }
+        }
+    }
+
+    //region private helpers
 
     /**
      * Initialize TrueTime with an ntp pool server address
@@ -89,9 +104,10 @@ class TrueTimeImpl(
         repeat(with.retryCountAgainstSingleIp - 1) {
             try {
                 // request Time
+                logger.v(TAG, "------ requesting SNTP time")
                 return sntpRequest(with, ipHostAddress)
             } catch (e: Exception) {
-                logger.e(TAG, "------ Error requesting time", e)
+                logger.e(TAG, "------ Error requesting SNTP time", e)
             }
         }
 
@@ -120,4 +136,6 @@ class TrueTimeImpl(
         val sortedList = this.sortedBy { sntp.clockOffset(it) }
         return sortedList[sortedList.size / 2]
     }
+
+    //endregion
 }

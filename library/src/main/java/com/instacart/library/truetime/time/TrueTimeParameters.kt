@@ -13,4 +13,5 @@ data class TrueTimeParameters(
     val rootDelayMax: Float = 100f,
     val rootDispersionMax: Float = 100f,
     val serverResponseDelayMax: Int = 750,
+    val syncIntervalInMillis: Long = 3600_000, // re-sync every 1 hour by default
 )

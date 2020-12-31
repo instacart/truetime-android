@@ -1,5 +1,7 @@
 package com.instacart.library.truetime.time
 
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import java.util.Date
 
 interface TrueTime2 {
@@ -17,6 +19,8 @@ interface TrueTime2 {
      */
     @Throws(IllegalStateException::class)
     fun nowForced(): Date
+
+    suspend fun sync(with: TrueTimeParameters): Job
 
     /**
      * return the [Date] now if [TrueTime2] initialized
