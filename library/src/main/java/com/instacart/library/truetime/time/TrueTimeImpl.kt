@@ -26,13 +26,13 @@ class TrueTimeImpl(
 
     override fun initialized(): Boolean = timeKeeper.hasTheTime()
 
-    override suspend fun initialize(with: TrueTimeParameters): Date = withContext(Dispatchers.IO) {
+    override fun initialize(with: TrueTimeParameters): Date {
         logger.v(TAG, "- initializing TrueTime")
         val ntpResult = init(with)
         logger.v(TAG, "- saving TrueTime NTP result")
         timeKeeper.save(ntpResult = ntpResult)
         logger.v(TAG, "- returning Time now")
-        timeKeeper.now()
+        return timeKeeper.now()
     }
 
     override fun nowSafely(): Date {
@@ -54,7 +54,7 @@ class TrueTimeImpl(
     override suspend fun sync(with: TrueTimeParameters): Job = withContext(Dispatchers.IO) {
         launch {
             while (true) {
-                init(with)
+                initialize(with)
                 delay(with.syncIntervalInMillis)
                 logger.v(TAG, "- starting next resync")
             }
