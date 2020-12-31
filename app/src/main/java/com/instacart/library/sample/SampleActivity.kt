@@ -72,9 +72,9 @@ class SampleActivity : AppCompatActivity() {
 
         val with = TrueTimeParameters(
             connectionTimeoutInMillis = 31428,
-            retryCountAgainstSingleIp = 5,
+            retryCountAgainstSingleIp = 3,
             ntpHostPool = "pool.ntp.org",
-            syncIntervalInMillis = 3_000
+            syncIntervalInMillis = 1_000
         )
 
         mainDispatcherScope.launch {
@@ -133,7 +133,7 @@ class SampleActivity : AppCompatActivity() {
         }
 
         override fun e(tag: String, msg: String, t: Throwable?) {
-            Log.e(tag, msg, t)
+            Log.e(tag, "$msg ${t?.message}", t)
         }
     }
 }

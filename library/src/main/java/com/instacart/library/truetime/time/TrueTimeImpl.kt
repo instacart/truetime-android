@@ -26,6 +26,20 @@ class TrueTimeImpl(
 
     override fun initialized(): Boolean = timeKeeper.hasTheTime()
 
+    override suspend fun sync(with: TrueTimeParameters): Job = withContext(Dispatchers.IO) {
+        launch {
+            while (true) {
+                try {
+                    initialize(with)
+                } catch (e: Exception) {
+                    logger.e(TAG, "- TrueTime initialization failed", e)
+                }
+                delay(with.syncIntervalInMillis)
+                logger.v(TAG, "- starting next resync")
+            }
+        }
+    }
+
     override fun initialize(with: TrueTimeParameters): Date {
         logger.v(TAG, "- initializing TrueTime")
         val ntpResult = init(with)
@@ -51,15 +65,6 @@ class TrueTimeImpl(
         return timeKeeper.now()
     }
 
-    override suspend fun sync(with: TrueTimeParameters): Job = withContext(Dispatchers.IO) {
-        launch {
-            while (true) {
-                initialize(with)
-                delay(with.syncIntervalInMillis)
-                logger.v(TAG, "- starting next resync")
-            }
-        }
-    }
 
     //region private helpers
 
