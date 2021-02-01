@@ -21,8 +21,18 @@ class SharedPreferenceCacheImpl implements CacheInterface {
     }
 
     @Override
+    public void put(String key, String value) {
+        _sharedPreferences.edit().putString(key, value).apply();
+    }
+
+    @Override
     public long get(String key, long defaultValue) {
         return _sharedPreferences.getLong(key, defaultValue);
+    }
+
+    @Override
+    public String get(String key, String defaultValue) {
+        return _sharedPreferences.getString(key, defaultValue);
     }
 
     @Override
