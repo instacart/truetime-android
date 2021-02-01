@@ -27,6 +27,9 @@ import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Simple SNTP client class for retrieving network time.
+ * Original source: https://android.googlesource.com/platform/frameworks/base/+/master/core/java/android/net/SntpClient.java
+ *
+ * Intentionally keeping this Java for easier diffing and keeping up to date with platform
  */
 public class SntpClient {
 
@@ -195,7 +198,7 @@ public class SntpClient {
             }
 
             _sntpInitialized.set(true);
-            TrueLog.i(TAG, "---- SNTP successful response from " + ntpHost);
+            TrueLog.INSTANCE.i(TAG, "---- SNTP successful response from " + ntpHost);
 
             // -----------------------------------------------------------------------------------
             // TODO:
@@ -203,7 +206,7 @@ public class SntpClient {
             return t;
 
         } catch (Exception e) {
-            TrueLog.d(TAG, "---- SNTP request failed for " + ntpHost);
+            TrueLog.INSTANCE.d(TAG, "---- SNTP request failed for " + ntpHost);
             throw e;
         } finally {
             if (socket != null) {
