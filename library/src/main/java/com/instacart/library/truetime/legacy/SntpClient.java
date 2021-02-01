@@ -1,4 +1,4 @@
-package com.instacart.library.truetime;
+package com.instacart.library.truetime.legacy;
 
 /*
  * Original work Copyright (C) 2008 The Android Open Source Project
@@ -18,6 +18,7 @@ package com.instacart.library.truetime;
  */
 
 import android.os.SystemClock;
+import com.instacart.library.truetime.InvalidNtpServerResponseException;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -67,7 +68,7 @@ public class SntpClient {
      */
     public static long getRoundTripDelay(long[] response) {
         return (response[RESPONSE_INDEX_RESPONSE_TIME] - response[RESPONSE_INDEX_ORIGINATE_TIME]) -
-               (response[RESPONSE_INDEX_TRANSMIT_TIME] - response[RESPONSE_INDEX_RECEIVE_TIME]);
+            (response[RESPONSE_INDEX_TRANSMIT_TIME] - response[RESPONSE_INDEX_RECEIVE_TIME]);
     }
 
     /**
@@ -76,7 +77,7 @@ public class SntpClient {
      */
     public static long getClockOffset(long[] response) {
         return ((response[RESPONSE_INDEX_RECEIVE_TIME] - response[RESPONSE_INDEX_ORIGINATE_TIME]) +
-                (response[RESPONSE_INDEX_TRANSMIT_TIME] - response[RESPONSE_INDEX_RESPONSE_TIME])) / 2;
+            (response[RESPONSE_INDEX_TRANSMIT_TIME] - response[RESPONSE_INDEX_RESPONSE_TIME])) / 2;
     }
 
     /**
@@ -191,7 +192,7 @@ public class SntpClient {
             long timeElapsedSinceRequest = Math.abs(originateTime - System.currentTimeMillis());
             if (timeElapsedSinceRequest >= 10_000) {
                 throw new InvalidNtpServerResponseException("Request was sent more than 10 seconds back " +
-                                                            timeElapsedSinceRequest);
+                    timeElapsedSinceRequest);
             }
 
             _sntpInitialized.set(true);
@@ -308,9 +309,9 @@ public class SntpClient {
         byte b3 = buffer[offset + 3];
 
         return ((long) ui(b0) << 24) +
-               ((long) ui(b1) << 16) +
-               ((long) ui(b2) << 8) +
-               (long) ui(b3);
+            ((long) ui(b1) << 16) +
+            ((long) ui(b2) << 8) +
+            (long) ui(b3);
     }
 
     /***

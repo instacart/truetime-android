@@ -1,7 +1,1 @@
-<manifest
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.instacart.library.truetime.extensionrx">
-
-    <application></application>
-
-</manifest>
+<manifest package="com.instacart.library.truetime.extensionrx"/>
