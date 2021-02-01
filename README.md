@@ -10,7 +10,7 @@ In certain applications it becomes important to get the real or "true" date and 
 
 Users may do this for a variety of reasons, like being in different timezones, trying to be punctual by setting their clocks 5 – 10 minutes early, etc. Your application or service may want a date that is unaffected by these changes and reliable as a source of truth. TrueTime gives you that.
 
-You can read more about the use case in our [blog post](https://tech.instacart.com/truetime/).
+You can read more about the use case in our [blog post](https://tech.instacart.com/offline-first-introducing-truetime-for-swift-and-android-15e5d968df96).
 
 In a [recent conference talk](https://vimeo.com/190922794), we explained how the full NTP implementation works with Rx. Check the [video](https://vimeo.com/190922794) and [slides](https://speakerdeck.com/kaushikgopal/learning-rx-by-example-2?slide=31) out for implementation details.
 
