@@ -9,6 +9,24 @@
     tools:context="com.instacart.library.sample.SampleActivity">
 
     <TextView
+        android:id="@+id/tt_success_response_counter"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+
+        android:text="Success response counter goes here"
+        android:textSize="20dp"
+
+        app:layout_constraintBottom_toTopOf="@+id/tt_time_device"
+        app:layout_constraintHorizontal_bias="0.47"
+        app:layout_constraintLeft_toLeftOf="@+id/activity_main"
+        app:layout_constraintRight_toRightOf="@+id/activity_main"
+        tools:layout_constraintBottom_creator="1"
+        tools:layout_constraintLeft_creator="1"
+        tools:layout_constraintRight_creator="1"/>
+
+    <TextView
         android:id="@+id/tt_time_pst"
 
         android:layout_width="wrap_content"
