@@ -1,12 +1,6 @@
 apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
-apply plugin: 'com.jfrog.artifactory'
-apply plugin: 'maven-publish'
-
-def packageName = 'com.instacart.library'
-def artifactoryRepositoryVariant
-version = versionName
-group = 'com.github.instacart'
+apply from: "../publishing.gradle"
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -33,67 +27,10 @@ android {
         buildConfig = false
     }
 
-    libraryVariants.all { variant ->
-        println "variant: " + variant.baseName
-        variant.outputs.all { output ->
-            if (variant.getPackageLibraryProvider().get() != null) {
-                outputFileName = "${archivesBaseName}-${version}.aar"
-                println "outputFileName: " + outputFileName
-            }
-        }
-    }
-
-    // workaround for https://github.com/gradle/gradle/issues/8328
-    // The name is properly built and reported in the script above, but the output file names are simply
-    // truetime-debug.aar and truetime-release.aar
-    afterEvaluate {
-        def debugFile = file("$buildDir/outputs/aar/${archivesBaseName}-debug.aar")
-        tasks.named("assembleDebug").configure {
-            doLast {
-                debugFile.renameTo("$buildDir/outputs/aar/${archivesBaseName}-${version}.aar")
-            }
-        }
-        def releaseFile = file("$buildDir/outputs/aar/${archivesBaseName}-release.aar")
-        tasks.named("assembleRelease").configure {
-            doLast {
-                releaseFile.renameTo("$buildDir/outputs/aar/${archivesBaseName}-${version}.aar")
-            }
-        }
-    }
 }
 
 dependencies {
 
 }
 
-publishing {
-    repositories {
-        maven {
-            credentials {
-                username "${artifactory_user}"
-                password "${artifactory_password}"
-            }
 
-            if (artifactory_variant == "release") {
-                version = version + "-WND"
-                artifactoryRepositoryVariant = "release"
-            } else {
-                version = version + "-SNAPSHOT"
-                artifactoryRepositoryVariant = "snapshot"
-            }
-
-            url "${artifactory_contextUrl}/libs-${artifactoryRepositoryVariant}-local"
-        }
-    }
-    publications {
-        aar(MavenPublication) {
-            groupId = packageName
-            artifactId = archivesBaseName
-
-            def targetFile = "$buildDir/outputs/aar/${archivesBaseName}-${version}.aar"
-            println "publishing: " + targetFile
-            // Tell maven to prepare the generated "*.aar" file for publishing
-            artifact(targetFile)
-        }
-    }
-}
