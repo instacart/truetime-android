@@ -2,6 +2,7 @@ package com.instacart.library.truetime;
 
 import android.os.SystemClock;
 
+import static com.instacart.library.truetime.CacheInterface.KEY_CACHED_BOOT_ID;
 import static com.instacart.library.truetime.CacheInterface.KEY_CACHED_BOOT_TIME;
 import static com.instacart.library.truetime.CacheInterface.KEY_CACHED_DEVICE_UPTIME;
 import static com.instacart.library.truetime.CacheInterface.KEY_CACHED_SNTP_TIME;
@@ -85,6 +86,21 @@ class DiskCacheClient {
         }
 
         return _cacheInterface.get(KEY_CACHED_SNTP_TIME, 0L);
+    }
+
+    String getCachedBootId() {
+        if (cacheUnavailable()) {
+            return null;
+        }
+
+        return _cacheInterface.get(KEY_CACHED_BOOT_ID, null);
+    }
+
+    void cacheBootId(String bootId) {
+        if (cacheUnavailable())
+            return;
+
+        _cacheInterface.put(KEY_CACHED_BOOT_ID, bootId);
     }
 
     // -----------------------------------------------------------------------------------
