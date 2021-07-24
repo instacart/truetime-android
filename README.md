@@ -24,6 +24,12 @@ Also, once we have this information it's valid until the next time you boot your
 
 Take a look at [the wiki sidebar](https://github.com/instacart/truetime-android/wiki) which should have a lot of useful information.
 
+# Is this library still maintained?
+
+The short answer is yes. We're planning a complete rewrite of TrueTime (Version 4). See [this branch](https://github.com/instacart/truetime-android/pull/129/files). We juggle our personal time between doing this rewrite and using TrueTime in its current version. TrueTime is still used in its current form at Instacart by *many* *many* users.
+
+As is the case with most open source libraries, maintenance is hard. We've not done a great job at answering [the various issues](https://github.com/instacart/truetime-android/issues), but we want to do better. We can only ask that you trust that the rewrite is coming and it should make things better. We don't want to spend too much time making changes to the library in its existing state, because the rewrite is the better future for TrueTime.
+
 # License
 
 ```
