@@ -52,14 +52,14 @@ class TrueTimeImpl(
     override fun nowSafely(): Date {
         return if (timeKeeper.hasTheTime()) {
             logger.v(TAG, "TimeKeeper has the time")
-            nowForced()
+            nowTrueOnly()
         } else {
             logger.d(TAG, "TimeKeeper does NOT have time: returning device time safely")
             Date()
         }
     }
 
-    override fun nowForced(): Date {
+    override fun nowTrueOnly(): Date {
         if (!initialized()) throw IllegalStateException("TrueTime was not initialized successfully yet")
         logger.v(TAG, "returning Time now")
         return timeKeeper.now()

@@ -5,20 +5,23 @@ import java.util.Date
 
 interface TrueTime2 {
 
+    /**
+     * The main 
+     */
     fun initialize(with: TrueTimeParameters = TrueTimeParameters()): Date
 
     /**
-     * Was [TrueTime2] initialized by calling [initialize]
+     * Is [TrueTime2] successfully initialized with [initialize]
      */
     fun initialized(): Boolean
 
     /**
-     * return the current time as calculated by TrueTime.
-     * If not initialized, will throw [IllegalStateException]
+     * Keep running the [initialize] SNTP call in the background
+     * to account for clock drift and update the locally stored SNTP result
+     *
+     * @param with Frequency for making the call is taken from [TrueTimeParameters.syncIntervalInMillis]
+     * @return Use this Coroutines job to cancel the [sync] and all background work
      */
-    @Throws(IllegalStateException::class)
-    fun nowForced(): Date
-
     suspend fun sync(with: TrueTimeParameters): Job
 //
 //    /**
@@ -34,7 +37,14 @@ interface TrueTime2 {
 //    }
 
     /**
-     * return [nowForced] if TrueTime is available otherwise fallback to System clock date
+     * return the current time as calculated by TrueTime.
+     * If not initialized, will throw [IllegalStateException]
      */
-    fun nowSafely(): Date = if (initialized()) nowForced() else Date()
+    @Throws(IllegalStateException::class)
+    fun nowTrueOnly(): Date
+
+    /**
+     * return [nowTrueOnly] if TrueTime is available otherwise fallback to System clock date
+     */
+    fun nowSafely(): Date = if (initialized()) nowTrueOnly() else Date()
 }

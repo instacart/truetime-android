@@ -133,7 +133,7 @@ class SampleActivity : AppCompatActivity() {
         }
 
         override fun e(tag: String, msg: String, t: Throwable?) {
-            Log.e(tag, "$msg ${t?.message}", t)
+            Log.e(tag, "$msg: ${t?.message}", t)
         }
     }
 }
