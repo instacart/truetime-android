@@ -7,26 +7,21 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.instacart.library.sample.databinding.ActivitySampleBinding
-import com.instacart.library.truetime.legacy.TrueTimeRx
-import com.instacart.library.truetime.log.Logger
-import com.instacart.library.truetime.time.TrueTime2
-import com.instacart.library.truetime.time.TrueTimeImpl
-import com.instacart.library.truetime.time.TrueTimeParameters
+import com.instacart.truetime.legacy.TrueTimeRx
+import com.instacart.truetime.log.Logger
+import com.instacart.truetime.time.TrueTime
+import com.instacart.truetime.time.TrueTimeImpl
+import com.instacart.truetime.time.TrueTimeParameters
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancelChildren
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Date
-import java.util.Timer
-import kotlin.concurrent.schedule
-import kotlin.concurrent.timerTask
 
 @SuppressLint("SetTextI18n")
 @RequiresApi(Build.VERSION_CODES.O)
@@ -35,7 +30,7 @@ class SampleActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySampleBinding
     private val disposables = CompositeDisposable()
 
-    private lateinit var trueTime: TrueTime2
+    private lateinit var trueTime: TrueTime
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

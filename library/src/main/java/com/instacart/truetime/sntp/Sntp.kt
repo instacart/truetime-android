@@ -1,4 +1,4 @@
-package com.instacart.library.truetime.sntp
+package com.instacart.truetime.sntp
 
 import java.io.IOException
 

@@ -1,4 +1,4 @@
-package com.instacart.library.truetime
+package com.instacart.truetime
 
 import java.io.IOException
 import java.util.Locale

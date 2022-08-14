@@ -1,6 +1,6 @@
-package com.instacart.library.truetime.time
+package com.instacart.truetime.time
 
-import com.instacart.library.truetime.cache.TrueTimeCacheProvider
+import com.instacart.truetime.cache.TrueTimeCacheProvider
 
 data class TrueTimeParameters(
 

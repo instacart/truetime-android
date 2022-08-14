@@ -1,10 +1,10 @@
-package com.instacart.library.truetime
+package com.instacart.truetime
 
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import com.instacart.library.truetime.legacy.TrueLog
-import com.instacart.library.truetime.legacy.TrueTime
+import com.instacart.truetime.legacy.TrueLog
+import com.instacart.truetime.legacy.TrueTime
 
 class BootCompletedBroadcastReceiver : BroadcastReceiver() {
 

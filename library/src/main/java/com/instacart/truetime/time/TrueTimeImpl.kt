@@ -1,9 +1,9 @@
-package com.instacart.library.truetime.time
+package com.instacart.truetime.time
 
-import com.instacart.library.truetime.log.Logger
-import com.instacart.library.truetime.log.LoggerNoOp
-import com.instacart.library.truetime.sntp.Sntp
-import com.instacart.library.truetime.sntp.SntpImpl
+import com.instacart.truetime.log.Logger
+import com.instacart.truetime.log.LoggerNoOp
+import com.instacart.truetime.sntp.Sntp
+import com.instacart.truetime.sntp.SntpImpl
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -15,7 +15,7 @@ import java.util.Date
 
 class TrueTimeImpl(
     private val logger: Logger = LoggerNoOp,
-) : TrueTime2 {
+) : TrueTime {
 
     private val sntp: Sntp = SntpImpl(logger)
     private val timeKeeper = TimeKeeper(sntp)
@@ -52,14 +52,14 @@ class TrueTimeImpl(
     override fun nowSafely(): Date {
         return if (timeKeeper.hasTheTime()) {
             logger.v(TAG, "TimeKeeper has the time")
-            nowTrueOnly()
+            trueNow()
         } else {
             logger.d(TAG, "TimeKeeper does NOT have time: returning device time safely")
             Date()
         }
     }
 
-    override fun nowTrueOnly(): Date {
+    override fun trueNow(): Date {
         if (!initialized()) throw IllegalStateException("TrueTime was not initialized successfully yet")
         logger.v(TAG, "returning Time now")
         return timeKeeper.now()

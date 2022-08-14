@@ -1,13 +1,4 @@
-package com.instacart.library.truetime.legacy;
-
-import android.content.SharedPreferences;
-import android.os.Handler;
-import android.os.HandlerThread;
-import android.os.SystemClock;
-import io.reactivex.schedulers.Schedulers;
-import java.util.EnumSet;
-import java.util.Locale;
-import java.util.concurrent.TimeUnit;
+package com.instacart.truetime.legacy;
 
 public class NtpManager {
 

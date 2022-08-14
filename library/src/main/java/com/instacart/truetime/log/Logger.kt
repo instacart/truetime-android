@@ -1,4 +1,4 @@
-package com.instacart.library.truetime.log
+package com.instacart.truetime.log
 
 interface Logger {
     fun v(tag: String, msg: String)

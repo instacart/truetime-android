@@ -1,4 +1,4 @@
-package com.instacart.library.truetime.cache
+package com.instacart.truetime.cache
 
 interface TrueTimeCacheProvider {
     fun clear()

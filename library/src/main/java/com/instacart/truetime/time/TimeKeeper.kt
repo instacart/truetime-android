@@ -1,7 +1,7 @@
-package com.instacart.library.truetime.time
+package com.instacart.truetime.time
 
 import android.os.SystemClock
-import com.instacart.library.truetime.sntp.Sntp
+import com.instacart.truetime.sntp.Sntp
 import java.util.Date
 import java.util.concurrent.atomic.AtomicReference
 

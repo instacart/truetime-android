@@ -1,17 +1,17 @@
-package com.instacart.library.truetime.time
+package com.instacart.truetime.time
 
 import kotlinx.coroutines.Job
 import java.util.Date
 
-interface TrueTime2 {
+interface TrueTime {
 
     /**
-     * The main 
+     * The main
      */
     fun initialize(with: TrueTimeParameters = TrueTimeParameters()): Date
 
     /**
-     * Is [TrueTime2] successfully initialized with [initialize]
+     * Is [TrueTime] successfully initialized with [initialize]
      */
     fun initialized(): Boolean
 
@@ -41,10 +41,10 @@ interface TrueTime2 {
      * If not initialized, will throw [IllegalStateException]
      */
     @Throws(IllegalStateException::class)
-    fun nowTrueOnly(): Date
+    fun trueNow(): Date
 
     /**
-     * return [nowTrueOnly] if TrueTime is available otherwise fallback to System clock date
+     * return [trueNow] if TrueTime is available otherwise fallback to System clock date
      */
-    fun nowSafely(): Date = if (initialized()) nowTrueOnly() else Date()
+    fun nowSafely(): Date = if (initialized()) trueNow() else Date()
 }

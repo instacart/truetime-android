@@ -5,7 +5,7 @@ android {
     compileSdkVersion rootProject.ext.compileSdkVersion
 
     defaultConfig {
-        applicationId "com.instacart.library.truetime"
+        applicationId "com.instacart.truetime"
         minSdkVersion 14
         targetSdkVersion rootProject.ext.targetSdkVersion
 

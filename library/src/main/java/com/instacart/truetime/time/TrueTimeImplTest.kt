@@ -1,4 +1,4 @@
-package com.instacart.library.truetime.time
+package com.instacart.truetime.time
 
 
 class TrueTimeImplTest {

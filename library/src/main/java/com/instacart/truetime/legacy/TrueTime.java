@@ -1,9 +1,9 @@
-package com.instacart.library.truetime.legacy;
+package com.instacart.truetime.legacy;
 
 import android.content.Context;
 import android.os.SystemClock;
-import com.instacart.library.truetime.cache.CacheInterface;
-import com.instacart.library.truetime.cache.SharedPreferenceCacheImpl;
+import com.instacart.truetime.cache.CacheInterface;
+import com.instacart.truetime.cache.SharedPreferenceCacheImpl;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Locale;

@@ -1,4 +1,4 @@
-package com.instacart.library.truetime.legacy
+package com.instacart.truetime.legacy
 
 import android.util.Log
 

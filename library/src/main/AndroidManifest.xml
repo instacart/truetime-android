@@ -1,6 +1,6 @@
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.instacart.library.truetime">
+    package="com.instacart.truetime">
 
     <!--UDP permissions-->
     <uses-permission android:name="android.permission.INTERNET"/>

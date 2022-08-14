@@ -1,7 +1,7 @@
-package com.instacart.library.truetime.legacy;
+package com.instacart.truetime.legacy;
 
 import android.content.Context;
-import com.instacart.library.truetime.cache.CacheInterface;
+import com.instacart.truetime.cache.CacheInterface;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.FlowableEmitter;

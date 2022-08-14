@@ -1,19 +1,6 @@
 package com.instacart.library.sample
 
-import android.annotation.SuppressLint
 import android.app.Application
-import android.os.AsyncTask
-import android.util.Log
-import com.instacart.library.truetime.legacy.TrueTime
-import com.instacart.library.truetime.time.TrueTime2
-import com.instacart.library.truetime.time.TrueTimeImpl
-import com.instacart.library.truetime.time.TrueTimeParameters
-import com.instacart.library.truetime.legacy.TrueTimeRx
-import com.instacart.library.truetime.legacy.SntpClient
-import com.instacart.library.truetime.sntp.SntpImpl
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
-import java.io.IOException
 
 @Suppress("unused")
 class App : Application() {
