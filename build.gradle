@@ -1,17 +1,16 @@
 buildscript {
     ext{
-        kotlin_version = '1.4.20'
-        coroutines_version = '1.4.1'
+        kotlin_version = '1.7.10'
+        coroutines_version = '1.6.3'
     }
 
     repositories {
         google()
-        jcenter()
+        mavenCentral()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.1.1'
-        classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
+        classpath 'com.android.tools.build:gradle:7.2.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -28,7 +27,6 @@ ext {
 allprojects {
     repositories {
         google()
-        jcenter()
     }
 }
 

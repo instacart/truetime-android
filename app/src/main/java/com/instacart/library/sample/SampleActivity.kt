@@ -68,7 +68,7 @@ class SampleActivity : AppCompatActivity() {
         val with = TrueTimeParameters(
             connectionTimeoutInMillis = 31428,
             retryCountAgainstSingleIp = 3,
-            ntpHostPool = "pool.ntp.org",
+            ntpHostPool = arrayListOf("pool.ntp.org"),
             syncIntervalInMillis = 1_000
         )
 

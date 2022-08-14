@@ -1,6 +1,5 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
-apply plugin: 'com.github.dcendents.android-maven'
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -8,8 +7,6 @@ android {
     defaultConfig {
         minSdkVersion rootProject.ext.minSdkVersion
 
-        versionCode rootProject.ext.versionCode
-        versionName rootProject.ext.versionName
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -24,6 +21,11 @@ android {
     buildFeatures {
         buildConfig = false
     }
+}
+
+
+repositories {
+  mavenCentral()
 }
 
 dependencies {
