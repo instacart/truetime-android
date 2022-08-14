@@ -52,14 +52,14 @@ class TrueTimeImpl(
     override fun nowSafely(): Date {
         return if (timeKeeper.hasTheTime()) {
             logger.v(TAG, "TimeKeeper has the time")
-            trueNow()
+            nowTrueOnly()
         } else {
             logger.d(TAG, "TimeKeeper does NOT have time: returning device time safely")
             Date()
         }
     }
 
-    override fun trueNow(): Date {
+    override fun nowTrueOnly(): Date {
         if (!initialized()) throw IllegalStateException("TrueTime was not initialized successfully yet")
         logger.v(TAG, "returning Time now")
         return timeKeeper.now()
@@ -74,7 +74,7 @@ class TrueTimeImpl(
     private fun init(with: TrueTimeParameters): LongArray {
 
         // resolve NTP pool -> single IPs
-        return resolveNtpHostToIPs(with.ntpHostPool)
+        return resolveNtpHostToIPs(with.ntpHostPool.first())
             // for each IP resolved
             .map { ipHost ->
                 logger.v(TAG, "---- requesting time (single IP: $ipHost)")

@@ -23,28 +23,17 @@ interface TrueTime {
      * @return Use this Coroutines job to cancel the [sync] and all background work
      */
     suspend fun sync(with: TrueTimeParameters): Job
-//
-//    /**
-//     * return the [Date] now if [TrueTime2] initialized
-//     * otherwise [initialize] first, then return the time
-//     */
-//    suspend fun now(with: TrueTimeParameters? = null): Date {
-//        return if (initialized()) {
-//            nowForced()
-//        } else {
-//            initialize(with ?: TrueTimeParameters())
-//        }
-//    }
 
     /**
      * return the current time as calculated by TrueTime.
      * If not initialized, will throw [IllegalStateException]
+     * now - but true time only
      */
     @Throws(IllegalStateException::class)
-    fun trueNow(): Date
+    fun nowTrueOnly(): Date
 
     /**
-     * return [trueNow] if TrueTime is available otherwise fallback to System clock date
+     * return [nowTrueOnly] if TrueTime is available otherwise fallback to System clock date
      */
-    fun nowSafely(): Date = if (initialized()) trueNow() else Date()
+    fun nowSafely(): Date = if (initialized()) nowTrueOnly() else Date()
 }
