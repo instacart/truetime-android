@@ -19,8 +19,7 @@ package com.instacart.truetime.sntp;
 
 import android.os.SystemClock;
 import com.instacart.truetime.InvalidNtpServerResponseException;
-import com.instacart.truetime.log.Logger;
-import com.instacart.truetime.log.LoggerNoOp;
+
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -44,8 +43,6 @@ public class SntpImpl implements Sntp {
   public static final int RESPONSE_INDEX_RESPONSE_TICKS = 7;
   public static final int RESPONSE_INDEX_SIZE = 8;
 
-  private static final String TAG = "SntpImpl";
-
   private static final int NTP_PORT = 123;
   private static final int NTP_MODE = 3;
   private static final int NTP_VERSION = 3;
@@ -61,15 +58,7 @@ public class SntpImpl implements Sntp {
   // 70 years plus 17 leap days
   private static final long OFFSET_1900_TO_1970 = ((365L * 70L) + 17L) * 24L * 60L * 60L;
 
-  private final Logger logger;
-
-  public SntpImpl() {
-    this.logger = LoggerNoOp.INSTANCE;
-  }
-
-  public SntpImpl(Logger logger) {
-    this.logger = logger;
-  }
+  public SntpImpl() {}
 
   @Override
   public long roundTripDelay(@NotNull long[] response) {
@@ -107,7 +96,8 @@ public class SntpImpl implements Sntp {
       float rootDelayMax,
       float rootDispersionMax,
       int serverResponseDelayMax,
-      int timeoutInMillis
+      int timeoutInMillis,
+      SntpEventListener listener
   ) throws IOException {
 
     DatagramSocket socket = null;
@@ -138,7 +128,7 @@ public class SntpImpl implements Sntp {
       // -----------------------------------------------------------------------------------
       // read the response
 
-      long t[] = new long[RESPONSE_INDEX_SIZE];
+      long[] t = new long[RESPONSE_INDEX_SIZE];
       DatagramPacket response = new DatagramPacket(buffer, buffer.length);
       socket.receive(response);
 
@@ -214,12 +204,12 @@ public class SntpImpl implements Sntp {
             timeElapsedSinceRequest);
       }
 
-      logger.v(TAG, "---- SNTP successful response from " + ntpHost);
+      listener.responseSuccessful(ntpHost);
 
       return t;
 
     } catch (Exception e) {
-      logger.d(TAG, "---- SNTP request failed for " + ntpHost);
+      listener.responseFailed(ntpHost, e);
       throw e;
     } finally {
       if (socket != null) {

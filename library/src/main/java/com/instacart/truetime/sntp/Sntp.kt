@@ -1,6 +1,7 @@
 package com.instacart.truetime.sntp
 
 import java.io.IOException
+import java.lang.Exception
 
 interface Sntp {
 
@@ -38,5 +39,11 @@ interface Sntp {
         rootDispersionMax: Float,
         serverResponseDelayMax: Int,
         timeoutInMillis: Int,
+        listener: SntpEventListener = NoOpEventListener,
     ): LongArray
+
+    private object NoOpEventListener: SntpEventListener {
+        override fun responseSuccessful(ntpHost: String) {}
+        override fun responseFailed(ntpHost: String, e: Exception) {}
+    }
 }
