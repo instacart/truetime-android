@@ -62,7 +62,7 @@ class SampleActivity : AppCompatActivity() {
         val mainDispatcherScope = CoroutineScope(Dispatchers.Main.immediate)
 
         if (!::trueTime.isInitialized) {
-            trueTime = TrueTimeImpl(logger = AndroidLogger)
+            trueTime = TrueTimeImpl()
         }
 
         val with = TrueTimeParameters(

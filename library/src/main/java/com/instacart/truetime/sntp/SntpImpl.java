@@ -24,6 +24,8 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+
+import com.instacart.truetime.SntpEventListener;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -99,6 +101,8 @@ public class SntpImpl implements Sntp {
       int timeoutInMillis,
       SntpEventListener listener
   ) throws IOException {
+
+    listener.requestingTime(ntpHost);
 
     DatagramSocket socket = null;
 

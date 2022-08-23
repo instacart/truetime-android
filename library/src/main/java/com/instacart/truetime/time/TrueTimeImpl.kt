@@ -1,11 +1,8 @@
 package com.instacart.truetime.time
 
-import com.instacart.truetime.EventListener
+import com.instacart.truetime.TrueTimeEventListener
 import com.instacart.truetime.NoOpEventListener
-import com.instacart.truetime.log.Logger
-import com.instacart.truetime.log.LoggerNoOp
 import com.instacart.truetime.sntp.Sntp
-import com.instacart.truetime.sntp.SntpEventListener
 import com.instacart.truetime.sntp.SntpImpl
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -17,16 +14,11 @@ import java.net.UnknownHostException
 import java.util.Date
 
 class TrueTimeImpl(
-    private val eventListener: EventListener = NoOpEventListener,
-    private val logger: Logger = LoggerNoOp,
+    private val listener: TrueTimeEventListener = NoOpEventListener,
 ) : TrueTime {
 
     private val sntp: Sntp = SntpImpl()
-    private val timeKeeper = TimeKeeper(sntp)
-
-    companion object {
-        private const val TAG: String = "TrueTimeImpl"
-    }
+    private val timeKeeper = TimeKeeper(sntp, listener)
 
     override fun initialized(): Boolean = timeKeeper.hasTheTime()
 
@@ -36,39 +28,34 @@ class TrueTimeImpl(
                 try {
                     initialize(with)
                 } catch (e: Exception) {
-                    logger.e(TAG, "- TrueTime initialization failed", e)
+                    listener.initializeFailed(e)
                 }
-                delay(with.syncIntervalInMillis)
-                logger.v(TAG, "- starting next resync")
+
+              listener.nextInitializeIn(with.syncIntervalInMillis)
+              delay(with.syncIntervalInMillis)
             }
         }
     }
 
     override fun initialize(with: TrueTimeParameters): Date {
-        logger.v(TAG, "- initializing TrueTime")
         val ntpResult = init(with)
-        logger.v(TAG, "- saving TrueTime NTP result")
         timeKeeper.save(ntpResult = ntpResult)
-        logger.v(TAG, "- returning Time now")
         return timeKeeper.now()
     }
 
     override fun nowSafely(): Date {
         return if (timeKeeper.hasTheTime()) {
-            logger.v(TAG, "TimeKeeper has the time")
             nowTrueOnly()
         } else {
-            logger.d(TAG, "TimeKeeper does NOT have time: returning device time safely")
+            listener.returningDeviceTime()
             Date()
         }
     }
 
     override fun nowTrueOnly(): Date {
         if (!initialized()) throw IllegalStateException("TrueTime was not initialized successfully yet")
-        logger.v(TAG, "returning Time now")
         return timeKeeper.now()
     }
-
 
     //region private helpers
 
@@ -76,15 +63,15 @@ class TrueTimeImpl(
      * Initialize TrueTime with an ntp pool server address
      */
     private fun init(with: TrueTimeParameters): LongArray {
+        listener.initialize(with)
 
         // resolve NTP pool -> single IPs
-        return resolveNtpHostToIPs(with.ntpHostPool.first())
+        val ntpResult = resolveNtpHostToIPs(with.ntpHostPool.first())
             // for each IP resolved
             .map { ipHost ->
-                logger.v(TAG, "---- requesting time (single IP: $ipHost)")
                 // 5 times against each IP
                 (1..5)
-                    .map { requestTime(with, ipHost, eventListener) }
+                    .map { requestTime(with, ipHost) }
                     // collect the 5 results to list
                     .toList()
                     // filter least round trip delay to get single Result
@@ -94,49 +81,50 @@ class TrueTimeImpl(
             .take(5)
             // filter median clock offset to get single Result
             .filterMedianClockOffset()
+
+        listener.initializeSuccess(ntpResult)
+        return ntpResult
     }
 
     /**
      * resolve ntp host pool address to single IPs
      */
     @Throws(UnknownHostException::class)
-    private fun resolveNtpHostToIPs(ntpHost: String): List<String> {
-        logger.v(TAG, "-- resolving ntpHost : $ntpHost")
-        return InetAddress.getAllByName(ntpHost).map { it.hostAddress }
+    private fun resolveNtpHostToIPs(ntpHostAddress: String): List<String> {
+        val ipList = InetAddress.getAllByName(ntpHostAddress).map { it.hostAddress }
+        listener.resolvedNtpHostToIPs(ntpHostAddress, ipList)
+        return ipList
     }
 
     private fun requestTime(
       with: TrueTimeParameters,
       ipHostAddress: String,
-      eventListener: EventListener,
     ): LongArray {
         // retrying upto (default 50) times if necessary
         repeat(with.retryCountAgainstSingleIp - 1) {
             try {
                 // request Time
-                logger.v(TAG, "------ requesting SNTP time")
-                return sntpRequest(with, ipHostAddress, eventListener)
+                return sntpRequest(with, ipHostAddress)
             } catch (e: Exception) {
-                logger.e(TAG, "------ Error requesting SNTP time", e)
+                listener.sntpRequestFailed(e)
             }
         }
 
         // last attempt
-        logger.i(TAG, "---- last attempt for $ipHostAddress")
+        listener.sntpRequestLastAttempt(ipHostAddress)
         return sntpRequest(with, ipHostAddress)
     }
 
     private fun sntpRequest(
-        with: TrueTimeParameters,
-        ipHostAddress: String,
-        eventListener: EventListener,
+      with: TrueTimeParameters,
+      ipHostAddress: String,
     ): LongArray = sntp.requestTime(
         ntpHostAddress = ipHostAddress,
         rootDelayMax = with.rootDelayMax,
         rootDispersionMax = with.rootDispersionMax,
         serverResponseDelayMax = with.serverResponseDelayMax,
         timeoutInMillis = with.connectionTimeoutInMillis,
-        listener = eventListener as SntpEventListener
+        listener = listener,
     )
 
     private fun List<LongArray>.filterLeastRoundTripDelay(): LongArray {
