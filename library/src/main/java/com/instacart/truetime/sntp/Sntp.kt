@@ -39,11 +39,7 @@ interface Sntp {
         rootDispersionMax: Float,
         serverResponseDelayMax: Int,
         timeoutInMillis: Int,
-        listener: SntpEventListener = NoOpEventListener,
+        listener: SntpEventListener,
     ): LongArray
 
-    private object NoOpEventListener: SntpEventListener {
-        override fun responseSuccessful(ntpHost: String) {}
-        override fun responseFailed(ntpHost: String, e: Exception) {}
-    }
 }

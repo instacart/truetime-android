@@ -1,8 +1,11 @@
 package com.instacart.truetime.time
 
+import com.instacart.truetime.EventListener
+import com.instacart.truetime.NoOpEventListener
 import com.instacart.truetime.log.Logger
 import com.instacart.truetime.log.LoggerNoOp
 import com.instacart.truetime.sntp.Sntp
+import com.instacart.truetime.sntp.SntpEventListener
 import com.instacart.truetime.sntp.SntpImpl
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -14,10 +17,11 @@ import java.net.UnknownHostException
 import java.util.Date
 
 class TrueTimeImpl(
+    private val eventListener: EventListener = NoOpEventListener,
     private val logger: Logger = LoggerNoOp,
 ) : TrueTime {
 
-    private val sntp: Sntp = SntpImpl(logger)
+    private val sntp: Sntp = SntpImpl()
     private val timeKeeper = TimeKeeper(sntp)
 
     companion object {
@@ -80,7 +84,7 @@ class TrueTimeImpl(
                 logger.v(TAG, "---- requesting time (single IP: $ipHost)")
                 // 5 times against each IP
                 (1..5)
-                    .map { requestTime(with, ipHost) }
+                    .map { requestTime(with, ipHost, eventListener) }
                     // collect the 5 results to list
                     .toList()
                     // filter least round trip delay to get single Result
@@ -102,15 +106,16 @@ class TrueTimeImpl(
     }
 
     private fun requestTime(
-        with: TrueTimeParameters,
-        ipHostAddress: String,
+      with: TrueTimeParameters,
+      ipHostAddress: String,
+      eventListener: EventListener,
     ): LongArray {
         // retrying upto (default 50) times if necessary
         repeat(with.retryCountAgainstSingleIp - 1) {
             try {
                 // request Time
                 logger.v(TAG, "------ requesting SNTP time")
-                return sntpRequest(with, ipHostAddress)
+                return sntpRequest(with, ipHostAddress, eventListener)
             } catch (e: Exception) {
                 logger.e(TAG, "------ Error requesting SNTP time", e)
             }
@@ -124,12 +129,14 @@ class TrueTimeImpl(
     private fun sntpRequest(
         with: TrueTimeParameters,
         ipHostAddress: String,
+        eventListener: EventListener,
     ): LongArray = sntp.requestTime(
         ntpHostAddress = ipHostAddress,
         rootDelayMax = with.rootDelayMax,
         rootDispersionMax = with.rootDispersionMax,
         serverResponseDelayMax = with.serverResponseDelayMax,
-        with.connectionTimeoutInMillis
+        timeoutInMillis = with.connectionTimeoutInMillis,
+        listener = eventListener as SntpEventListener
     )
 
     private fun List<LongArray>.filterLeastRoundTripDelay(): LongArray {
