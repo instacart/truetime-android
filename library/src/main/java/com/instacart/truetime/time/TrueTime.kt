@@ -1,28 +1,27 @@
 package com.instacart.truetime.time
 
-import com.instacart.truetime.time.TrueTimeParameters.Builder
 import kotlinx.coroutines.Job
 import java.util.Date
 
 interface TrueTime {
-    /**
-     * The main
-     */
-    fun initialize(with: TrueTimeParameters = Builder().buildParams()): Date
 
     /**
-     * Is [TrueTime] successfully initialized with [initialize]
-     */
-    fun initialized(): Boolean
-
-    /**
-     * Keep running the [initialize] SNTP call in the background
-     * to account for clock drift and update the locally stored SNTP result
+     * Keep running the [com.instacart.truetime.sntp.Sntp.requestTime] call
+     * in the background to account for clock drift and
+     * update the locally stored SNTP result
      *
-     * @param with Frequency for making the call is taken from [TrueTimeParameters.syncIntervalInMillis]
+     * @param params Frequency for making the call is taken from [TrueTimeParameters.syncIntervalInMillis]
      * @return Use this Coroutines job to cancel the [sync] and all background work
      */
-    suspend fun sync(with: TrueTimeParameters): Job
+    suspend fun sync(params: TrueTimeParameters): Job
+
+    fun hasTheTime(): Boolean
+
+    /**
+     * You should use this function by default to get the time
+     * It respects [TrueTimeParameters.shouldReturnSafely] and returns accordingly
+     */
+    fun now(): Date
 
     /**
      * return the current time as calculated by TrueTime.
@@ -35,5 +34,5 @@ interface TrueTime {
     /**
      * return [nowTrueOnly] if TrueTime is available otherwise fallback to System clock date
      */
-    fun nowSafely(): Date = if (initialized()) nowTrueOnly() else Date()
+    fun nowSafely(): Date = if (hasTheTime()) nowTrueOnly() else Date()
 }

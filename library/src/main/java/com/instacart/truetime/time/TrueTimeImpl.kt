@@ -4,6 +4,7 @@ import com.instacart.truetime.TrueTimeEventListener
 import com.instacart.truetime.NoOpEventListener
 import com.instacart.truetime.sntp.Sntp
 import com.instacart.truetime.sntp.SntpImpl
+import com.instacart.truetime.time.TrueTimeParameters.Builder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -15,45 +16,44 @@ import java.util.Date
 
 class TrueTimeImpl(
     private val listener: TrueTimeEventListener = NoOpEventListener,
+    private val params: TrueTimeParameters = Builder().buildParams()
 ) : TrueTime {
 
     private val sntp: Sntp = SntpImpl()
     private val timeKeeper = TimeKeeper(sntp, listener)
 
-    override fun initialized(): Boolean = timeKeeper.hasTheTime()
+    override fun hasTheTime(): Boolean = timeKeeper.hasTheTime()
 
-    override suspend fun sync(with: TrueTimeParameters): Job = withContext(Dispatchers.IO) {
+    override suspend fun sync(params: TrueTimeParameters): Job = withContext(Dispatchers.IO) {
         launch {
             while (true) {
                 try {
-                    initialize(with)
+                    initialize(params)
                 } catch (e: Exception) {
                     listener.initializeFailed(e)
                 }
 
-              listener.nextInitializeIn(with.syncIntervalInMillis)
-              delay(with.syncIntervalInMillis)
+              listener.nextInitializeIn(params.syncIntervalInMillis)
+              delay(params.syncIntervalInMillis)
             }
         }
     }
 
-    override fun initialize(with: TrueTimeParameters): Date {
-        val ntpResult = init(with)
-        timeKeeper.save(ntpResult = ntpResult)
-        return timeKeeper.now()
+    override fun now(): Date {
+        return if (params.shouldReturnSafely) nowSafely() else nowTrueOnly()
     }
 
     override fun nowSafely(): Date {
-        return if (timeKeeper.hasTheTime()) {
-            nowTrueOnly()
-        } else {
-            listener.returningDeviceTime()
-            Date()
-        }
+          return if (timeKeeper.hasTheTime()) {
+              nowTrueOnly()
+          } else {
+              listener.returningDeviceTime()
+              Date()
+          }
     }
 
     override fun nowTrueOnly(): Date {
-        if (!initialized()) throw IllegalStateException("TrueTime was not initialized successfully yet")
+        if (!hasTheTime()) throw IllegalStateException("TrueTime was not initialized successfully yet")
         return timeKeeper.now()
     }
 
@@ -62,7 +62,7 @@ class TrueTimeImpl(
     /**
      * Initialize TrueTime with an ntp pool server address
      */
-    private fun init(with: TrueTimeParameters): LongArray {
+    private fun initialize(with: TrueTimeParameters): LongArray {
         listener.initialize(with)
 
         // resolve NTP pool -> single IPs
@@ -83,6 +83,9 @@ class TrueTimeImpl(
             .filterMedianClockOffset()
 
         listener.initializeSuccess(ntpResult)
+
+        timeKeeper.save(ntpResult = ntpResult)
+
         return ntpResult
     }
 

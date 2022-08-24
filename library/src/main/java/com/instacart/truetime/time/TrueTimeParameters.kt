@@ -8,6 +8,7 @@ class TrueTimeParameters private constructor(
   val rootDispersionMax: Float,
   val serverResponseDelayMax: Int,
   val syncIntervalInMillis: Long,
+  val shouldReturnSafely: Boolean,
 ) {
 
   class Builder {
@@ -62,6 +63,17 @@ class TrueTimeParameters private constructor(
       return this
     }
 
+    /**
+     * if set to [true] it will default to [TrueTime.nowSafely]
+     * else will return [TrueTime.nowTrueOnly]
+     */
+    private var shouldReturnSafely: Boolean = true
+
+    fun shouldReturnSafely(value: Boolean): Builder {
+      shouldReturnSafely = value
+      return this
+    }
+
 //    TODO: cache provider
 //    val cacheProvider: TrueTimeCacheProvider? = null,
 
@@ -76,6 +88,7 @@ class TrueTimeParameters private constructor(
       rootDispersionMax,
       serverResponseDelayMax,
       syncIntervalInMillis,
+      shouldReturnSafely
     )
   }
 }
