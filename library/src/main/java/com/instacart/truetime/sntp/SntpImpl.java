@@ -94,7 +94,7 @@ public class SntpImpl implements Sntp {
   @NotNull
   @Override
   public synchronized long[] requestTime(
-      String ntpHost,
+      InetAddress ntpHost,
       float rootDelayMax,
       float rootDispersionMax,
       int serverResponseDelayMax,
@@ -109,9 +109,8 @@ public class SntpImpl implements Sntp {
     try {
 
       byte[] buffer = new byte[NTP_PACKET_SIZE];
-      InetAddress address = InetAddress.getByName(ntpHost);
 
-      DatagramPacket request = new DatagramPacket(buffer, buffer.length, address, NTP_PORT);
+      DatagramPacket request = new DatagramPacket(buffer, buffer.length, ntpHost, NTP_PORT);
 
       writeVersion(buffer);
 

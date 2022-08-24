@@ -1,6 +1,7 @@
 package com.instacart.truetime
 
 import com.instacart.truetime.time.TrueTimeParameters
+import java.net.InetAddress
 import java.util.*
 
 interface TrueTimeEventListener : SntpEventListener, TimeKeeperListener {
@@ -25,9 +26,9 @@ interface TrueTimeEventListener : SntpEventListener, TimeKeeperListener {
      * resolved NTP pool host address [ntpHost]
      * to the list of IP addresses [ipList]
      */
-    fun resolvedNtpHostToIPs(ntpHost: String, ipList: List<String?>)
+    fun resolvedNtpHostToIPs(ntpHost: String, ipList: List<InetAddress>)
 
-    fun lastSntpRequestAttempt(ipHost: String)
+    fun lastSntpRequestAttempt(ipHost: InetAddress)
 
     fun sntpRequestFailed(e: Exception)
 
@@ -42,14 +43,14 @@ interface SntpEventListener {
     /**
      * requesting time from [ntpHost] which should be an IP address
      */
-    fun sntpRequest(ntpHost: String)
+    fun sntpRequest(ntpHost: InetAddress)
 
-    fun sntpRequestSuccessful(ntpHost: String)
+    fun sntpRequestSuccessful(ntpHost: InetAddress)
 
     /**
      * Invoked if the SNTP request to [ntpHost] fails for any reason
      */
-    fun sntpRequestFailed(ntpHost: String, e: Exception)
+    fun sntpRequestFailed(ntpHost: InetAddress, e: Exception)
 }
 
 interface TimeKeeperListener {
@@ -72,14 +73,14 @@ object NoOpEventListener : TrueTimeEventListener {
     override fun initializeSuccess(ntpResult: LongArray) {}
     override fun initializeFailed(e: Exception) {}
     override fun nextInitializeIn(delayInMillis: Long) {}
-    override fun resolvedNtpHostToIPs(ntpHost: String, ipList: List<String?>) {}
-    override fun lastSntpRequestAttempt(ipHost: String) {}
+    override fun resolvedNtpHostToIPs(ntpHost: String, ipList: List<InetAddress>) {}
+    override fun lastSntpRequestAttempt(ipHost: InetAddress) {}
     override fun sntpRequestFailed(e: Exception) {}
     override fun syncDispatcherException(t: Throwable) {}
 
-    override fun sntpRequest(ntpHost: String) {}
-    override fun sntpRequestSuccessful(ntpHost: String) {}
-    override fun sntpRequestFailed(ntpHost: String, e: Exception) {}
+    override fun sntpRequest(ntpHost: InetAddress) {}
+    override fun sntpRequestSuccessful(ntpHost: InetAddress) {}
+    override fun sntpRequestFailed(ntpHost: InetAddress, e: Exception) {}
 
     override fun storingTrueTime(ntpResult: LongArray) {}
     override fun returningTrueTime(trueTime: Date) {}

@@ -2,7 +2,7 @@ package com.instacart.truetime.sntp
 
 import com.instacart.truetime.SntpEventListener
 import java.io.IOException
-import java.lang.Exception
+import java.net.InetAddress
 
 interface Sntp {
 
@@ -35,7 +35,7 @@ interface Sntp {
      */
     @Throws(IOException::class)
     fun requestTime(
-      ntpHostAddress: String,
+      ntpHostAddress: InetAddress,
       rootDelayMax: Float,
       rootDispersionMax: Float,
       serverResponseDelayMax: Int,

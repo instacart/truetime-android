@@ -3,6 +3,7 @@ package com.instacart.library.sample
 import android.util.Log
 import com.instacart.truetime.TrueTimeEventListener
 import com.instacart.truetime.time.TrueTimeParameters
+import java.net.InetAddress
 import java.util.Date
 
 class TrueTimeLogEventListener: TrueTimeEventListener {
@@ -22,11 +23,11 @@ class TrueTimeLogEventListener: TrueTimeEventListener {
     Log.v("TrueTime4", " next initialization call will be made in $delayInMillis ms")
   }
 
-  override fun resolvedNtpHostToIPs(ntpHost: String, ipList: List<String?>) {
+  override fun resolvedNtpHostToIPs(ntpHost: String, ipList: List<InetAddress>) {
     Log.v("TrueTime4", "resolved NTP pool host address $ntpHost to the list of IP addresses $ipList")
   }
 
-  override fun lastSntpRequestAttempt(ipHost: String) {
+  override fun lastSntpRequestAttempt(ipHost: InetAddress) {
     Log.v("TrueTime4", "This is the last SNTP request attempt to $ipHost")
   }
 
@@ -38,15 +39,15 @@ class TrueTimeLogEventListener: TrueTimeEventListener {
     Log.e("TrueTime4", "CoroutineDispatcher exception from TrueTime sync call", t)
   }
 
-  override fun sntpRequest(ntpHost: String) {
+  override fun sntpRequest(ntpHost: InetAddress) {
     Log.v("TrueTime4 SNTP", "SNTP request to $ntpHost")
   }
 
-  override fun sntpRequestSuccessful(ntpHost: String) {
+  override fun sntpRequestSuccessful(ntpHost: InetAddress) {
     Log.v("TrueTime4 SNTP", "SNTP Request to $ntpHost came back successfully")
   }
 
-  override fun sntpRequestFailed(ntpHost: String, e: Exception) {
+  override fun sntpRequestFailed(ntpHost: InetAddress, e: Exception) {
 //    Log.e("TrueTime4 SNTP", "SNTP Request to $ntpHost failed", e)
   }
 

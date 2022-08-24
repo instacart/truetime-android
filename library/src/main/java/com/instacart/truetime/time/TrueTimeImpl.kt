@@ -5,6 +5,7 @@ import com.instacart.truetime.NoOpEventListener
 import com.instacart.truetime.sntp.Sntp
 import com.instacart.truetime.sntp.SntpImpl
 import com.instacart.truetime.time.TrueTimeParameters.Builder
+import java.net.Inet6Address
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -99,21 +100,20 @@ class TrueTimeImpl(
      * resolve ntp host pool address to single IPs
      */
     @Throws(UnknownHostException::class)
-    private fun resolveNtpHostToIPs(ntpHostAddress: String): List<String> {
-        val ipList: List<String?> = InetAddress.getAllByName(ntpHostAddress).map { it.hostAddress }
+    private fun resolveNtpHostToIPs(ntpHostAddress: String): List<InetAddress> {
+        val ipList: List<InetAddress> =  InetAddress
+          .getAllByName(ntpHostAddress)
+          .toList()
+          .filter { it !is Inet6Address }
         listener.resolvedNtpHostToIPs(ntpHostAddress, ipList)
-        if (ipList.any { it?.isNotBlank() == true }) {
-          @Suppress("UNCHECKED_CAST")
-          return ipList as List<String>
-        }
-        throw UnknownHostException("couldn't resolve $ntpHostAddress to any addresses")
+        return ipList
     }
 
     private fun requestTime(
       with: TrueTimeParameters,
-      ipHostAddress: String,
+      ipHostAddress: InetAddress,
     ): LongArray {
-        // retrying upto (default 50) times if necessary
+        // retrying up to (default 50) times if necessary
         repeat(with.retryCountAgainstSingleIp - 1) {
             try {
                 // request Time
@@ -130,7 +130,7 @@ class TrueTimeImpl(
 
     private fun sntpRequest(
       with: TrueTimeParameters,
-      ipHostAddress: String,
+      ipHostAddress: InetAddress,
     ): LongArray = sntp.requestTime(
         ntpHostAddress = ipHostAddress,
         rootDelayMax = with.rootDelayMax,
