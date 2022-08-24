@@ -1,3 +1,7 @@
+plugins {
+  id 'maven-publish'
+}
+
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
@@ -40,4 +44,16 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
 }
 
-group='com.github.instacart'
+afterEvaluate {
+  publishing {
+    publications {
+      release(MavenPublication) {
+        from components.release
+
+        groupId = 'com.github.instacart'
+        artifactId = 'truetime-android'
+        version = rootProject.ext.versionName
+      }
+    }
+  }
+}
