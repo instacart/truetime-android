@@ -19,7 +19,7 @@ You can read more about the use case in our [blog post](https://tech.instacart.c
 In a [conference talk](https://vimeo.com/190922794), we explained how the full NTP implementation works (with Rx). Check the [video](https://vimeo.com/190922794#t=1466s) and [slides](https://speakerdeck.com/kaushikgopal/learning-rx-by-example-2?slide=31) out for implementation details.
 
 
-# Work in Progress
+# Work in Progress 4.0
 
 With the move to Kotlin & Coroutines TrueTime 4 was a [major overhaul](https://github.com/instacart/truetime-android/pull/129). We still haven't ported some of the additional bells & whistles. This section keeps track of those features (that will come in the near future). TrueTime is completely functional without these additional features, so feel free to start using it.
 
