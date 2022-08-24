@@ -7,17 +7,13 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.instacart.library.sample.databinding.ActivitySampleBinding
-import com.instacart.truetime.legacy.TrueTimeRx
-import com.instacart.truetime.log.Logger
+import com.instacart.library.truetime.TrueTimeRx
 import com.instacart.truetime.time.TrueTime
 import com.instacart.truetime.time.TrueTimeImpl
 import com.instacart.truetime.time.TrueTimeParameters
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -115,27 +111,5 @@ class SampleActivity : AppCompatActivity() {
             .ofEpochMilli(date.time)
             .atZone(ZoneId.of("America/Los_Angeles"))
             .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-    }
-
-    object AndroidLogger : Logger {
-        override fun v(tag: String, msg: String) {
-            Log.v(tag, msg)
-        }
-
-        override fun d(tag: String, msg: String) {
-            Log.d(tag, msg)
-        }
-
-        override fun i(tag: String, msg: String) {
-            Log.i(tag, msg)
-        }
-
-        override fun w(tag: String, msg: String) {
-            Log.w(tag, msg)
-        }
-
-        override fun e(tag: String, msg: String, t: Throwable?) {
-            Log.e(tag, "$msg: ${t?.message}", t)
-        }
     }
 }

@@ -33,6 +33,10 @@ I may have busted the jitpack import. Got to fix this first.
 * Provide a default cache implementation (probably using the non-android version of [DataStore](https://developer.android.com/topic/libraries/architecture/datastore#kts))
 * ? Provide example of using this with a Database like Realm
 
+- [ ] BootCompletedBroadcastReceiver
+
+Everytime a device is rebooted, the Truetime info is invalid. Provide a helpful broadcast receiver that clears any old TrueTime values.
+
 - [ ] Utilize all ntp pool addresses from `TrueTimeParameters.ntpHostPool`
 
 We currently only take the first ntp host pool address from the supplied parameters. In the future, it would be nice to provide multiple ntp "pool" addresses like `time.google.com`, `time.apple.com` and utilize all of those to get the "best" value.
