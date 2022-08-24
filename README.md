@@ -23,6 +23,10 @@ In a [conference talk](https://vimeo.com/190922794), we explained how the full N
 
 With the move to Kotlin & Coroutines TrueTime 4 was a [major overhaul](https://github.com/instacart/truetime-android/pull/129). We still haven't ported some of the additional bells & whistles. This section keeps track of those features (that will come in the near future). TrueTime is completely functional without these additional features, so feel free to start using it.
 
+- [ ] Fix Jitpack import
+
+I may have busted the jitpack import. Got to fix this first.
+
 - [ ] Introduce a Cache provider
 
 * Add an `interface CacheProvider` so folks can inject in their preferred caching mechanisms
