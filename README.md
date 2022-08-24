@@ -55,6 +55,7 @@ trueTime.now()
 
 # Wiki has a lot of useful information
 
+*⚠️ The Wiki has not been updated to the latest version of TrueTime*
 Take a look at [the wiki sidebar](https://github.com/instacart/truetime-android/wiki) which should have a lot of useful information.
 
 # License
