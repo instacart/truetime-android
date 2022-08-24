@@ -100,9 +100,13 @@ class TrueTimeImpl(
      */
     @Throws(UnknownHostException::class)
     private fun resolveNtpHostToIPs(ntpHostAddress: String): List<String> {
-        val ipList = InetAddress.getAllByName(ntpHostAddress).map { it.hostAddress }
+        val ipList: List<String?> = InetAddress.getAllByName(ntpHostAddress).map { it.hostAddress }
         listener.resolvedNtpHostToIPs(ntpHostAddress, ipList)
-        return ipList
+        if (ipList.any { it?.isNotBlank() == true }) {
+          @Suppress("UNCHECKED_CAST")
+          return ipList as List<String>
+        }
+        throw UnknownHostException("couldn't resolve $ntpHostAddress to any addresses")
     }
 
     private fun requestTime(

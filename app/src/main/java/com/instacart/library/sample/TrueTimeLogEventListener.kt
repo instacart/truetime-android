@@ -22,7 +22,7 @@ class TrueTimeLogEventListener: TrueTimeEventListener {
     Log.v("TrueTime4", " next initialization call will be made in $delayInMillis ms")
   }
 
-  override fun resolvedNtpHostToIPs(ntpHost: String, ipList: List<String>) {
+  override fun resolvedNtpHostToIPs(ntpHost: String, ipList: List<String?>) {
     Log.v("TrueTime4", "resolved NTP pool host address $ntpHost to the list of IP addresses $ipList")
   }
 

@@ -25,7 +25,7 @@ interface TrueTimeEventListener : SntpEventListener, TimeKeeperListener {
      * resolved NTP pool host address [ntpHost]
      * to the list of IP addresses [ipList]
      */
-    fun resolvedNtpHostToIPs(ntpHost: String, ipList: List<String>)
+    fun resolvedNtpHostToIPs(ntpHost: String, ipList: List<String?>)
 
     fun lastSntpRequestAttempt(ipHost: String)
 
@@ -72,7 +72,7 @@ object NoOpEventListener : TrueTimeEventListener {
     override fun initializeSuccess(ntpResult: LongArray) {}
     override fun initializeFailed(e: Exception) {}
     override fun nextInitializeIn(delayInMillis: Long) {}
-    override fun resolvedNtpHostToIPs(ntpHost: String, ipList: List<String>) {}
+    override fun resolvedNtpHostToIPs(ntpHost: String, ipList: List<String?>) {}
     override fun lastSntpRequestAttempt(ipHost: String) {}
     override fun sntpRequestFailed(e: Exception) {}
     override fun syncDispatcherException(t: Throwable) {}
