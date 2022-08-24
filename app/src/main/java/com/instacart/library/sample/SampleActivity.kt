@@ -61,26 +61,27 @@ class SampleActivity : AppCompatActivity() {
     }
 
     private fun kickOffTruetimeCoroutines() {
-        binding.truetimeNew.text = "TrueTime (Coroutines): (loading...)"
+        binding.truetimeNew.text = "(Coroutines): (loading...)"
 
         if (!::sampleTrueTime.isInitialized) {
             val params = TrueTimeParameters.Builder()
               .ntpHostPool(arrayListOf("pool.ntp.org"))
               .connectionTimeoutInMillis(31428)
-              .syncIntervalInMillis(1_000)
+//              .syncIntervalInMillis(1_000)
               .retryCountAgainstSingleIp(3)
+              .shouldReturnSafely(false)
               .buildParams()
 
-            val dispatcher = Dispatchers.Main.immediate
+//            val dispatcher = Dispatchers.Main.immediate
 
-            sampleTrueTime = TrueTimeImpl(params, dispatcher)
+            sampleTrueTime = TrueTimeImpl(params, listener = TrueTimeLogEventListener())
         }
 
         job = sampleTrueTime.sync()
 
-        binding.truetimeNew.text = "TrueTime (Coroutines): ${formatDate(sampleTrueTime.nowSafely())}"
+        binding.truetimeNew.text = "(Coroutines): ${formatDate(sampleTrueTime.nowSafely())}"
 
-        if (false) {
+        if (!false) {
             Timer("Kill Sync Job", false).schedule(12_000) {
               job.cancel()
             }
@@ -88,7 +89,7 @@ class SampleActivity : AppCompatActivity() {
     }
 
     private fun kickOffTrueTimeRx() {
-        binding.truetimeLegacy.text = "TrueTime (Rx) : (loading...)"
+        binding.truetimeLegacy.text = "(Rx) : (loading...)"
 
         val d = TrueTimeRx()
             .withConnectionTimeout(31428)
@@ -99,7 +100,7 @@ class SampleActivity : AppCompatActivity() {
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ date ->
-                binding.truetimeLegacy.text = "TrueTime (Rx) : ${formatDate(date)}"
+                binding.truetimeLegacy.text = "(Rx) : ${formatDate(date)}"
             }, {
                 Log.e("Demo", "something went wrong when trying to initializeRx TrueTime", it)
             })
