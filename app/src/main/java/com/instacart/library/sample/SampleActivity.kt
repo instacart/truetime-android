@@ -22,6 +22,9 @@ import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Date
+import java.util.Timer
+import kotlin.concurrent.schedule
+import kotlinx.coroutines.Job
 
 @SuppressLint("SetTextI18n")
 @RequiresApi(Build.VERSION_CODES.O)
@@ -30,7 +33,8 @@ class SampleActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySampleBinding
     private val disposables = CompositeDisposable()
 
-    private lateinit var trueTime: TrueTime
+    private lateinit var sampleTrueTime: TrueTime
+    private lateinit var job: Job
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,28 +63,28 @@ class SampleActivity : AppCompatActivity() {
     private fun kickOffTruetimeCoroutines() {
         binding.truetimeNew.text = "TrueTime (Coroutines): (loading...)"
 
-        val mainDispatcherScope = CoroutineScope(Dispatchers.Main.immediate)
+        if (!::sampleTrueTime.isInitialized) {
+            val params = TrueTimeParameters.Builder()
+              .ntpHostPool(arrayListOf("pool.ntp.org"))
+              .connectionTimeoutInMillis(31428)
+              .syncIntervalInMillis(1_000)
+              .retryCountAgainstSingleIp(3)
+              .buildParams()
 
-        if (!::trueTime.isInitialized) {
-            trueTime = TrueTimeImpl()
+            val dispatcher = Dispatchers.Main.immediate
+
+            sampleTrueTime = TrueTimeImpl(params, dispatcher)
         }
 
-        val params = TrueTimeParameters.Builder()
-          .ntpHostPool(arrayListOf("pool.ntp.org"))
-          .connectionTimeoutInMillis(31428)
-          .syncIntervalInMillis(1_000)
-          .retryCountAgainstSingleIp(3)
-          .buildParams()
+        job = sampleTrueTime.sync()
 
-        mainDispatcherScope.launch {
-            trueTime.sync(params)
+        binding.truetimeNew.text = "TrueTime (Coroutines): ${formatDate(sampleTrueTime.nowSafely())}"
+
+        if (false) {
+            Timer("Kill Sync Job", false).schedule(12_000) {
+              job.cancel()
+            }
         }
-
-        binding.truetimeNew.text = "TrueTime (Coroutines): ${formatDate(trueTime.nowSafely())}"
-
-//        Timer("Kill Sync Job", false).schedule(12_000) {
-//            job.cancel()
-//        }
     }
 
     private fun kickOffTrueTimeRx() {
