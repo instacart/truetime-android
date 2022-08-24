@@ -4,6 +4,8 @@
 
 *⚠️ See work in progress section below. TrueTime is undergoing some changes*
 
+----------------------------------------
+
 *Make sure to check out our counterpart too: [TrueTime](https://github.com/instacart/TrueTime.swift), an NTP library for Swift.*
 
 NTP client for Android. Calculate the date and time "now" impervious to manual changes to device clock time.
@@ -28,9 +30,11 @@ With the move to Kotlin & Coroutines TrueTime 4 was a [major overhaul](https://g
 * ? Provide example of using this with a Database like Realm
 
 - [ ] Utilize all ntp pool addresses from `TrueTimeParameters.ntpHostPool`
+
 We currently only take the first ntp host pool address from the supplied parameters. In the future, it would be nice to provide multiple ntp "pool" addresses like `time.google.com`, `time.apple.com` and utilize all of those to get the "best" value.
 
 - [ ] Algorithmic improvements
+
 There are some exciting improvements that we have planned and use internally. Will have to upstream these changes (with a cleaner api + implementation)
 
 # Installation
