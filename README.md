@@ -33,9 +33,9 @@ I may have busted the jitpack import. Got to fix this first.
 * Provide a default cache implementation (probably using the non-android version of [DataStore](https://developer.android.com/topic/libraries/architecture/datastore#kts))
 * ? Provide example of using this with a Database like Realm
 
-- [ ] BootCompletedBroadcastReceiver
+- [ ] BootCompletedBroadcastReceiver sample
 
-Everytime a device is rebooted, the Truetime info is invalid. Provide a helpful broadcast receiver that clears any old TrueTime values.
+Everytime a device is rebooted, the Truetime info is invalid. Previous libraries included an actual `BroadcastReceiver` but this is better handled by the application than the library. For safe measure, I'll include an example of how this can be done in case folks are curious.
 
 - [ ] Utilize all ntp pool addresses from `TrueTimeParameters.ntpHostPool`
 

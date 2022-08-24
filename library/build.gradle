@@ -8,11 +8,12 @@ android {
 
     defaultConfig {
         minSdkVersion rootProject.ext.minSdkVersion
-
-
-      testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        aarMetadata {
+          minCompileSdk = rootProject.ext.compileSdkVersion
+        }
     }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -23,10 +24,11 @@ android {
     buildFeatures {
         buildConfig = false
     }
-  compileOptions {
-    sourceCompatibility JavaVersion.VERSION_1_8
-    targetCompatibility JavaVersion.VERSION_1_8
-  }
+
+    compileOptions {
+      sourceCompatibility JavaVersion.VERSION_1_8
+      targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 repositories {
