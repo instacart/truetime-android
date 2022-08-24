@@ -9,23 +9,27 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.net.InetAddress
 import java.net.UnknownHostException
 import java.util.Date
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
 
 class TrueTimeImpl(
+    private val params: TrueTimeParameters = Builder().buildParams(),
+    dispatcher: CoroutineDispatcher = Dispatchers.IO,
     private val listener: TrueTimeEventListener = NoOpEventListener,
-    private val params: TrueTimeParameters = Builder().buildParams()
 ) : TrueTime {
 
     private val sntp: Sntp = SntpImpl()
     private val timeKeeper = TimeKeeper(sntp, listener)
+    private val scope = CoroutineScope(SupervisorJob() + dispatcher +
+      CoroutineExceptionHandler { _, throwable -> listener.syncDispatcherException(throwable) })
 
-    override fun hasTheTime(): Boolean = timeKeeper.hasTheTime()
-
-    override suspend fun sync(params: TrueTimeParameters): Job = withContext(Dispatchers.IO) {
-        launch {
+    override fun sync(): Job {
+        return scope.launch {
             while (true) {
                 try {
                     initialize(params)
@@ -33,11 +37,13 @@ class TrueTimeImpl(
                     listener.initializeFailed(e)
                 }
 
-              listener.nextInitializeIn(params.syncIntervalInMillis)
+              listener.nextInitializeIn(delayInMillis = params.syncIntervalInMillis)
               delay(params.syncIntervalInMillis)
             }
         }
     }
+
+    override fun hasTheTime(): Boolean = timeKeeper.hasTheTime()
 
     override fun now(): Date {
         return if (params.shouldReturnSafely) nowSafely() else nowTrueOnly()
@@ -114,7 +120,7 @@ class TrueTimeImpl(
         }
 
         // last attempt
-        listener.sntpRequestLastAttempt(ipHostAddress)
+        listener.lastSntpRequestAttempt(ipHostAddress)
         return sntpRequest(with, ipHostAddress)
     }
 

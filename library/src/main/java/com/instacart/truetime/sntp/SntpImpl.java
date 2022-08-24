@@ -102,7 +102,7 @@ public class SntpImpl implements Sntp {
       SntpEventListener listener
   ) throws IOException {
 
-    listener.requestingTime(ntpHost);
+    listener.sntpRequest(ntpHost);
 
     DatagramSocket socket = null;
 
@@ -208,12 +208,12 @@ public class SntpImpl implements Sntp {
             timeElapsedSinceRequest);
       }
 
-      listener.responseSuccessful(ntpHost);
+      listener.sntpRequestSuccessful(ntpHost);
 
       return t;
 
     } catch (Exception e) {
-      listener.responseFailed(ntpHost, e);
+      listener.sntpRequestFailed(ntpHost, e);
       throw e;
     } finally {
       if (socket != null) {
