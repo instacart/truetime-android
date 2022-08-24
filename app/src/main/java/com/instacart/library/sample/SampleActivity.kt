@@ -65,15 +65,15 @@ class SampleActivity : AppCompatActivity() {
             trueTime = TrueTimeImpl()
         }
 
-        val with = TrueTimeParameters(
-            connectionTimeoutInMillis = 31428,
-            retryCountAgainstSingleIp = 3,
-            ntpHostPool = arrayListOf("pool.ntp.org"),
-            syncIntervalInMillis = 1_000
-        )
+        val params = TrueTimeParameters.Builder()
+          .ntpHostPool(arrayListOf("pool.ntp.org"))
+          .connectionTimeoutInMillis(31428)
+          .syncIntervalInMillis(1_000)
+          .retryCountAgainstSingleIp(3)
+          .buildParams()
 
         mainDispatcherScope.launch {
-            trueTime.sync(with)
+            trueTime.sync(params)
         }
 
         binding.truetimeNew.text = "TrueTime (Coroutines): ${formatDate(trueTime.nowSafely())}"

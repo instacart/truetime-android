@@ -1,14 +1,14 @@
 package com.instacart.truetime.time
 
+import com.instacart.truetime.time.TrueTimeParameters.Builder
 import kotlinx.coroutines.Job
 import java.util.Date
 
 interface TrueTime {
-
     /**
      * The main
      */
-    fun initialize(with: TrueTimeParameters = TrueTimeParameters()): Date
+    fun initialize(with: TrueTimeParameters = Builder().buildParams()): Date
 
     /**
      * Is [TrueTime] successfully initialized with [initialize]
