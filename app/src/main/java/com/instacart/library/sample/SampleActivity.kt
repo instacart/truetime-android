@@ -14,13 +14,21 @@ import com.instacart.truetime.time.TrueTimeParameters
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import java.time.Duration
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Timer
+import java.util.TimerTask
 import kotlin.concurrent.schedule
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 
 @SuppressLint("SetTextI18n")
 @RequiresApi(Build.VERSION_CODES.O)
@@ -59,13 +67,15 @@ class SampleActivity : AppCompatActivity() {
 
     private fun kickOffTruetimeCoroutines() {
 
-      binding.truetimeNew.text = "(Coroutines): (loading...)"
+        binding.truetimeNew.text = "(Coroutines): (loading...)"
+
+        if (::job.isInitialized) job.cancel()
 
         if (!::sampleTrueTime.isInitialized) {
             val params = TrueTimeParameters.Builder()
-              .ntpHostPool(arrayListOf("pool.ntp.org"))
+              .ntpHostPool(arrayListOf("time.google.com"))
               .connectionTimeoutInMillis(31428)
-//              .syncIntervalInMillis(1_000)
+              .syncIntervalInMillis(1_000)
               .retryCountAgainstSingleIp(3)
               .shouldReturnSafely(false)
               .buildParams()
@@ -75,11 +85,15 @@ class SampleActivity : AppCompatActivity() {
 
         job = sampleTrueTime.sync()
 
-        sampleTrueTime.now()
+        GlobalScope.launch(Dispatchers.Main) {
+          while (!sampleTrueTime.hasTheTime()) {
+            delay(5_000)
+          }
 
-        binding.truetimeNew.text = "(Coroutines): ${formatDate(sampleTrueTime.nowSafely())}"
+          binding.truetimeNew.text = "(Coroutines): ${formatDate(sampleTrueTime.now())}"
+        }
 
-        if (!false) {
+        if (false) {
             Timer("Kill Sync Job", false).schedule(12_000) {
               job.cancel()
             }
@@ -94,7 +108,7 @@ class SampleActivity : AppCompatActivity() {
             .withRetryCount(100)
 //            .withSharedPreferencesCache(this)
             .withLoggingEnabled(false)
-            .initializeRx("pool.ntp.org")
+            .initializeRx("time.google.com")
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ date ->
