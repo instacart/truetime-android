@@ -42,6 +42,7 @@ class SampleActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         supportActionBar?.title = "True Time Demo"
+//        (application as App).trueTime.now()
 
         binding.btnRefresh.setOnClickListener { refreshTime() }
     }
@@ -61,7 +62,8 @@ class SampleActivity : AppCompatActivity() {
     }
 
     private fun kickOffTruetimeCoroutines() {
-        binding.truetimeNew.text = "(Coroutines): (loading...)"
+
+      binding.truetimeNew.text = "(Coroutines): (loading...)"
 
         if (!::sampleTrueTime.isInitialized) {
             val params = TrueTimeParameters.Builder()
@@ -72,12 +74,12 @@ class SampleActivity : AppCompatActivity() {
               .shouldReturnSafely(false)
               .buildParams()
 
-//            val dispatcher = Dispatchers.Main.immediate
-
             sampleTrueTime = TrueTimeImpl(params, listener = TrueTimeLogEventListener())
         }
 
         job = sampleTrueTime.sync()
+
+        sampleTrueTime.now()
 
         binding.truetimeNew.text = "(Coroutines): ${formatDate(sampleTrueTime.nowSafely())}"
 

@@ -22,6 +22,8 @@ class TrueTimeParameters private constructor(
 
     private var ntpHostPool: ArrayList<String> = arrayListOf("time.google.com")
 
+    // TODO: currently only using the first ntp host
+    //  in the future we want to leverage all the time providers
     fun ntpHostPool(value: ArrayList<String>): Builder {
       ntpHostPool = value
       return this
@@ -74,11 +76,8 @@ class TrueTimeParameters private constructor(
       return this
     }
 
-//    TODO: cache provider
-//    val cacheProvider: TrueTimeCacheProvider? = null,
-
-//    TODO: currently only using the first ntp host
-//    in the future we want to leverage all the time providers
+    // TODO: cache provider
+    //  val cacheProvider: TrueTimeCacheProvider? = null,
 
     fun buildParams() = TrueTimeParameters(
       connectionTimeoutInMillis,
