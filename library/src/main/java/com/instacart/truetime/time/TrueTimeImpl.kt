@@ -104,9 +104,11 @@ class TrueTimeImpl(
         val ipList: List<InetAddress> =  InetAddress
           .getAllByName(ntpHostAddress)
           .toList()
-          .filter { it !is Inet6Address }
         listener.resolvedNtpHostToIPs(ntpHostAddress, ipList)
-        return ipList
+
+        return ipList.filter {
+            if (params.filterIPV6Addresses) it !is Inet6Address else true
+        }
     }
 
     private fun requestTime(

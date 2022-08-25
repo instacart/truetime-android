@@ -9,6 +9,7 @@ class TrueTimeParameters private constructor(
   val serverResponseDelayMax: Int,
   val syncIntervalInMillis: Long,
   val shouldReturnSafely: Boolean,
+  val filterIPV6Addresses: Boolean,
 ) {
 
   class Builder {
@@ -76,6 +77,20 @@ class TrueTimeParameters private constructor(
       return this
     }
 
+    /**
+     * Certain NTP hosts like time.google.com return IPV6 addresses.
+     * This can cause problems (atleast in emulators) so filter by default.
+     *
+     * In practice, on real devices [InetAddress.getAllByName] tends to return
+     * only IPV4 addresses.
+     */
+    private var filterIPV6Addresses: Boolean = true
+
+    fun filterIPV6Addresses(value: Boolean): Builder {
+      filterIPV6Addresses = value
+      return this
+    }
+
     // TODO: cache provider
     //  val cacheProvider: TrueTimeCacheProvider? = null,
 
@@ -87,7 +102,8 @@ class TrueTimeParameters private constructor(
       rootDispersionMax,
       serverResponseDelayMax,
       syncIntervalInMillis,
-      shouldReturnSafely
+      shouldReturnSafely,
+      filterIPV6Addresses,
     )
   }
 }
