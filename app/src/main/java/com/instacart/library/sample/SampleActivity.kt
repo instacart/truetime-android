@@ -77,7 +77,7 @@ class SampleActivity : AppCompatActivity() {
               .connectionTimeoutInMillis(31428)
               .syncIntervalInMillis(1_000)
               .retryCountAgainstSingleIp(3)
-              .shouldReturnSafely(false)
+              .safeReturnMode(false)
               .buildParams()
 
             sampleTrueTime = TrueTimeImpl(params, listener = TrueTimeLogEventListener())
