@@ -87,7 +87,7 @@ class SampleActivity : AppCompatActivity() {
 
         GlobalScope.launch(Dispatchers.Main) {
           while (!sampleTrueTime.hasTheTime()) {
-            delay(5_000)
+            delay(500)
           }
 
           binding.truetimeNew.text = "(Coroutines): ${formatDate(sampleTrueTime.now())}"
