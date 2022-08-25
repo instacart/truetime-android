@@ -51,7 +51,7 @@ class TrueTimeImpl(
     override fun hasTheTime(): Boolean = timeKeeper.hasTheTime()
 
     override fun now(): Date {
-        return if (params.shouldReturnSafely) nowSafely() else nowTrueOnly()
+        return if (params.returnSafelyWhenUninitialized) nowSafely() else nowTrueOnly()
     }
 
     override fun nowSafely(): Date {
@@ -79,7 +79,7 @@ class TrueTimeImpl(
         // resolve NTP pool -> single IPs
         val resolvedIPs = resolveNtpHostToIPs(params.ntpHostPool.first())
 
-        val ntpResult: LongArray = if (this.params.strictMode) {
+        val ntpResult: LongArray = if (this.params.strictNtpMode) {
             // for each IP resolved
             resolvedIPs.map { ipHost ->
               // 5 times against each IP
@@ -124,7 +124,7 @@ class TrueTimeImpl(
         listener.resolvedNtpHostToIPs(ntpHostAddress, ipList)
 
         return ipList.filter {
-            if (params.filterIPV6Addresses) it !is Inet6Address else true
+            if (params.filterIpv6Addresses) it !is Inet6Address else true
         }
     }
 

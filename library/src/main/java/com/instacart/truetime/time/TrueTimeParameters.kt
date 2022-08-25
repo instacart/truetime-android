@@ -8,9 +8,9 @@ class TrueTimeParameters private constructor(
   val rootDispersionMax: Float,
   val serverResponseDelayMax: Int,
   val syncIntervalInMillis: Long,
-  val shouldReturnSafely: Boolean,
-  val filterIPV6Addresses: Boolean,
-  val strictMode: Boolean,
+  val returnSafelyWhenUninitialized: Boolean,
+  val filterIpv6Addresses: Boolean,
+  val strictNtpMode: Boolean,
 ) {
 
   class Builder {
@@ -71,10 +71,10 @@ class TrueTimeParameters private constructor(
      * if set to [true] it will default to [TrueTime.nowSafely]
      * else will return [TrueTime.nowTrueOnly]
      */
-    private var shouldReturnSafely: Boolean = true
+    private var returnSafelyWhenUninitialized: Boolean = true
 
-    fun safeReturnMode(value: Boolean): Builder {
-      shouldReturnSafely = value
+    fun returnSafelyWhenUninitialized(value: Boolean): Builder {
+      returnSafelyWhenUninitialized = value
       return this
     }
 
@@ -85,10 +85,10 @@ class TrueTimeParameters private constructor(
      * In practice, on real devices [InetAddress.getAllByName] tends to return
      * only IPV4 addresses.
      */
-    private var filterIPV6Addresses: Boolean = true
+    private var filterIpv6Addresses: Boolean = true
 
-    fun filterIPV6Addresses(value: Boolean): Builder {
-      filterIPV6Addresses = value
+    fun filterIpv6Addresses(value: Boolean): Builder {
+      filterIpv6Addresses = value
       return this
     }
 
@@ -98,13 +98,13 @@ class TrueTimeParameters private constructor(
      *    we now make 5 calls to each of these IPs (~ 5 * 4-5 calls)
      *    and if a call fails we repeat it at least [retryCountAgainstSingleIp] times.
      *
-     *  if [strictCalculationMode] is true, we ignore all of the above and return as soon as we get
+     *  if [strictNtpMode] is true, we ignore all of the above and return as soon as we get
      *  at least one successful SNTP call. This is what many other common libraries do.
      */
-    private var strictMode: Boolean = true
+    private var strictNtpMode: Boolean = true
 
-    fun strictCalculationMode(value: Boolean): Builder {
-      strictMode = value
+    fun strictNtpMode(value: Boolean): Builder {
+      strictNtpMode = value
       return this
     }
 
@@ -119,9 +119,9 @@ class TrueTimeParameters private constructor(
       rootDispersionMax,
       serverResponseDelayMax,
       syncIntervalInMillis,
-      shouldReturnSafely,
-      filterIPV6Addresses,
-      strictMode,
+      returnSafelyWhenUninitialized,
+      filterIpv6Addresses,
+      strictNtpMode,
     )
   }
 }

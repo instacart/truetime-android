@@ -14,21 +14,17 @@ import com.instacart.truetime.time.TrueTimeParameters
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import java.time.Duration
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Timer
-import java.util.TimerTask
 import kotlin.concurrent.schedule
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
 
 @SuppressLint("SetTextI18n")
 @RequiresApi(Build.VERSION_CODES.O)
@@ -77,7 +73,7 @@ class SampleActivity : AppCompatActivity() {
               .connectionTimeoutInMillis(31428)
               .syncIntervalInMillis(1_000)
               .retryCountAgainstSingleIp(3)
-              .safeReturnMode(false)
+              .returnSafelyWhenUninitialized(false)
               .buildParams()
 
             sampleTrueTime = TrueTimeImpl(params, listener = TrueTimeLogEventListener())

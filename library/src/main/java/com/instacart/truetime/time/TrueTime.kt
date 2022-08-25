@@ -18,7 +18,7 @@ interface TrueTime {
 
     /**
      * This is [TrueTime]'s main function to get time
-     * It should respect [TrueTimeParameters.shouldReturnSafely] setting
+     * It should respect [TrueTimeParameters.returnSafelyWhenUninitialized] setting
      */
     fun now(): Date
 
