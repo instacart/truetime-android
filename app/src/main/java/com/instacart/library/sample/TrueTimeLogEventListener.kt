@@ -39,15 +39,15 @@ class TrueTimeLogEventListener: TrueTimeEventListener {
     Log.e("TrueTime4", "CoroutineDispatcher exception from TrueTime sync call", t)
   }
 
-  override fun sntpRequest(ntpHost: InetAddress) {
-    Log.v("TrueTime4 SNTP", "SNTP request to $ntpHost")
+  override fun sntpRequest(address: InetAddress) {
+    Log.v("TrueTime4 SNTP", "SNTP request to $address")
   }
 
-  override fun sntpRequestSuccessful(ntpHost: InetAddress) {
-    Log.v("TrueTime4 SNTP", "SNTP Request to $ntpHost came back successfully")
+  override fun sntpRequestSuccessful(address: InetAddress) {
+    Log.v("TrueTime4 SNTP", "SNTP Request to $address came back successfully")
   }
 
-  override fun sntpRequestFailed(ntpHost: InetAddress, e: Exception) {
+  override fun sntpRequestFailed(address: InetAddress, e: Exception) {
 //    Log.e("TrueTime4 SNTP", "SNTP Request to $ntpHost failed", e)
   }
 

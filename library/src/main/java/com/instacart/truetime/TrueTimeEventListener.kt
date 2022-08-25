@@ -41,16 +41,16 @@ interface TrueTimeEventListener : SntpEventListener, TimeKeeperListener {
 
 interface SntpEventListener {
     /**
-     * requesting time from [ntpHost] which should be an IP address
+     * requesting time from [address] which should be an IP address
      */
-    fun sntpRequest(ntpHost: InetAddress)
+    fun sntpRequest(address: InetAddress)
 
-    fun sntpRequestSuccessful(ntpHost: InetAddress)
+    fun sntpRequestSuccessful(address: InetAddress)
 
     /**
-     * Invoked if the SNTP request to [ntpHost] fails for any reason
+     * Invoked if the SNTP request to [address] fails for any reason
      */
-    fun sntpRequestFailed(ntpHost: InetAddress, e: Exception)
+    fun sntpRequestFailed(address: InetAddress, e: Exception)
 }
 
 interface TimeKeeperListener {
@@ -78,9 +78,9 @@ object NoOpEventListener : TrueTimeEventListener {
     override fun sntpRequestFailed(e: Exception) {}
     override fun syncDispatcherException(t: Throwable) {}
 
-    override fun sntpRequest(ntpHost: InetAddress) {}
-    override fun sntpRequestSuccessful(ntpHost: InetAddress) {}
-    override fun sntpRequestFailed(ntpHost: InetAddress, e: Exception) {}
+    override fun sntpRequest(address: InetAddress) {}
+    override fun sntpRequestSuccessful(address: InetAddress) {}
+    override fun sntpRequestFailed(address: InetAddress, e: Exception) {}
 
     override fun storingTrueTime(ntpResult: LongArray) {}
     override fun returningTrueTime(trueTime: Date) {}

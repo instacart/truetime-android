@@ -89,12 +89,12 @@ public class SntpImpl implements Sntp {
   /**
    * Sends an NTP request to the given host and processes the response.
    *
-   * @param ntpHost host name of the server.
+   * @param address host name of the server.
    */
   @NotNull
   @Override
   public synchronized long[] requestTime(
-      InetAddress ntpHost,
+      InetAddress address,
       float rootDelayMax,
       float rootDispersionMax,
       int serverResponseDelayMax,
@@ -102,17 +102,18 @@ public class SntpImpl implements Sntp {
       SntpEventListener listener
   ) throws IOException {
 
-    listener.sntpRequest(ntpHost);
+    listener.sntpRequest(address);
 
     DatagramSocket socket = null;
 
     try {
 
+      socket = new DatagramSocket();
+      socket.setSoTimeout(timeoutInMillis);
       byte[] buffer = new byte[NTP_PACKET_SIZE];
+      DatagramPacket request = new DatagramPacket(buffer, buffer.length, address, NTP_PORT);
 
-      DatagramPacket request = new DatagramPacket(buffer, buffer.length, ntpHost, NTP_PORT);
-
-      writeVersion(buffer);
+      writeNtpVersion(buffer);
 
       // -----------------------------------------------------------------------------------
       // get current time and write it to the request packet
@@ -124,8 +125,6 @@ public class SntpImpl implements Sntp {
 
       writeTimeStamp(buffer, INDEX_TRANSMIT_TIME, requestTime);
 
-      socket = new DatagramSocket();
-      socket.setSoTimeout(timeoutInMillis);
       socket.send(request);
 
       // -----------------------------------------------------------------------------------
@@ -207,12 +206,12 @@ public class SntpImpl implements Sntp {
             timeElapsedSinceRequest);
       }
 
-      listener.sntpRequestSuccessful(ntpHost);
+      listener.sntpRequestSuccessful(address);
 
       return t;
 
     } catch (Exception e) {
-      listener.sntpRequestFailed(ntpHost, e);
+      listener.sntpRequestFailed(address, e);
       throw e;
     } finally {
       if (socket != null) {
@@ -226,7 +225,7 @@ public class SntpImpl implements Sntp {
   /**
    * Writes NTP version as defined in RFC-1305
    */
-  private void writeVersion(byte[] buffer) {
+  private void writeNtpVersion(byte[] buffer) {
     // mode is in low 3 bits of first byte
     // version is in bits 3-5 of first byte
     buffer[INDEX_VERSION] = NTP_MODE | (NTP_VERSION << 3);
