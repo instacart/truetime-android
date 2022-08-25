@@ -10,6 +10,7 @@ class TrueTimeParameters private constructor(
   val syncIntervalInMillis: Long,
   val shouldReturnSafely: Boolean,
   val filterIPV6Addresses: Boolean,
+  val strictMode: Boolean,
 ) {
 
   class Builder {
@@ -72,7 +73,7 @@ class TrueTimeParameters private constructor(
      */
     private var shouldReturnSafely: Boolean = true
 
-    fun shouldReturnSafely(value: Boolean): Builder {
+    fun safeReturnMode(value: Boolean): Builder {
       shouldReturnSafely = value
       return this
     }
@@ -91,6 +92,22 @@ class TrueTimeParameters private constructor(
       return this
     }
 
+    /**
+     *  The NTP spec requires a pretty strict set of SNTP call sequence to be made
+     *    we resolve the ntp pool to single IPs (typically around 4-5 IP addresses)
+     *    we now make 5 calls to each of these IPs (~ 5 * 4-5 calls)
+     *    and if a call fails we repeat it at least [retryCountAgainstSingleIp] times.
+     *
+     *  if [strictCalculationMode] is true, we ignore all of the above and return as soon as we get
+     *  at least one successful SNTP call. This is what many other common libraries do.
+     */
+    private var strictMode: Boolean = true
+
+    fun strictCalculationMode(value: Boolean): Builder {
+      strictMode = value
+      return this
+    }
+
     // TODO: cache provider
     //  val cacheProvider: TrueTimeCacheProvider? = null,
 
@@ -104,6 +121,7 @@ class TrueTimeParameters private constructor(
       syncIntervalInMillis,
       shouldReturnSafely,
       filterIPV6Addresses,
+      strictMode,
     )
   }
 }

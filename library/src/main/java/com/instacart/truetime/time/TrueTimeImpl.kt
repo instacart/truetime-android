@@ -17,6 +17,10 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
+import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.selects.select
 
 class TrueTimeImpl(
     private val params: TrueTimeParameters = Builder().buildParams(),
@@ -69,25 +73,38 @@ class TrueTimeImpl(
     /**
      * Initialize TrueTime with an ntp pool server address
      */
-    private fun initialize(with: TrueTimeParameters): LongArray {
-        listener.initialize(with)
+    private suspend fun initialize(params: TrueTimeParameters): LongArray {
+        listener.initialize(params)
 
         // resolve NTP pool -> single IPs
-        val ntpResult = resolveNtpHostToIPs(with.ntpHostPool.first())
+        val resolvedIPs = resolveNtpHostToIPs(params.ntpHostPool.first())
+
+        val ntpResult: LongArray = if (this.params.strictMode) {
             // for each IP resolved
-            .map { ipHost ->
-                // 5 times against each IP
-                (1..5)
-                    .map { requestTime(with, ipHost) }
-                    // collect the 5 results to list
-                    .toList()
-                    // filter least round trip delay to get single Result
-                    .filterLeastRoundTripDelay()
+            resolvedIPs.map { ipHost ->
+              // 5 times against each IP
+              (1..5)
+                .map { requestTime(params, ipHost) }
+                // collect the 5 results to list
+                .toList()
+                // filter least round trip delay to get single Result
+                .filterLeastRoundTripDelay()
             }
-            // collect max 5 of the IPs in a list
+            // collect 5 of the results made so far to any of the IPs
             .take(5)
             // filter median clock offset to get single Result
             .filterMedianClockOffset()
+        } else {
+            coroutineScope {
+                select {
+                    resolvedIPs.forEach { ipHost ->
+                        async {
+                            requestTime(params, ipHost)
+                        }.onAwait { it }
+                    }
+                }.also { coroutineContext.cancelChildren() }
+            }
+        }
 
         listener.initializeSuccess(ntpResult)
 
