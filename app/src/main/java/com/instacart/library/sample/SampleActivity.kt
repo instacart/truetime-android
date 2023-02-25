@@ -67,7 +67,7 @@ class SampleActivity : AppCompatActivity() {
 
         if (!::sampleTrueTime.isInitialized) {
             val params = TrueTimeParameters.Builder()
-              .ntpHostPool(arrayListOf("time.google.com"))
+              .ntpHostPool(arrayListOf("time.apple.com"))
               .connectionTimeoutInMillis(31428)
               .syncIntervalInMillis(1_000)
               .retryCountAgainstSingleIp(3)
