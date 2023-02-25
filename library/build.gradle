@@ -4,7 +4,6 @@ plugins {
 
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
-apply plugin: 'maven-publish'
 
 android {
     namespace = 'com.instacart.truetime'
@@ -48,14 +47,13 @@ dependencies {
 afterEvaluate {
   publishing {
     publications {
-      maven(MavenPublication) {
-        groupId = 'com.github.instacart'
-        artifactId = 'truetime-android'
-        version = rootProject.ext.versionName
+      release(MavenPublication) {
         from components.release
-        pom {
-          description = 'TrueTime: Get the true current time impervious to device clock time changes'
-        }
+
+        groupId = 'com.instacart'
+        artifactId = 'truetime'
+        version = rootProject.ext.versionName
+
       }
     }
   }
