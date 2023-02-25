@@ -98,7 +98,7 @@ class TrueTimeParameters private constructor(
      *    we now make 5 calls to each of these IPs (~ 5 * 4-5 calls)
      *    and if a call fails we repeat it at least [retryCountAgainstSingleIp] times.
      *
-     *  if [strictNtpMode] is true, we ignore all of the above and return as soon as we get
+     *  if [strictNtpMode] is false, we ignore all of the above and return as soon as we get
      *  at least one successful SNTP call. This is what many other common libraries do.
      */
     private var strictNtpMode: Boolean = true
