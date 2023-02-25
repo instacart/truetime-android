@@ -1,26 +1,16 @@
 package com.instacart.truetime.time
 
-import com.instacart.truetime.TrueTimeEventListener
 import com.instacart.truetime.NoOpEventListener
+import com.instacart.truetime.TrueTimeEventListener
 import com.instacart.truetime.sntp.Sntp
 import com.instacart.truetime.sntp.SntpImpl
 import com.instacart.truetime.time.TrueTimeParameters.Builder
+import kotlinx.coroutines.*
+import kotlinx.coroutines.selects.select
 import java.net.Inet6Address
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import java.net.InetAddress
 import java.net.UnknownHostException
-import java.util.Date
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.async
-import kotlinx.coroutines.cancelChildren
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.selects.select
+import java.util.*
 
 class TrueTimeImpl(
     private val params: TrueTimeParameters = Builder().buildParams(),
@@ -34,7 +24,7 @@ class TrueTimeImpl(
       CoroutineExceptionHandler { _, throwable -> listener.syncDispatcherException(throwable) })
 
     override fun sync(): Job {
-        return scope.launch {
+        return scope.launch(CoroutineName("TrueTime-Syncer")) {
             while (true) {
                 try {
                     initialize(params)

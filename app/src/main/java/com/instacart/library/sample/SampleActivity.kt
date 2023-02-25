@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.instacart.library.sample.databinding.ActivitySampleBinding
 import com.instacart.library.truetime.TrueTimeRx
 import com.instacart.truetime.time.TrueTime
@@ -14,17 +15,13 @@ import com.instacart.truetime.time.TrueTimeParameters
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.*
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Timer
 import kotlin.concurrent.schedule
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 @SuppressLint("SetTextI18n")
 @RequiresApi(Build.VERSION_CODES.O)
@@ -74,6 +71,7 @@ class SampleActivity : AppCompatActivity() {
               .syncIntervalInMillis(1_000)
               .retryCountAgainstSingleIp(3)
               .returnSafelyWhenUninitialized(false)
+              .serverResponseDelayMaxInMillis(780)
               .buildParams()
 
             sampleTrueTime = TrueTimeImpl(params, listener = TrueTimeLogEventListener())
@@ -81,7 +79,7 @@ class SampleActivity : AppCompatActivity() {
 
         job = sampleTrueTime.sync()
 
-        GlobalScope.launch(Dispatchers.Main) {
+      lifecycleScope.launch {
           while (!sampleTrueTime.hasTheTime()) {
             delay(500)
           }
