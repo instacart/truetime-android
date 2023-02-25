@@ -1,7 +1,7 @@
 buildscript {
     ext{
-        kotlin_version = '1.7.10'
-        coroutines_version = '1.6.3'
+        kotlin_version = '1.8.0'
+        coroutines_version = '1.6.4'
     }
 
     repositories {
