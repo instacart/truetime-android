@@ -4,6 +4,7 @@ apply plugin: 'kotlin-android'
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
 
+    namespace 'com.instacart.library.sample'
     defaultConfig {
         applicationId "com.instacart.truetime"
         minSdkVersion 14
