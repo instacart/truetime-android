@@ -44,7 +44,7 @@ repositories {
 
 dependencies {
     implementation project(path: ':library')
-//    implementation project(path: ':library-extension-rx')
+//    implementation 'com.github.instacart:truetime-android:4.0.0.alpha'
     implementation 'com.github.instacart.truetime-android:library-extension-rx:3.5'
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib"

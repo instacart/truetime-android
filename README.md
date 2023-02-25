@@ -8,26 +8,77 @@
 
 *Make sure to check out our counterpart too: [TrueTime](https://github.com/instacart/TrueTime.swift), an NTP library for Swift.*
 
-NTP client for Android. Calculate the date and time "now" impervious to manual changes to device clock time.
+
+# What is TrueTime?
+
+TrueTime is an (S)NTP client for Android. It helps you calculate the date and time "now" impervious to manual changes to device clock time.
+
+## Why do I need TrueTime?
 
 In certain applications it becomes important to get the real or "true" date and time. On most devices, if the clock has been changed manually, then a `Date()` instance gives you a time impacted by local settings.
 
 Users may do this for a variety of reasons, like being in different timezones, trying to be punctual by setting their clocks 5 – 10 minutes early, etc. Your application or service may want a date that is unaffected by these changes and reliable as a source of truth. TrueTime gives you that.
 
-You can read more about the use case in our [blog post](https://tech.instacart.com/offline-first-introducing-truetime-for-swift-and-android-15e5d968df96).
+You can read more about the use case in our [intro blog post](https://tech.instacart.com/offline-first-introducing-truetime-for-swift-and-android-15e5d968df96).
 
-In a [conference talk](https://vimeo.com/190922794), we explained how the full NTP implementation works (with Rx). Check the [video](https://vimeo.com/190922794#t=1466s) and [slides](https://speakerdeck.com/kaushikgopal/learning-rx-by-example-2?slide=31) out for implementation details.
+# How does TrueTime work?
 
+In a [conference talk](https://vimeo.com/190922794), we explained how the full NTP implementation works. Check the [video](https://vimeo.com/190922794#t=1466s) and [slides](https://speakerdeck.com/kaushikgopal/learning-rx-by-example-2?slide=31) out for implementation details.
 
-# Work in Progress 4.0
+TrueTime has since been migrated to Kotlin & Coroutines and no longer requires the additional Rx dependency. The concept hasn't changed but the above video is still a good explainer on the concept.
+
+# How do I use TrueTime?
+
+## Installation
+
+We use [JitPack](https://jitpack.io) to host the library.
+
+[![](https://jitpack.io/v/instacart/truetime-android.svg)](https://jitpack.io/#instacart/truetime-android)
+
+Add this to your application's `build.gradle` file:
+
+```groovy
+repositories {
+    maven {
+        url "https://jitpack.io"
+    }
+}
+
+dependencies {
+    // ...
+    implementation 'com.github.instacart:truetime-android:<release-version>'
+}
+```
+
+## Usage
+
+In your application class start the TrueTime sync-er like so:
+
+```kt
+// App.kt
+class App : Application() {
+
+    val trueTime = TrueTimeImpl()
+
+    override fun onCreate() {
+        super.onCreate()
+        trueTime.sync()
+    }
+}
+```
+Once TrueTime gets a fix with an NTP time server, you can simply use:
+
+```kt
+(application as App).trueTime.now()
+```
+
+_Btw don't do ↑, inject TrueTime into your app and then just call `trueTime.now()`_
+
+# ⚠️ Work in Progress 4.0
 
 With the move to Kotlin & Coroutines TrueTime 4 was a [major overhaul](https://github.com/instacart/truetime-android/pull/129). We still haven't ported some of the additional bells & whistles. This section keeps track of those features (that will come in the near future). TrueTime is completely functional without these additional features, so feel free to start using it.
 
 Most of these todos should have corresponding "TODO" comments within the code.
-
-- [ ] Fix Jitpack import
-
-I may have busted the jitpack import. Got to fix this first.
 
 - [ ] Introduce a Cache provider
 
