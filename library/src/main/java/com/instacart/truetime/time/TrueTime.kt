@@ -6,11 +6,12 @@ import java.util.Date
 interface TrueTime {
 
     /**
-     * Keep running the [com.instacart.truetime.sntp.Sntp.requestTime] call
-     * in the background to account for clock drift and
-     * update the locally stored SNTP result
+     * Run [com.instacart.truetime.sntp.Sntp.requestTime]
+     * in the background repeatedly to account for clock drift
+     * and update the locally stored SNTP result
      *
-     * @return Use this Coroutines job to cancel the [sync] and all background work
+     * @return Use this Coroutines job
+     *          to cancel the [sync] and all background work
      */
     fun sync(): Job
 
