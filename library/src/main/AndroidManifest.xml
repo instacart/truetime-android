@@ -1,6 +1,5 @@
 <manifest
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.instacart.library.truetime">
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!--UDP permissions-->
     <uses-permission android:name="android.permission.INTERNET"/>
@@ -10,14 +9,6 @@
     <!--Detect boot to invalidate TrueTime-->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
-    <application>
-        <!-- Start the Service if applicable on boot -->
-        <receiver android:name=".BootCompletedBroadcastReceiver"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
-            </intent-filter>
-        </receiver>
-    </application>
+    <application />
 
 </manifest>

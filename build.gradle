@@ -1,27 +1,32 @@
 buildscript {
+    ext{
+        kotlin_version = '1.8.0'
+        coroutines_version = '1.6.4'
+    }
+
     repositories {
         google()
-        jcenter()
+        mavenCentral()
     }
+
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.1.3'
-        classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
+        classpath 'com.android.tools.build:gradle:7.4.1'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 
 ext {
     minSdkVersion = 9
-    targetSdkVersion = 27
-    compileSdkVersion = 27
+    targetSdkVersion = 33
+    compileSdkVersion = 33
 
-    versionCode = 10
-    versionName = '3.3'
+    versionCode = 99
+    versionName = 'xxx'
 }
 
 allprojects {
     repositories {
         google()
-        jcenter()
     }
 }
 

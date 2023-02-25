@@ -1,18 +1,23 @@
+plugins {
+  id 'maven-publish'
+}
+
 apply plugin: 'com.android.library'
-apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'kotlin-android'
 
 android {
+    namespace = 'com.instacart.truetime'
+
     compileSdkVersion rootProject.ext.compileSdkVersion
 
     defaultConfig {
         minSdkVersion rootProject.ext.minSdkVersion
-
-        versionCode rootProject.ext.versionCode
-        versionName rootProject.ext.versionName
-
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        aarMetadata {
+          minCompileSdk = rootProject.ext.compileSdkVersion
+        }
     }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -20,14 +25,35 @@ android {
         }
     }
 
-    // TODO replace with https://issuetracker.google.com/issues/72050365 once released.
-    libraryVariants.all {
-        it.generateBuildConfig.enabled = false
+    buildFeatures {
+        buildConfig = false
+    }
+
+    compileOptions {
+      sourceCompatibility JavaVersion.VERSION_1_8
+      targetCompatibility JavaVersion.VERSION_1_8
     }
 }
 
-dependencies {
-
+repositories {
+  mavenCentral()
 }
 
-group='com.github.instacart'
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
+}
+
+afterEvaluate {
+  publishing {
+    publications {
+      release(MavenPublication) {
+        from components.release
+
+        groupId = 'com.github.instacart'
+        artifactId = 'truetime-android'
+        version = rootProject.ext.versionName
+      }
+    }
+  }
+}

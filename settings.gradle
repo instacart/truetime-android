@@ -1,1 +1,1 @@
-include ':app', ':library', ':library-extension-rx'
+include ':app', ':library'

@@ -1,23 +1,35 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
 
+    namespace 'com.instacart.sample'
     defaultConfig {
-        applicationId "com.instacart.library.truetime"
+        applicationId "com.instacart.truetime"
         minSdkVersion 14
         targetSdkVersion rootProject.ext.targetSdkVersion
 
         versionCode rootProject.ext.versionCode
         versionName rootProject.ext.versionName
 
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+
+    buildFeatures {
+        viewBinding true
     }
 }
 
@@ -25,19 +37,20 @@ repositories {
     maven {
         url "https://jitpack.io"
     }
+    mavenCentral()
 }
 
-ext {
-    butterknifeVersion = '8.8.1'
-}
 dependencies {
     implementation project(path: ':library')
-    implementation project(path: ':library-extension-rx')
-//    compile 'com.github.instacart.truetime-android:library-extension-rx:master-SNAPSHOT'
+//    implementation project(path: ':library-extension-rx')
+    implementation 'com.github.instacart.truetime-android:library-extension-rx:3.5'
 
-    implementation 'com.android.support:appcompat-v7:27.1.1'
-    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
-    implementation "com.jakewharton:butterknife:$butterknifeVersion"
-    annotationProcessor "com.jakewharton:butterknife-compiler:$butterknifeVersion"
-    implementation "io.reactivex.rxjava2:rxandroid:2.0.2"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
+
+    implementation 'androidx.appcompat:appcompat:1.5.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.2.0'
+
+    implementation "io.reactivex.rxjava2:rxandroid:2.1.1"
 }
