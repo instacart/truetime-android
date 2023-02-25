@@ -72,7 +72,7 @@ class SampleActivity : AppCompatActivity() {
               .syncIntervalInMillis(1_000)
               .retryCountAgainstSingleIp(3)
               .returnSafelyWhenUninitialized(false)
-              .serverResponseDelayMaxInMillis(780)
+              .serverResponseDelayMaxInMillis(900)  // this value is pretty high (coding on a plane)
               .buildParams()
 
             sampleTrueTime = TrueTimeImpl(params, listener = TrueTimeLogEventListener())
