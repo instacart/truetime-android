@@ -23,6 +23,8 @@ In a [conference talk](https://vimeo.com/190922794), we explained how the full N
 
 With the move to Kotlin & Coroutines TrueTime 4 was a [major overhaul](https://github.com/instacart/truetime-android/pull/129). We still haven't ported some of the additional bells & whistles. This section keeps track of those features (that will come in the near future). TrueTime is completely functional without these additional features, so feel free to start using it.
 
+Most of these todos should have corresponding "TODO" comments within the code.
+
 - [ ] Fix Jitpack import
 
 I may have busted the jitpack import. Got to fix this first.
@@ -33,17 +35,23 @@ I may have busted the jitpack import. Got to fix this first.
 * Provide a default cache implementation (probably using the non-android version of [DataStore](https://developer.android.com/topic/libraries/architecture/datastore#kts))
 * ? Provide example of using this with a Database like Realm
 
-- [ ] BootCompletedBroadcastReceiver sample
+- [ ] Algorithmic improvements
 
-Everytime a device is rebooted, the Truetime info is invalid. Previous libraries included an actual `BroadcastReceiver` but this is better handled by the application than the library. For safe measure, I'll include an example of how this can be done in case folks are curious.
+There are some exciting improvements that we have planned and use internally. Will have to upstream these changes (with a cleaner api + implementation)
+
+- [ ] Move android dependency to separate package
+
+There's no reason for TrueTime (with the move to coroutines) to be an "android" library. It can be a pure kotlin lib.
+
+The only remaining dependency is `SystemClock` (which we should just have a provider for).
 
 - [ ] Utilize all ntp pool addresses from `TrueTimeParameters.ntpHostPool`
 
 We currently only take the first ntp host pool address from the supplied parameters. In the future, it would be nice to provide multiple ntp "pool" addresses like `time.google.com`, `time.apple.com` and utilize all of those to get the "best" value.
 
-- [ ] Algorithmic improvements
+- [ ] BootCompletedBroadcastReceiver sample
 
-There are some exciting improvements that we have planned and use internally. Will have to upstream these changes (with a cleaner api + implementation)
+Everytime a device is rebooted, the Truetime info is invalid. Previous libraries included an actual `BroadcastReceiver` but this is better handled by the application than the library. For safe measure, I'll include an example of how this can be done in case folks are curious.
 
 # Installation
 

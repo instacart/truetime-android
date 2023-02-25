@@ -7,6 +7,7 @@ import java.util.Date
 import java.util.concurrent.atomic.AtomicReference
 
 // TODO: move android dependency to separate package
+//  so we can make Truetime a pure kotlin library
 
 /**
  * Helper class that stores the NTP [LongArray] result

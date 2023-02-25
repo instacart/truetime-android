@@ -120,7 +120,8 @@ public class SntpImpl implements Sntp {
 
       long requestTime = System.currentTimeMillis();
 
-      // TODO: move android dependency to separate package
+      // TODO: Move android dependency to separate package
+      //  so we can make Truetime a pure kotlin library
       long requestTicks = SystemClock.elapsedRealtime();
 
       writeTimeStamp(buffer, INDEX_TRANSMIT_TIME, requestTime);
