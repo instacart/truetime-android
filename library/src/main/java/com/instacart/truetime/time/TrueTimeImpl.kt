@@ -154,7 +154,7 @@ class TrueTimeImpl(
         ntpHostAddress = ipHostAddress,
         rootDelayMax = with.rootDelayMax,
         rootDispersionMax = with.rootDispersionMax,
-        serverResponseDelayMax = with.serverResponseDelayMax,
+        serverResponseDelayMax = with.serverResponseDelayMaxInMillis,
         timeoutInMillis = with.connectionTimeoutInMillis,
         listener = listener,
     )

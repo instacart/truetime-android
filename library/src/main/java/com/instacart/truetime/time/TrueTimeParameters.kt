@@ -6,7 +6,7 @@ class TrueTimeParameters private constructor(
   val retryCountAgainstSingleIp: Int,
   val rootDelayMax: Float,
   val rootDispersionMax: Float,
-  val serverResponseDelayMax: Int,
+  val serverResponseDelayMaxInMillis: Int,
   val syncIntervalInMillis: Long,
   val returnSafelyWhenUninitialized: Boolean,
   val filterIpv6Addresses: Boolean,
@@ -52,10 +52,10 @@ class TrueTimeParameters private constructor(
       return this
     }
 
-    private var serverResponseDelayMax: Int = 750
+    private var serverResponseDelayMaxInMillis: Int = 750
 
-    fun serverResponseDelayMax(value: Int): Builder {
-      serverResponseDelayMax = value
+    fun serverResponseDelayMaxInMillis(value: Int): Builder {
+      serverResponseDelayMaxInMillis = value
       return this
     }
 
@@ -117,7 +117,7 @@ class TrueTimeParameters private constructor(
       retryCountAgainstSingleIp,
       rootDelayMax,
       rootDispersionMax,
-      serverResponseDelayMax,
+      serverResponseDelayMaxInMillis,
       syncIntervalInMillis,
       returnSafelyWhenUninitialized,
       filterIpv6Addresses,
