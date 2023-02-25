@@ -6,10 +6,12 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:name=".App"
-        android:theme="@style/AppTheme">
+        android:name="com.instacart.sample.App"
+        android:theme="@style/AppTheme"
+      >
 
-        <activity android:name=".SampleActivity">
+        <activity android:name="com.instacart.sample.SampleActivity"
+          android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

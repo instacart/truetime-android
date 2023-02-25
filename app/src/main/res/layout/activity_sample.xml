@@ -6,7 +6,7 @@
   android:layout_width="match_parent"
   android:layout_height="match_parent"
   android:keepScreenOn="true"
-  tools:context="com.instacart.library.sample.SampleActivity">
+  tools:context="com.instacart.library.sample.com.instacart.sample.SampleActivity">
 
   <Button
     android:id="@+id/btn_refresh"

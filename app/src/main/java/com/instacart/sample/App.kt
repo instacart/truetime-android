@@ -1,4 +1,4 @@
-package com.instacart.library.sample
+package com.instacart.sample
 
 import android.app.Application
 import com.instacart.truetime.time.TrueTime

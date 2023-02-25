@@ -1,4 +1,4 @@
-package com.instacart.library.sample
+package com.instacart.sample
 
 import android.annotation.SuppressLint
 import android.os.Build
@@ -7,8 +7,8 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.instacart.library.sample.databinding.ActivitySampleBinding
 import com.instacart.library.truetime.TrueTimeRx
+import com.instacart.sample.databinding.ActivitySampleBinding
 import com.instacart.truetime.time.TrueTime
 import com.instacart.truetime.time.TrueTimeImpl
 import com.instacart.truetime.time.TrueTimeParameters
