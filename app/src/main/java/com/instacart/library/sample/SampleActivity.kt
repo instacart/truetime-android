@@ -47,6 +47,7 @@ class SampleActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         disposables.clear()
+        job.cancel()
     }
 
     private fun refreshTime() {
