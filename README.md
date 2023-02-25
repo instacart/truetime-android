@@ -74,6 +74,19 @@ Once TrueTime gets a fix with an NTP time server, you can simply use:
 
 _Btw don't do ↑, inject TrueTime into your app and then just call `trueTime.now()`_
 
+# Installation
+
+## Usage
+
+```kt
+val trueTime = TrueTimeImpl()
+trueTime.sync()
+trueTime.now()
+```
+
+💥
+
+
 # ⚠️ Work in Progress 4.0
 
 With the move to Kotlin & Coroutines TrueTime 4 was a [major overhaul](https://github.com/instacart/truetime-android/pull/129). We still haven't ported some of the additional bells & whistles. This section keeps track of those features (that will come in the near future). TrueTime is completely functional without these additional features, so feel free to start using it.
@@ -103,33 +116,6 @@ We currently only take the first ntp host pool address from the supplied paramet
 - [ ] BootCompletedBroadcastReceiver sample
 
 Everytime a device is rebooted, the Truetime info is invalid. Previous libraries included an actual `BroadcastReceiver` but this is better handled by the application than the library. For safe measure, I'll include an example of how this can be done in case folks are curious.
-
-# Installation
-
-*⚠️ The Wiki has not been updated to the latest version of TrueTime*
-
-[See the wiki for full instructions](https://github.com/instacart/truetime-android/wiki/How-to-use-this-library).
-
-## Usage
-
-```kt
-val trueTime = TrueTimeImpl()
-trueTime.sync()
-trueTime.now()
-```
-
-💥
-
-# Wiki has a lot of useful information
-
-*⚠️ The Wiki has not been updated to the latest version of TrueTime*
-Take a look at [the wiki sidebar](https://github.com/instacart/truetime-android/wiki) which should have a lot of useful information.
-
-# Is this library still maintained?
-
-The short answer is yes. We're planning a complete rewrite of TrueTime (Version 4). See [this branch](https://github.com/instacart/truetime-android/pull/129/files). We juggle our personal time between doing this rewrite and using TrueTime in its current version. TrueTime is still used in its current form at Instacart by *many* *many* users.
-
-As is the case with most open source libraries, maintenance is hard. We've not done a great job at answering [the various issues](https://github.com/instacart/truetime-android/issues), but we want to do better. We can only ask that you trust that the rewrite is coming and it should make things better. We don't want to spend too much time making changes to the library in its existing state, because the rewrite is the better future for TrueTime.
 
 # License
 
