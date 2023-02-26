@@ -3,7 +3,7 @@ package com.instacart.truetime.time
 import android.os.SystemClock
 import com.instacart.truetime.TimeKeeperListener
 import com.instacart.truetime.sntp.Sntp
-import java.util.Date
+import java.util.*
 import java.util.concurrent.atomic.AtomicReference
 
 // TODO: move android dependency to separate package

@@ -4,7 +4,7 @@ import android.util.Log
 import com.instacart.truetime.TrueTimeEventListener
 import com.instacart.truetime.time.TrueTimeParameters
 import java.net.InetAddress
-import java.util.Date
+import java.util.*
 
 class TrueTimeLogEventListener : TrueTimeEventListener {
   override fun initialize(params: TrueTimeParameters) {

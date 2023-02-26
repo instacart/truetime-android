@@ -1,3 +1,8 @@
+root = true
+
+[*]
+charset = utf-8
+
 # This .editorconfig section approximates ktfmt's formatting rules. You can include it in an
 # existing .editorconfig file or use it standalone by copying it to <project root>/.editorconfig
 # and making sure your editor is set to read settings from .editorconfig files.

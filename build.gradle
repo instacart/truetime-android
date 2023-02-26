@@ -1,43 +1,43 @@
 buildscript {
-  ext {
-    kotlin_version = '1.8.0'
-    coroutines_version = '1.6.4'
-  }
+    ext {
+        kotlin_version = '1.8.0'
+        coroutines_version = '1.6.4'
+    }
 
-  repositories {
-    google()
-  }
+    repositories {
+        google()
+    }
 
-  dependencies {
-    // jitpack doesn't like any other versions (yet)
-    classpath 'com.android.tools.build:gradle:7.2.2'
-    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-  }
+    dependencies {
+        // jitpack doesn't like any other versions (yet)
+        classpath 'com.android.tools.build:gradle:7.2.2'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
 }
 
 plugins {
-  id "com.diffplug.spotless" version "6.15.0"
+    id "com.diffplug.spotless" version "6.15.0"
 }
 
 ext {
-  minSdkVersion = 9
-  targetSdkVersion = 33
-  compileSdkVersion = 33
+    minSdkVersion = 9
+    targetSdkVersion = 33
+    compileSdkVersion = 33
 
-  versionCode = 12
-  versionName = '4.0.0.alpha'
+    versionCode = 12
+    versionName = '4.0.0.alpha'
 }
 
 allprojects {
-  repositories {
-    google()
-    mavenCentral()
-  }
+    repositories {
+        google()
+        mavenCentral()
+    }
 }
 
 spotless {
-  kotlin {
-    target "**/*.kt", "**/*.kts"
-    ktfmt("0.43")
-  }
+    kotlin {
+        target "**/*.kt", "**/*.kts"
+        ktfmt("0.43")
+    }
 }

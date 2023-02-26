@@ -1,65 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-  xmlns:app="http://schemas.android.com/apk/res-auto"
-  xmlns:tools="http://schemas.android.com/tools"
-  android:id="@+id/activity_main"
-  android:layout_width="match_parent"
-  android:layout_height="match_parent"
-  android:keepScreenOn="true"
-  tools:context="com.instacart.library.sample.com.instacart.sample.SampleActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:keepScreenOn="true"
+    tools:context="com.instacart.library.sample.com.instacart.sample.SampleActivity">
 
-  <Button
-    android:id="@+id/btn_refresh"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_margin="@dimen/activity_vertical_margin"
+    <Button
+        android:id="@+id/btn_refresh"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/activity_vertical_margin"
 
-    android:text="Refresh"
+        android:text="Refresh"
 
-    app:layout_constraintLeft_toLeftOf="@+id/activity_main"
-    app:layout_constraintRight_toRightOf="@+id/activity_main"
-    app:layout_constraintTop_toBottomOf="@+id/truetime_new" />
+        app:layout_constraintLeft_toLeftOf="@+id/activity_main"
+        app:layout_constraintRight_toRightOf="@+id/activity_main"
+        app:layout_constraintTop_toBottomOf="@+id/truetime_new" />
 
-  <TextView
-    android:id="@+id/truetime_legacy"
+    <TextView
+        android:id="@+id/truetime_legacy"
 
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_margin="@dimen/activity_vertical_margin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/activity_vertical_margin"
 
-    android:text="TrueTime (Rx) : "
-    android:textSize="20dp"
+        android:text="TrueTime (Rx) : "
+        android:textSize="20dp"
 
-    app:layout_constraintStart_toStartOf="@+id/activity_main"
-    app:layout_constraintTop_toBottomOf="@+id/device_time" />
-
-
-  <TextView
-    android:id="@+id/truetime_new"
-
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_margin="@dimen/activity_vertical_margin"
-
-    android:text="TrueTime (Coroutines): "
-    android:textSize="20dp"
-
-    app:layout_constraintStart_toStartOf="@+id/activity_main"
-    app:layout_constraintTop_toBottomOf="@+id/truetime_legacy" />
+        app:layout_constraintStart_toStartOf="@+id/activity_main"
+        app:layout_constraintTop_toBottomOf="@+id/device_time" />
 
 
-  <TextView
-    android:id="@+id/device_time"
+    <TextView
+        android:id="@+id/truetime_new"
 
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_margin="@dimen/activity_vertical_margin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/activity_vertical_margin"
 
-    android:text="Device Time:"
-    android:textSize="20dp"
+        android:text="TrueTime (Coroutines): "
+        android:textSize="20dp"
 
-    app:layout_constraintStart_toStartOf="@+id/activity_main"
-    app:layout_constraintTop_toTopOf="@+id/activity_main" />
+        app:layout_constraintStart_toStartOf="@+id/activity_main"
+        app:layout_constraintTop_toBottomOf="@+id/truetime_legacy" />
+
+
+    <TextView
+        android:id="@+id/device_time"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/activity_vertical_margin"
+
+        android:text="Device Time:"
+        android:textSize="20dp"
+
+        app:layout_constraintStart_toStartOf="@+id/activity_main"
+        app:layout_constraintTop_toTopOf="@+id/activity_main" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
