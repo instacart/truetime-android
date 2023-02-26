@@ -6,7 +6,7 @@ import com.instacart.truetime.time.TrueTimeParameters
 import java.net.InetAddress
 import java.util.Date
 
-class TrueTimeLogEventListener: TrueTimeEventListener {
+class TrueTimeLogEventListener : TrueTimeEventListener {
   override fun initialize(params: TrueTimeParameters) {
     Log.v("TrueTime4", "initialize call performed with $params")
   }
@@ -24,7 +24,8 @@ class TrueTimeLogEventListener: TrueTimeEventListener {
   }
 
   override fun resolvedNtpHostToIPs(ntpHost: String, ipList: List<InetAddress>) {
-    Log.v("TrueTime4", "resolved NTP pool host address $ntpHost to the list of IP addresses $ipList")
+    Log.v(
+        "TrueTime4", "resolved NTP pool host address $ntpHost to the list of IP addresses $ipList")
   }
 
   override fun lastSntpRequestAttempt(ipHost: InetAddress) {
@@ -48,7 +49,7 @@ class TrueTimeLogEventListener: TrueTimeEventListener {
   }
 
   override fun sntpRequestFailed(address: InetAddress, e: Exception) {
-//    Log.e("TrueTime4 SNTP", "SNTP Request to $ntpHost failed", e)
+    //    Log.e("TrueTime4 SNTP", "SNTP Request to $ntpHost failed", e)
   }
 
   override fun storingTrueTime(ntpResult: LongArray) {
@@ -56,10 +57,10 @@ class TrueTimeLogEventListener: TrueTimeEventListener {
   }
 
   override fun returningTrueTime(trueTime: Date) {
-    Log.v("TrueTime4 TimeKeeper", "returning TrueTime $trueTime" )
+    Log.v("TrueTime4 TimeKeeper", "returning TrueTime $trueTime")
   }
 
   override fun returningDeviceTime() {
-    Log.v("TrueTime4 TimeKeeper", "returning Device Time" )
+    Log.v("TrueTime4 TimeKeeper", "returning Device Time")
   }
 }

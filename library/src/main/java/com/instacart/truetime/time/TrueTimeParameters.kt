@@ -1,16 +1,17 @@
 package com.instacart.truetime.time
 
-class TrueTimeParameters private constructor(
-  val connectionTimeoutInMillis: Int,
-  val ntpHostPool: ArrayList<String>,
-  val retryCountAgainstSingleIp: Int,
-  val rootDelayMax: Float,
-  val rootDispersionMax: Float,
-  val serverResponseDelayMaxInMillis: Int,
-  val syncIntervalInMillis: Long,
-  val returnSafelyWhenUninitialized: Boolean,
-  val filterIpv6Addresses: Boolean,
-  val strictNtpMode: Boolean,
+class TrueTimeParameters
+private constructor(
+    val connectionTimeoutInMillis: Int,
+    val ntpHostPool: ArrayList<String>,
+    val retryCountAgainstSingleIp: Int,
+    val rootDelayMax: Float,
+    val rootDispersionMax: Float,
+    val serverResponseDelayMaxInMillis: Int,
+    val syncIntervalInMillis: Long,
+    val returnSafelyWhenUninitialized: Boolean,
+    val filterIpv6Addresses: Boolean,
+    val strictNtpMode: Boolean,
 ) {
 
   class Builder {
@@ -69,8 +70,8 @@ class TrueTimeParameters private constructor(
     }
 
     /**
-     * if set to [true] it will default to [TrueTime.nowSafely]
-     * else will return [TrueTime.nowTrueOnly]
+     * if set to [true] it will default to [TrueTime.nowSafely] else will return
+     * [TrueTime.nowTrueOnly]
      */
     private var returnSafelyWhenUninitialized: Boolean = true
 
@@ -80,11 +81,10 @@ class TrueTimeParameters private constructor(
     }
 
     /**
-     * Certain NTP hosts like time.google.com return IPV6 addresses.
-     * This can cause problems (atleast in emulators) so filter by default.
+     * Certain NTP hosts like time.google.com return IPV6 addresses. This can cause problems
+     * (atleast in emulators) so filter by default.
      *
-     * In practice, on real devices [InetAddress.getAllByName] tends to return
-     * only IPV4 addresses.
+     * In practice, on real devices [InetAddress.getAllByName] tends to return only IPV4 addresses.
      */
     private var filterIpv6Addresses: Boolean = true
 
@@ -94,13 +94,13 @@ class TrueTimeParameters private constructor(
     }
 
     /**
-     *  The NTP spec requires a pretty strict set of SNTP call sequence to be made
-     *    we resolve the ntp pool to single IPs (typically around 4-5 IP addresses)
-     *    we now make 5 calls to each of these IPs (~ 5 * 4-5 calls)
-     *    and if a call fails we repeat it at least [retryCountAgainstSingleIp] times.
+     * The NTP spec requires a pretty strict set of SNTP call sequence to be made we resolve the ntp
+     * pool to single IPs (typically around 4-5 IP addresses) we now make 5 calls to each of these
+     * IPs (~ 5 * 4-5 calls) and if a call fails we repeat it at least [retryCountAgainstSingleIp]
+     * times.
      *
-     *  if [strictNtpMode] is false, we ignore all of the above and return as soon as we get
-     *  at least one successful SNTP call. This is what many other common libraries do.
+     * if [strictNtpMode] is false, we ignore all of the above and return as soon as we get at least
+     * one successful SNTP call. This is what many other common libraries do.
      */
     private var strictNtpMode: Boolean = true
 
@@ -112,17 +112,18 @@ class TrueTimeParameters private constructor(
     // TODO: Introduce a Cache provider
     //  val cacheProvider: TrueTimeCacheProvider? = null,
 
-    fun buildParams() = TrueTimeParameters(
-      connectionTimeoutInMillis,
-      ntpHostPool,
-      retryCountAgainstSingleIp,
-      rootDelayMax,
-      rootDispersionMax,
-      serverResponseDelayMaxInMillis,
-      syncIntervalInMillis,
-      returnSafelyWhenUninitialized,
-      filterIpv6Addresses,
-      strictNtpMode,
-    )
+    fun buildParams() =
+        TrueTimeParameters(
+            connectionTimeoutInMillis,
+            ntpHostPool,
+            retryCountAgainstSingleIp,
+            rootDelayMax,
+            rootDispersionMax,
+            serverResponseDelayMaxInMillis,
+            syncIntervalInMillis,
+            returnSafelyWhenUninitialized,
+            filterIpv6Addresses,
+            strictNtpMode,
+        )
   }
 }
