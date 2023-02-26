@@ -1,7 +1,12 @@
+# https://editorconfig.org
+
+# top-most EditorConfig file
 root = true
 
 [*]
 charset = utf-8
+insert_final_newline = true
+trim_trailing_whitespace = true
 
 # This .editorconfig section approximates ktfmt's formatting rules. You can include it in an
 # existing .editorconfig file or use it standalone by copying it to <project root>/.editorconfig
