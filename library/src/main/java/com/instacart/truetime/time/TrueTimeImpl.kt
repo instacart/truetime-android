@@ -5,12 +5,12 @@ import com.instacart.truetime.TrueTimeEventListener
 import com.instacart.truetime.sntp.Sntp
 import com.instacart.truetime.sntp.SntpImpl
 import com.instacart.truetime.time.TrueTimeParameters.Builder
-import kotlinx.coroutines.*
-import kotlinx.coroutines.selects.select
 import java.net.Inet6Address
 import java.net.InetAddress
 import java.net.UnknownHostException
 import java.util.*
+import kotlinx.coroutines.*
+import kotlinx.coroutines.selects.select
 
 class TrueTimeImpl(
     private val params: TrueTimeParameters = Builder().buildParams(),

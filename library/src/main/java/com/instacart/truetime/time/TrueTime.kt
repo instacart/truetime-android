@@ -1,7 +1,7 @@
 package com.instacart.truetime.time
 
-import kotlinx.coroutines.Job
 import java.util.*
+import kotlinx.coroutines.Job
 
 interface TrueTime {
 
