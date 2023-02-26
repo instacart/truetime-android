@@ -39,7 +39,6 @@ repositories {
     maven {
         url "https://jitpack.io"
     }
-    mavenCentral()
 }
 
 dependencies {
