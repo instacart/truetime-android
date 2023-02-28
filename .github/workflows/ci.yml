@@ -7,4 +7,4 @@ jobs:
       - name: Checkout the code
         uses: actions/checkout@v2
       - name: Build the app
-        run: chmod +x gradlew && ./gradlew build
+        run: ./gradlew build
