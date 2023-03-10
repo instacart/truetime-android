@@ -1,10 +1,14 @@
-name: Build
+name: CI
 on: [pull_request, push]
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
     steps:
       - name: Checkout the code
         uses: actions/checkout@v3
+      - name: Spotless checks
+        run: ./gradlew spotlessCheck --stacktrace
       - name: Build the app
         run: ./gradlew build
