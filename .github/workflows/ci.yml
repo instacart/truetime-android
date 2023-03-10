@@ -7,7 +7,7 @@ jobs:
       fail-fast: false
     steps:
       - name: Checkout the code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Spotless checks
         run: ./gradlew spotlessCheck --stacktrace
       - name: Build the app
