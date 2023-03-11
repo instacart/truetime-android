@@ -16,10 +16,11 @@ class TrueTimeImpl(
     private val params: TrueTimeParameters = Builder().buildParams(),
     dispatcher: CoroutineDispatcher = Dispatchers.IO,
     private val listener: TrueTimeEventListener = NoOpEventListener,
+    private val sntp: Sntp = SntpImpl(),
 ) : TrueTime {
 
-  private val sntp: Sntp = SntpImpl()
   private val timeKeeper = TimeKeeper(sntp, listener)
+
   private val scope =
       CoroutineScope(
           SupervisorJob() +
@@ -43,25 +44,13 @@ class TrueTimeImpl(
     }
   }
 
-  override fun hasTheTime(): Boolean = timeKeeper.hasTheTime()
+  override fun now() = if (params.returnSafelyWhenUninitialized) nowSafely() else nowTrueOnly()
 
-  override fun now(): Date {
-    return if (params.returnSafelyWhenUninitialized) nowSafely() else nowTrueOnly()
-  }
+  override fun nowSafely() = timeKeeper.nowSafely()
 
-  override fun nowSafely(): Date {
-    return if (timeKeeper.hasTheTime()) {
-      nowTrueOnly()
-    } else {
-      listener.returningDeviceTime()
-      Date()
-    }
-  }
+  override fun nowTrueOnly() = timeKeeper.nowTrueOnly()
 
-  override fun nowTrueOnly(): Date {
-    if (!hasTheTime()) throw IllegalStateException("TrueTime was not initialized successfully yet")
-    return timeKeeper.now()
-  }
+  override fun hasTheTime() = timeKeeper.hasTheTime()
 
   // region private helpers
 

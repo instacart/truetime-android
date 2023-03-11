@@ -3,6 +3,7 @@ package com.instacart.truetime.time
 import java.util.*
 import kotlinx.coroutines.Job
 
+/** This is the main class that has the APIs for accessing Truetime. */
 interface TrueTime {
 
   /**
@@ -12,8 +13,6 @@ interface TrueTime {
    * @return Use this Coroutines job to cancel the [sync] and all background work
    */
   fun sync(): Job
-
-  fun hasTheTime(): Boolean
 
   /**
    * This is [TrueTime]'s main function to get time It should respect
@@ -28,5 +27,8 @@ interface TrueTime {
   @Throws(IllegalStateException::class) fun nowTrueOnly(): Date
 
   /** return [nowTrueOnly] if TrueTime is available otherwise fallback to System clock date */
-  fun nowSafely(): Date = if (hasTheTime()) nowTrueOnly() else Date()
+  fun nowSafely(): Date
+
+  /** Does [TrueTime] have the "true" time or about to default to device time */
+  fun hasTheTime(): Boolean
 }
