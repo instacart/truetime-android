@@ -2,7 +2,7 @@ package com.instacart.truetime.time
 
 import android.os.SystemClock
 import com.instacart.truetime.TimeKeeperListener
-import com.instacart.truetime.sntp.Sntp
+import com.instacart.truetime.sntp.SntpResult
 import java.util.*
 import java.util.concurrent.atomic.AtomicReference
 
@@ -11,13 +11,12 @@ import java.util.concurrent.atomic.AtomicReference
 
 /** TimeKeeper figures out how to give you the best time given all the info currently available. */
 internal class TimeKeeper(
-    private val sntp: Sntp,
     private val listener: TimeKeeperListener,
 ) {
-  private var ttResult: AtomicReference<LongArray> = AtomicReference()
+  private var ttResult: AtomicReference<SntpResult> = AtomicReference()
 
-  /** stores the NTP [LongArray] result and derives true time from that result */
-  fun save(ntpResult: LongArray) {
+  /** stores the NTP [SntpResult] result and derives true time from that result */
+  fun save(ntpResult: SntpResult) {
     listener.storingTrueTime(ntpResult)
     ttResult.set(ntpResult)
   }
@@ -42,8 +41,8 @@ internal class TimeKeeper(
   /** Given the available information provide the best known time */
   private fun now(): Date {
     val ntpResult = ttResult.get()
-    val savedSntpTime: Long = sntp.trueTime(ntpResult)
-    val timeSinceBoot: Long = sntp.timeSinceBoot(ntpResult)
+    val savedSntpTime: Long = ntpResult.trueTime()
+    val timeSinceBoot: Long = ntpResult.timeSinceBoot()
     val currentTimeSinceBoot: Long = SystemClock.elapsedRealtime()
     val trueTime = Date(savedSntpTime + (currentTimeSinceBoot - timeSinceBoot))
 

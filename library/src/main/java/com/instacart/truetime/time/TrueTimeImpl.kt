@@ -20,7 +20,7 @@ class TrueTimeImpl(
     private val sntp: Sntp = SntpImpl(),
 ) : TrueTime {
 
-  private val timeKeeper = TimeKeeper(sntp, listener)
+  private val timeKeeper = TimeKeeper(listener)
 
   private val scope =
       CoroutineScope(
@@ -56,7 +56,7 @@ class TrueTimeImpl(
   // region private helpers
 
   /** Initialize TrueTime with an ntp pool server address */
-  private suspend fun initialize(params: TrueTimeParameters): LongArray {
+  private suspend fun initialize(params: TrueTimeParameters): SntpResult {
     listener.initialize(params)
 
     // resolve NTP pool -> single IPs

@@ -39,7 +39,7 @@ interface SntpEventListener {
 }
 
 interface TimeKeeperListener {
-  fun storingTrueTime(ntpResult: LongArray)
+  fun storingTrueTime(ntpResult: SntpResult)
 
   /** TimeKeeper has the "true" time and is returning it */
   fun returningTrueTime(trueTime: Date)
@@ -62,7 +62,7 @@ object NoOpEventListener : TrueTimeEventListener {
   override fun sntpRequestSuccessful(address: InetAddress) {}
   override fun sntpRequestFailed(address: InetAddress, e: Exception) {}
 
-  override fun storingTrueTime(ntpResult: LongArray) {}
+  override fun storingTrueTime(ntpResult: SntpResult) {}
   override fun returningTrueTime(trueTime: Date) {}
   override fun returningDeviceTime() {}
 }
