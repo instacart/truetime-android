@@ -16,14 +16,14 @@ internal class TimeKeeper(
 ) {
   private var ttResult: AtomicReference<LongArray> = AtomicReference()
 
-  /** Is there sufficient information to determine the time */
-  fun hasTheTime(): Boolean = ttResult.get() != null
-
   /** stores the NTP [LongArray] result and derives true time from that result */
   fun save(ntpResult: LongArray) {
     listener.storingTrueTime(ntpResult)
     ttResult.set(ntpResult)
   }
+
+  /** Is there sufficient information to determine the time */
+  fun hasTheTime(): Boolean = ttResult.get() != null
 
   fun nowSafely(): Date {
     return if (hasTheTime()) {
