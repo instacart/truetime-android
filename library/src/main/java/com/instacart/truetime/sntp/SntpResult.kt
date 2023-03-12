@@ -18,7 +18,7 @@ class SntpResult(val ntpResult: LongArray) {
             ntpResult[SntpImpl.RESPONSE_INDEX_RESPONSE_TIME])) / 2
   }
 
-  /** @return NTP/"true" time when NTP call was made */
+  /** @return "true" time when NTP call was made */
   fun trueTime(): Long {
     return responseTime() + clockOffset()
   }

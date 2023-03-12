@@ -1,5 +1,7 @@
 package com.instacart.truetime.time
 
+import com.instacart.truetime.BasicCacheProvider
+import com.instacart.truetime.CacheProvider
 import com.instacart.truetime.NoOpEventListener
 import com.instacart.truetime.TrueTimeEventListener
 import com.instacart.truetime.sntp.Sntp
@@ -16,11 +18,12 @@ import kotlinx.coroutines.selects.select
 class TrueTimeImpl(
     private val params: TrueTimeParameters = Builder().buildParams(),
     dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    cacheProvider: CacheProvider = BasicCacheProvider(),
     private val listener: TrueTimeEventListener = NoOpEventListener,
     private val sntp: Sntp = SntpImpl(),
 ) : TrueTime {
 
-  private val timeKeeper = TimeKeeper(listener)
+  private val timeKeeper = TimeKeeper(listener, cacheProvider)
 
   private val scope =
       CoroutineScope(

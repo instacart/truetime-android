@@ -69,7 +69,7 @@ class SampleActivity : AppCompatActivity() {
           TrueTimeParameters.Builder()
               .ntpHostPool(arrayListOf("time.apple.com"))
               .connectionTimeoutInMillis(31428)
-              .syncIntervalInMillis(1_000)
+              .syncIntervalInMillis(5_000)
               .retryCountAgainstSingleIp(3)
               .returnSafelyWhenUninitialized(false)
               .serverResponseDelayMaxInMillis(900) // this value is pretty high (coding on a plane)
