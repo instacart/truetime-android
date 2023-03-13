@@ -15,12 +15,12 @@ import com.instacart.truetime.time.TrueTimeParameters
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.*
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.concurrent.schedule
-import kotlinx.coroutines.*
 
 @SuppressLint("SetTextI18n")
 @RequiresApi(Build.VERSION_CODES.O)
@@ -55,7 +55,7 @@ class SampleActivity : AppCompatActivity() {
     kickOffTruetimeCoroutines()
     kickOffTrueTimeRx()
 
-    binding.deviceTime.text = "Device Time: ${formatDate(Date())}"
+    binding.deviceTime.text = "Device Time: ${formatInstant(Instant.now())}"
   }
 
   private fun kickOffTruetimeCoroutines() {
@@ -85,7 +85,7 @@ class SampleActivity : AppCompatActivity() {
         delay(500)
       }
 
-      binding.truetimeNew.text = "(Coroutines): ${formatDate(sampleTrueTime.now())}"
+      binding.truetimeNew.text = "(Coroutines): ${formatInstant(sampleTrueTime.now())}"
     }
 
     if (false) {
@@ -106,14 +106,15 @@ class SampleActivity : AppCompatActivity() {
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
-                { date -> binding.truetimeLegacy.text = "(Rx) : ${formatDate(date)}" },
-                { Log.e("Demo", "something went wrong when trying to initializeRx TrueTime", it) })
+                { date -> binding.truetimeLegacy.text = "(Rx) : ${formatInstant(date.toInstant())}" },
+                { Log.e("Demo", "something went wrong when trying to initializeRx TrueTime", it) },
+            )
 
     disposables.add(d)
   }
 
-  private fun formatDate(date: Date): String {
-    return Instant.ofEpochMilli(date.time)
+  private fun formatInstant(instant: Instant): String {
+    return instant
         .atZone(ZoneId.of("America/Los_Angeles"))
         .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
   }

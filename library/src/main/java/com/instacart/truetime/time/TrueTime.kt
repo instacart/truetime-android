@@ -1,7 +1,8 @@
 package com.instacart.truetime.time
 
-import java.util.*
 import kotlinx.coroutines.Job
+import java.time.Instant
+import java.util.*
 
 /** This is the main class that has the APIs for accessing Truetime. */
 interface TrueTime {
@@ -18,16 +19,16 @@ interface TrueTime {
    * This is [TrueTime]'s main function to get time It should respect
    * [TrueTimeParameters.returnSafelyWhenUninitialized] setting
    */
-  fun now(): Date
+  fun now(): Instant
 
   /**
    * return the current time as calculated by TrueTime. If TrueTime doesn't [hasTheTime], will throw
    * [IllegalStateException]
    */
-  @Throws(IllegalStateException::class) fun nowTrueOnly(): Date
+  @Throws(IllegalStateException::class) fun nowTrueOnly(): Instant
 
   /** return [nowTrueOnly] if TrueTime is available otherwise fallback to System clock date */
-  fun nowSafely(): Date
+  fun nowSafely(): Instant
 
   /** Does [TrueTime] have the "true" time or about to default to device time */
   fun hasTheTime(): Boolean

@@ -5,7 +5,7 @@ import com.instacart.truetime.TrueTimeEventListener
 import com.instacart.truetime.sntp.SntpResult
 import com.instacart.truetime.time.TrueTimeParameters
 import java.net.InetAddress
-import java.util.*
+import java.time.Instant
 
 class TrueTimeLogEventListener : TrueTimeEventListener {
   override fun initialize(params: TrueTimeParameters) {
@@ -57,7 +57,7 @@ class TrueTimeLogEventListener : TrueTimeEventListener {
     Log.v("TrueTime4 TimeKeeper", "TimeKeeper storing time $ntpResult")
   }
 
-  override fun returningTrueTime(trueTime: Date) {
+  override fun returningTrueTime(trueTime: Instant) {
     Log.v("TrueTime4 TimeKeeper", "returning TrueTime $trueTime")
   }
 

@@ -4,7 +4,7 @@ import android.os.SystemClock
 import com.instacart.truetime.CacheProvider
 import com.instacart.truetime.TimeKeeperListener
 import com.instacart.truetime.sntp.SntpResult
-import java.util.*
+import java.time.Instant
 
 // TODO: move android dependency to separate package
 //  so we can make Truetime a pure kotlin library
@@ -22,27 +22,27 @@ internal class TimeKeeper(
 
   fun hasTheTime(): Boolean = cacheProvider.hasInfo()
 
-  fun nowSafely(): Date {
+  fun nowSafely(): Instant {
     return if (hasTheTime()) {
       nowTrueOnly()
     } else {
       listener.returningDeviceTime()
-      Date()
+      Instant.now()
     }
   }
 
-  fun nowTrueOnly(): Date {
+  fun nowTrueOnly(): Instant {
     if (!hasTheTime()) throw IllegalStateException("TrueTime was not initialized successfully yet")
     return now()
   }
 
   /** Given the available information provide the best known time */
-  private fun now(): Date {
+  private fun now(): Instant {
     val ntpResult = cacheProvider.fetch()!!
     val savedSntpTime: Long = ntpResult.trueTime()
     val timeSinceBoot: Long = ntpResult.timeSinceBoot()
     val currentTimeSinceBoot: Long = SystemClock.elapsedRealtime()
-    val trueTime = Date(savedSntpTime + (currentTimeSinceBoot - timeSinceBoot))
+    val trueTime = Instant.ofEpochMilli(savedSntpTime + (currentTimeSinceBoot - timeSinceBoot))
     listener.returningTrueTime(trueTime)
     return trueTime
   }

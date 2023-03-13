@@ -3,7 +3,7 @@ package com.instacart.truetime
 import com.instacart.truetime.sntp.SntpResult
 import com.instacart.truetime.time.TrueTimeParameters
 import java.net.InetAddress
-import java.util.*
+import java.time.Instant
 
 interface TrueTimeEventListener : SntpEventListener, TimeKeeperListener {
   /** [com.instacart.truetime.time.TrueTime] initialize call performed */
@@ -42,7 +42,7 @@ interface TimeKeeperListener {
   fun storingTrueTime(ntpResult: SntpResult)
 
   /** TimeKeeper has the "true" time and is returning it */
-  fun returningTrueTime(trueTime: Date)
+  fun returningTrueTime(trueTime: Instant)
 
   /** TimeKeeper does not have the "true" time returning device time. */
   fun returningDeviceTime()
@@ -63,6 +63,6 @@ object NoOpEventListener : TrueTimeEventListener {
   override fun sntpRequestFailed(address: InetAddress, e: Exception) {}
 
   override fun storingTrueTime(ntpResult: SntpResult) {}
-  override fun returningTrueTime(trueTime: Date) {}
+  override fun returningTrueTime(trueTime: Instant) {}
   override fun returningDeviceTime() {}
 }
