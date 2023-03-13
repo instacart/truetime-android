@@ -1,9 +1,12 @@
 package com.instacart.truetime.time
 
+import com.instacart.truetime.BasicCacheProvider
+import com.instacart.truetime.CacheProvider
 import com.instacart.truetime.NoOpEventListener
 import com.instacart.truetime.TrueTimeEventListener
 import com.instacart.truetime.sntp.Sntp
 import com.instacart.truetime.sntp.SntpImpl
+import com.instacart.truetime.sntp.SntpResult
 import com.instacart.truetime.time.TrueTimeParameters.Builder
 import java.net.Inet6Address
 import java.net.InetAddress
@@ -15,11 +18,12 @@ import kotlinx.coroutines.selects.select
 class TrueTimeImpl(
     private val params: TrueTimeParameters = Builder().buildParams(),
     dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    cacheProvider: CacheProvider = BasicCacheProvider(),
     private val listener: TrueTimeEventListener = NoOpEventListener,
     private val sntp: Sntp = SntpImpl(),
 ) : TrueTime {
 
-  private val timeKeeper = TimeKeeper(sntp, listener)
+  private val timeKeeper = TimeKeeper(listener, cacheProvider)
 
   private val scope =
       CoroutineScope(
@@ -55,13 +59,13 @@ class TrueTimeImpl(
   // region private helpers
 
   /** Initialize TrueTime with an ntp pool server address */
-  private suspend fun initialize(params: TrueTimeParameters): LongArray {
+  private suspend fun initialize(params: TrueTimeParameters): SntpResult {
     listener.initialize(params)
 
     // resolve NTP pool -> single IPs
     val resolvedIPs = resolveNtpHostToIPs(params.ntpHostPool.first())
 
-    val ntpResult: LongArray =
+    val ntpResult: SntpResult =
         if (this.params.strictNtpMode) {
           // for each IP resolved
           resolvedIPs
@@ -108,7 +112,7 @@ class TrueTimeImpl(
   private fun requestTime(
       with: TrueTimeParameters,
       ipHostAddress: InetAddress,
-  ): LongArray {
+  ): SntpResult {
     // retrying up to (default 50) times if necessary
     repeat(with.retryCountAgainstSingleIp - 1) {
       try {
@@ -127,7 +131,7 @@ class TrueTimeImpl(
   private fun sntpRequest(
       with: TrueTimeParameters,
       ipHostAddress: InetAddress,
-  ): LongArray =
+  ): SntpResult =
       sntp.requestTime(
           ntpHostAddress = ipHostAddress,
           rootDelayMax = with.rootDelayMax,
@@ -137,13 +141,13 @@ class TrueTimeImpl(
           listener = listener,
       )
 
-  private fun List<LongArray>.filterLeastRoundTripDelay(): LongArray {
-    return minByOrNull { sntp.roundTripDelay(it) }
+  private fun List<SntpResult>.filterLeastRoundTripDelay(): SntpResult {
+    return minByOrNull { it.roundTripDelay() }
         ?: throw IllegalStateException("Could not find any results from requestingTime")
   }
 
-  private fun List<LongArray>.filterMedianClockOffset(): LongArray {
-    val sortedList = this.sortedBy { sntp.clockOffset(it) }
+  private fun List<SntpResult>.filterMedianClockOffset(): SntpResult {
+    val sortedList = this.sortedBy { it.clockOffset() }
     return sortedList[sortedList.size / 2]
   }
 

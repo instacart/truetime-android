@@ -64,30 +64,6 @@ public class SntpImpl implements Sntp {
     public SntpImpl() {
     }
 
-    @Override
-    public long roundTripDelay(@NotNull long[] response) {
-        return (response[RESPONSE_INDEX_RESPONSE_TIME] - response[RESPONSE_INDEX_ORIGINATE_TIME]) -
-                (response[RESPONSE_INDEX_TRANSMIT_TIME] - response[RESPONSE_INDEX_RECEIVE_TIME]);
-    }
-
-    @Override
-    public long clockOffset(@NotNull long[] response) {
-        return ((response[RESPONSE_INDEX_RECEIVE_TIME] - response[RESPONSE_INDEX_ORIGINATE_TIME]) +
-                (response[RESPONSE_INDEX_TRANSMIT_TIME] - response[RESPONSE_INDEX_RESPONSE_TIME])) / 2;
-    }
-
-    @Override
-    public long trueTime(@NotNull long[] response) {
-        long clockOffset = clockOffset(response);
-        long responseTime = response[RESPONSE_INDEX_RESPONSE_TIME];
-        return responseTime + clockOffset;
-    }
-
-    @Override
-    public long timeSinceBoot(@NotNull long[] ntpResult) {
-        return ntpResult[RESPONSE_INDEX_RESPONSE_TICKS];
-    }
-
     /**
      * Sends an NTP request to the given host and processes the response.
      *
@@ -95,7 +71,7 @@ public class SntpImpl implements Sntp {
      */
     @NotNull
     @Override
-    public synchronized long[] requestTime(
+    public synchronized SntpResult requestTime(
             InetAddress address,
             float rootDelayMax,
             float rootDispersionMax,
@@ -211,7 +187,7 @@ public class SntpImpl implements Sntp {
 
             listener.sntpRequestSuccessful(address);
 
-            return t;
+            return new SntpResult(t);
 
         } catch (Exception e) {
             listener.sntpRequestFailed(address, e);

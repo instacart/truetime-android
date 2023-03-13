@@ -1,5 +1,6 @@
 package com.instacart.truetime
 
+import com.instacart.truetime.sntp.SntpResult
 import com.instacart.truetime.time.TrueTimeParameters
 import java.net.InetAddress
 import java.util.*
@@ -8,7 +9,7 @@ interface TrueTimeEventListener : SntpEventListener, TimeKeeperListener {
   /** [com.instacart.truetime.time.TrueTime] initialize call performed */
   fun initialize(params: TrueTimeParameters)
 
-  fun initializeSuccess(ntpResult: LongArray)
+  fun initializeSuccess(ntpResult: SntpResult)
 
   /** initialization call failed with a generic exception [e] */
   fun initializeFailed(e: Exception)
@@ -38,7 +39,7 @@ interface SntpEventListener {
 }
 
 interface TimeKeeperListener {
-  fun storingTrueTime(ntpResult: LongArray)
+  fun storingTrueTime(ntpResult: SntpResult)
 
   /** TimeKeeper has the "true" time and is returning it */
   fun returningTrueTime(trueTime: Date)
@@ -49,7 +50,7 @@ interface TimeKeeperListener {
 
 object NoOpEventListener : TrueTimeEventListener {
   override fun initialize(params: TrueTimeParameters) {}
-  override fun initializeSuccess(ntpResult: LongArray) {}
+  override fun initializeSuccess(ntpResult: SntpResult) {}
   override fun initializeFailed(e: Exception) {}
   override fun nextInitializeIn(delayInMillis: Long) {}
   override fun resolvedNtpHostToIPs(ntpHost: String, ipList: List<InetAddress>) {}
@@ -61,7 +62,7 @@ object NoOpEventListener : TrueTimeEventListener {
   override fun sntpRequestSuccessful(address: InetAddress) {}
   override fun sntpRequestFailed(address: InetAddress, e: Exception) {}
 
-  override fun storingTrueTime(ntpResult: LongArray) {}
+  override fun storingTrueTime(ntpResult: SntpResult) {}
   override fun returningTrueTime(trueTime: Date) {}
   override fun returningDeviceTime() {}
 }

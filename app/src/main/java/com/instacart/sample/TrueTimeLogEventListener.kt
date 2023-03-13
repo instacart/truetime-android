@@ -2,6 +2,7 @@ package com.instacart.sample
 
 import android.util.Log
 import com.instacart.truetime.TrueTimeEventListener
+import com.instacart.truetime.sntp.SntpResult
 import com.instacart.truetime.time.TrueTimeParameters
 import java.net.InetAddress
 import java.util.*
@@ -11,7 +12,7 @@ class TrueTimeLogEventListener : TrueTimeEventListener {
     Log.v("TrueTime4", "initialize call performed with $params")
   }
 
-  override fun initializeSuccess(ntpResult: LongArray) {
+  override fun initializeSuccess(ntpResult: SntpResult) {
     Log.i("TrueTime4", "came back successfully with $ntpResult")
   }
 
@@ -52,7 +53,7 @@ class TrueTimeLogEventListener : TrueTimeEventListener {
     //    Log.e("TrueTime4 SNTP", "SNTP Request to $ntpHost failed", e)
   }
 
-  override fun storingTrueTime(ntpResult: LongArray) {
+  override fun storingTrueTime(ntpResult: SntpResult) {
     Log.v("TrueTime4 TimeKeeper", "TimeKeeper storing time $ntpResult")
   }
 
