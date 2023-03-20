@@ -21,6 +21,7 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.concurrent.schedule
 import kotlinx.coroutines.*
+import kotlin.time.Duration.Companion.milliseconds
 
 @SuppressLint("SetTextI18n")
 @RequiresApi(Build.VERSION_CODES.O)
@@ -68,11 +69,11 @@ class SampleActivity : AppCompatActivity() {
       val params =
           TrueTimeParameters.Builder()
               .ntpHostPool(arrayListOf("time.apple.com"))
-              .connectionTimeoutInMillis(31428)
-              .syncIntervalInMillis(5_000)
+              .connectionTimeout(31428.milliseconds)
+              .syncInterval(5_000.milliseconds)
               .retryCountAgainstSingleIp(3)
               .returnSafelyWhenUninitialized(false)
-              .serverResponseDelayMaxInMillis(900) // this value is pretty high (coding on a plane)
+              .serverResponseDelayMax(900.milliseconds) // this value is pretty high (coding on a plane)
               .buildParams()
 
       sampleTrueTime = TrueTimeImpl(params, listener = TrueTimeLogEventListener())

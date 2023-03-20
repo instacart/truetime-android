@@ -6,6 +6,7 @@ import com.instacart.truetime.sntp.SntpResult
 import com.instacart.truetime.time.TrueTimeParameters
 import java.net.InetAddress
 import java.util.*
+import kotlin.time.Duration
 
 class TrueTimeLogEventListener : TrueTimeEventListener {
   override fun initialize(params: TrueTimeParameters) {
@@ -20,8 +21,8 @@ class TrueTimeLogEventListener : TrueTimeEventListener {
     Log.e("TrueTime4", "initialization call failed with a generic exception", e)
   }
 
-  override fun nextInitializeIn(delayInMillis: Long) {
-    Log.v("TrueTime4", " next initialization call will be made in $delayInMillis ms")
+  override fun nextInitializeIn(delay: Duration) {
+    Log.v("TrueTime4", " next initialization call will be made in ${delay.inWholeMilliseconds} ms")
   }
 
   override fun resolvedNtpHostToIPs(ntpHost: String, ipList: List<InetAddress>) {

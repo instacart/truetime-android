@@ -42,8 +42,8 @@ class TrueTimeImpl(
           listener.initializeFailed(e)
         }
 
-        listener.nextInitializeIn(delayInMillis = params.syncIntervalInMillis)
-        delay(params.syncIntervalInMillis)
+        listener.nextInitializeIn(delay = params.syncInterval)
+        delay(params.syncInterval)
       }
     }
   }
@@ -136,8 +136,8 @@ class TrueTimeImpl(
           ntpHostAddress = ipHostAddress,
           rootDelayMax = with.rootDelayMax,
           rootDispersionMax = with.rootDispersionMax,
-          serverResponseDelayMax = with.serverResponseDelayMaxInMillis,
-          timeoutInMillis = with.connectionTimeoutInMillis,
+          serverResponseDelayMax = with.serverResponseDelayMax.inWholeMilliseconds.toInt(),
+          timeoutInMillis = with.connectionTimeout.inWholeMilliseconds.toInt(),
           listener = listener,
       )
 
