@@ -20,8 +20,8 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.concurrent.schedule
-import kotlinx.coroutines.*
 import kotlin.time.Duration.Companion.milliseconds
+import kotlinx.coroutines.*
 
 @SuppressLint("SetTextI18n")
 @RequiresApi(Build.VERSION_CODES.O)
@@ -73,7 +73,8 @@ class SampleActivity : AppCompatActivity() {
               .syncInterval(5_000.milliseconds)
               .retryCountAgainstSingleIp(3)
               .returnSafelyWhenUninitialized(false)
-              .serverResponseDelayMax(900.milliseconds) // this value is pretty high (coding on a plane)
+              .serverResponseDelayMax(
+                  900.milliseconds) // this value is pretty high (coding on a plane)
               .buildParams()
 
       sampleTrueTime = TrueTimeImpl(params, listener = TrueTimeLogEventListener())

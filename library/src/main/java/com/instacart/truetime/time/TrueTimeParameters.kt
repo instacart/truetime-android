@@ -6,16 +6,16 @@ import kotlin.time.Duration.Companion.milliseconds
 
 class TrueTimeParameters
 private constructor(
-  val connectionTimeout: Duration,
-  val ntpHostPool: ArrayList<String>,
-  val retryCountAgainstSingleIp: Int,
-  val rootDelayMax: Float,
-  val rootDispersionMax: Float,
-  val serverResponseDelayMax: Duration,
-  val syncInterval: Duration,
-  val returnSafelyWhenUninitialized: Boolean,
-  val filterIpv6Addresses: Boolean,
-  val strictNtpMode: Boolean,
+    val connectionTimeout: Duration,
+    val ntpHostPool: ArrayList<String>,
+    val retryCountAgainstSingleIp: Int,
+    val rootDelayMax: Float,
+    val rootDispersionMax: Float,
+    val serverResponseDelayMax: Duration,
+    val syncInterval: Duration,
+    val returnSafelyWhenUninitialized: Boolean,
+    val filterIpv6Addresses: Boolean,
+    val strictNtpMode: Boolean,
 ) {
 
   class Builder {
