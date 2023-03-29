@@ -1,14 +1,18 @@
 package com.instacart.truetime.time
 
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.milliseconds
+
 class TrueTimeParameters
 private constructor(
-    val connectionTimeoutInMillis: Int,
+    val connectionTimeout: Duration,
     val ntpHostPool: ArrayList<String>,
     val retryCountAgainstSingleIp: Int,
     val rootDelayMax: Float,
     val rootDispersionMax: Float,
-    val serverResponseDelayMaxInMillis: Int,
-    val syncIntervalInMillis: Long,
+    val serverResponseDelayMax: Duration,
+    val syncInterval: Duration,
     val returnSafelyWhenUninitialized: Boolean,
     val filterIpv6Addresses: Boolean,
     val strictNtpMode: Boolean,
@@ -16,10 +20,10 @@ private constructor(
 
   class Builder {
 
-    private var connectionTimeoutInMillis: Int = 30_000
+    private var connectionTimeout: Duration = 30_000.milliseconds
 
-    fun connectionTimeoutInMillis(value: Int): Builder {
-      connectionTimeoutInMillis = value
+    fun connectionTimeout(value: Duration): Builder {
+      connectionTimeout = value
       return this
     }
 
@@ -54,18 +58,18 @@ private constructor(
       return this
     }
 
-    private var serverResponseDelayMaxInMillis: Int = 750
+    private var serverResponseDelayMax: Duration = 750.milliseconds
 
-    fun serverResponseDelayMaxInMillis(value: Int): Builder {
-      serverResponseDelayMaxInMillis = value
+    fun serverResponseDelayMax(value: Duration): Builder {
+      serverResponseDelayMax = value
       return this
     }
 
     // re-sync every 1 hour by default
-    private var syncIntervalInMillis: Long = 3600_000
+    private var syncInterval: Duration = 1.hours
 
-    fun syncIntervalInMillis(value: Long): Builder {
-      syncIntervalInMillis = value
+    fun syncInterval(value: Duration): Builder {
+      syncInterval = value
       return this
     }
 
@@ -114,13 +118,13 @@ private constructor(
 
     fun buildParams() =
         TrueTimeParameters(
-            connectionTimeoutInMillis,
+            connectionTimeout,
             ntpHostPool,
             retryCountAgainstSingleIp,
             rootDelayMax,
             rootDispersionMax,
-            serverResponseDelayMaxInMillis,
-            syncIntervalInMillis,
+            serverResponseDelayMax,
+            syncInterval,
             returnSafelyWhenUninitialized,
             filterIpv6Addresses,
             strictNtpMode,
