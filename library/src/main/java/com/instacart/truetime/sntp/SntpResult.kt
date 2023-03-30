@@ -28,6 +28,13 @@ class SntpResult(val ntpResult: LongArray) {
     return ntpResult[SntpImpl.RESPONSE_INDEX_RESPONSE_TICKS]
   }
 
+  /**
+   * @return wall clock time when NTP call was made
+   */
+  internal fun transmitTime(): Long {
+    return ntpResult[SntpImpl.RESPONSE_INDEX_TRANSMIT_TIME]
+  }
+
   private fun responseTime(): Long {
     return ntpResult[SntpImpl.RESPONSE_INDEX_RESPONSE_TIME]
   }

@@ -21,6 +21,7 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.concurrent.schedule
 import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.*
 
 @SuppressLint("SetTextI18n")
@@ -70,7 +71,7 @@ class SampleActivity : AppCompatActivity() {
           TrueTimeParameters.Builder()
               .ntpHostPool(arrayListOf("time.apple.com"))
               .connectionTimeout(31428.milliseconds)
-              .syncInterval(5_000.milliseconds)
+              .syncInterval(30.minutes)
               .retryCountAgainstSingleIp(3)
               .returnSafelyWhenUninitialized(false)
               .serverResponseDelayMax(

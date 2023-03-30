@@ -43,11 +43,11 @@ class TrueTimeLogEventListener : TrueTimeEventListener {
   }
 
   override fun sntpRequest(address: InetAddress) {
-    Log.v("TrueTime4 SNTP", "SNTP request to $address")
+//    Log.v("TrueTime4 SNTP", "SNTP request to $address")
   }
 
   override fun sntpRequestSuccessful(address: InetAddress) {
-    Log.v("TrueTime4 SNTP", "SNTP Request to $address came back successfully")
+//    Log.v("TrueTime4 SNTP", "SNTP Request to $address came back successfully")
   }
 
   override fun sntpRequestFailed(address: InetAddress, e: Exception) {
@@ -56,6 +56,10 @@ class TrueTimeLogEventListener : TrueTimeEventListener {
 
   override fun storingTrueTime(ntpResult: SntpResult) {
     Log.v("TrueTime4 TimeKeeper", "TimeKeeper storing time $ntpResult")
+  }
+
+  override fun usingRegressionEstimate() {
+    Log.v("TrueTime4 TimeKeeper", "TimeKeeper is using a regression model to give you TrueTime")
   }
 
   override fun returningTrueTime(trueTime: Date) {

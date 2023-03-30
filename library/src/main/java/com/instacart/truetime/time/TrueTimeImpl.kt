@@ -50,9 +50,9 @@ class TrueTimeImpl(
 
   override fun now() = if (params.returnSafelyWhenUninitialized) nowSafely() else nowTrueOnly()
 
-  override fun nowSafely() = timeKeeper.nowSafely()
+  override fun nowSafely() = timeKeeper.nowSafely(params.syncInterval)
 
-  override fun nowTrueOnly() = timeKeeper.nowTrueOnly()
+  override fun nowTrueOnly() = timeKeeper.nowTrueOnly(params.syncInterval)
 
   override fun hasTheTime() = timeKeeper.hasTheTime()
 
