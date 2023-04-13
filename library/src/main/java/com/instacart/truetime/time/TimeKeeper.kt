@@ -20,25 +20,38 @@ internal class TimeKeeper(
     cacheProvider.insert(ntpResult)
   }
 
-  fun hasTheTime(): Boolean = cacheProvider.hasInfo()
+  fun hasTheTime(): Boolean {
+    if (!cacheProvider.hasAnyEntries()) return false
+
+    val lastEntry = cacheProvider.fetchLatest()!!
+    val currentElapsedTime = SystemClock.elapsedRealtime()
+    val deviceRebooted = lastEntry.timeSinceBoot() > currentElapsedTime
+    if (deviceRebooted) {
+      cacheProvider.invalidate()
+      listener.invalidateCacheOnRebootDetection()
+    }
+
+    return !deviceRebooted
+  }
 
   fun nowSafely(): Date {
     return if (hasTheTime()) {
-      nowTrueOnly()
+      nowTrueOnly(true)
     } else {
       listener.returningDeviceTime()
       Date()
     }
   }
 
-  fun nowTrueOnly(): Date {
-    if (!hasTheTime()) throw IllegalStateException("TrueTime was not initialized successfully yet")
+  fun nowTrueOnly(hasTheTimeCalculated: Boolean = false): Date {
+    if (hasTheTimeCalculated || !hasTheTime())
+        throw IllegalStateException("TrueTime was not initialized successfully yet")
     return now()
   }
 
   /** Given the available information provide the best known time */
   private fun now(): Date {
-    val ntpResult = cacheProvider.fetch()!!
+    val ntpResult = cacheProvider.fetchLatest()!!
     val savedSntpTime: Long = ntpResult.trueTime()
     val timeSinceBoot: Long = ntpResult.timeSinceBoot()
     val currentTimeSinceBoot: Long = SystemClock.elapsedRealtime()

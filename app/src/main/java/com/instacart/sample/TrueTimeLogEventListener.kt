@@ -65,4 +65,8 @@ class TrueTimeLogEventListener : TrueTimeEventListener {
   override fun returningDeviceTime() {
     Log.v("TrueTime4 TimeKeeper", "returning Device Time")
   }
+
+  override fun invalidateCacheOnRebootDetection() {
+    Log.w("TrueTime4 TimeKeeper", "A reboot was detected, invalidating cache")
+  }
 }

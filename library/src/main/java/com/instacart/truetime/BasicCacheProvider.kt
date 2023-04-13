@@ -13,9 +13,11 @@ class BasicCacheProvider : CacheProvider {
     }
   }
 
-  override fun fetch(): SntpResult? = stack.peekFirst()
+  override fun fetchLatest(): SntpResult? = stack.peekFirst()
 
   override fun fetchAll(): Iterable<SntpResult> = stack.asIterable()
 
-  override fun hasInfo(): Boolean = stack.size > 0
+  override fun hasAnyEntries(): Boolean = stack.size > 0
+
+  override fun invalidate() = stack.clear()
 }

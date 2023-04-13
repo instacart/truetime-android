@@ -47,6 +47,9 @@ interface TimeKeeperListener {
 
   /** TimeKeeper does not have the "true" time returning device time. */
   fun returningDeviceTime()
+
+  /** TimeKeeper invalidated the existing cache as a reboot was detected. */
+  fun invalidateCacheOnRebootDetection()
 }
 
 object NoOpEventListener : TrueTimeEventListener {
@@ -66,4 +69,5 @@ object NoOpEventListener : TrueTimeEventListener {
   override fun storingTrueTime(ntpResult: SntpResult) {}
   override fun returningTrueTime(trueTime: Date) {}
   override fun returningDeviceTime() {}
+  override fun invalidateCacheOnRebootDetection() {}
 }
