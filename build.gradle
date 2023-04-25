@@ -9,9 +9,9 @@ plugins {
 
     // alias for plugins that come from the version catalog file  libs.versions.toml
     // ...
+    alias(libs.plugins.spotless)
 
     // id for plugins that don't come from the version catalog file
-    id "com.diffplug.spotless" version "6.15.0"
 }
 
 ext {

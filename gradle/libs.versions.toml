@@ -10,6 +10,7 @@ constraintlayout = "2.1.4"
 kotlin = "1.8.10"
 kotlinxCoroutines = "1.6.4"
 rxJava = "2.1.1"
+spotless = "6.15.0"
 trueTime = "4.0.0.alpha"
 trueTimeRx = "3.5"
 
@@ -33,3 +34,4 @@ truetime-rx = { group = "com.github.instacart.truetime-android", name = "library
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
 android-library = { id = "com.android.library", version.ref = "androidGradlePlugin" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
