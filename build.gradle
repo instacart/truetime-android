@@ -1,10 +1,3 @@
-buildscript {
-    repositories {
-        google()
-        mavenCentral()
-    }
-}
-
 plugins {
 
     // alias for plugins that come from the version catalog file  libs.versions.toml
