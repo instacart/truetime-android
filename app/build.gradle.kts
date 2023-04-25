@@ -3,6 +3,7 @@
 plugins {
   alias(libs.plugins.android.application)
   alias(libs.plugins.kotlin.android)
+  alias(libs.plugins.ksp)
 }
 
 android {
@@ -29,15 +30,19 @@ android {
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
   }
-
-  kotlinOptions { jvmTarget = JavaVersion.VERSION_11.toString() }
 }
+
+kotlin { jvmToolchain(11) }
 
 dependencies {
   implementation(project(":library"))
   //    implementation(libs.truetime)
   implementation(libs.truetime.rx)
   implementation(libs.kotlin.stdlib)
+
+  ksp(libs.kotlin.inject.compiler)
+  implementation(libs.kotlin.inject.runtime)
+
   implementation(libs.androidx.appcompat)
   implementation(libs.androidx.constraintlayout)
   implementation(libs.androidx.lifecycle.runtime.ktx)
