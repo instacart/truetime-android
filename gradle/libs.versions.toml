@@ -11,6 +11,8 @@ kotlin = "1.8.10"
 kotlinxCoroutines = "1.6.4"
 rxJava = "2.1.1"
 spotless = "6.15.0"
+
+trueTimeVersionCode = "12"
 trueTime = "4.0.0.alpha"
 trueTimeRx = "3.5"
 
