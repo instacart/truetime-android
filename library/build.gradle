@@ -38,7 +38,7 @@ android {
 }
 
 dependencies {
-    api "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
+    api(libs.kotlinx.coroutines.core)
 }
 
 afterEvaluate {

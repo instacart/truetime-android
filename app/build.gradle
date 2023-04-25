@@ -46,15 +46,11 @@ repositories {
 
 dependencies {
     implementation project(path: ':library')
-//    implementation 'com.github.instacart:truetime-android:4.0.0.alpha'
-    implementation 'com.github.instacart.truetime-android:library-extension-rx:3.5'
-
-    implementation "org.jetbrains.kotlin:kotlin-stdlib"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
-
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.0'
-
-    implementation "io.reactivex.rxjava2:rxandroid:2.1.1"
+//    implementation(libs.truetime)
+    implementation(libs.truetime.rx)
+    implementation(libs.kotlin.stdlib)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.rxjava.android)
 }
