@@ -49,8 +49,7 @@ afterEvaluate {
 
                 groupId = 'com.instacart'
                 artifactId = 'truetime'
-                version = rootProject.ext.versionName
-
+                version = libs.versions.trueTime.get()
             }
         }
     }

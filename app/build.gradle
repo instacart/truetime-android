@@ -12,8 +12,8 @@ android {
         minSdkVersion libs.versions.minSdk.get()
         targetSdkVersion libs.versions.targetSdk.get()
 
-        versionCode rootProject.ext.versionCode
-        versionName rootProject.ext.versionName
+        versionCode libs.versions.trueTimeVersionCode.get().toInteger()
+        versionName libs.versions.trueTime.get()
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
