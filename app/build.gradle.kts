@@ -6,9 +6,9 @@ plugins {
 }
 
 android {
-  compileSdk = libs.versions.compileSdk.get().toInt()
-
   namespace = "com.instacart.sample"
+
+  compileSdk = libs.versions.compileSdk.get().toInt()
 
   defaultConfig {
     applicationId = "com.instacart.truetime"
