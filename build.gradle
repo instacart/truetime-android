@@ -1,29 +1,20 @@
 buildscript {
-    ext {
-        kotlin_version = '1.8.0'
-        coroutines_version = '1.6.4'
-    }
-
     repositories {
         google()
         mavenCentral()
     }
-
-    dependencies {
-        classpath 'com.android.tools.build:gradle:7.4.2'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-    }
 }
 
 plugins {
-    id "com.diffplug.spotless" version "6.15.0"
+
+    // alias for plugins that come from the version catalog file  libs.versions.toml
+    // ...
+    alias(libs.plugins.spotless)
+
+    // id for plugins that don't come from the version catalog file
 }
 
 ext {
-    minSdkVersion = 9
-    targetSdkVersion = 33
-    compileSdkVersion = 33
-
     versionCode = 12
     versionName = '4.0.0.alpha'
 }

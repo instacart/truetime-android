@@ -1,0 +1,37 @@
+[versions]
+compileSdk = "33"
+minSdk = "21"
+targetSdk = "33"
+
+androidGradlePlugin = "7.4.2"
+androidxAppCompat = "1.6.1"
+androidxLifecycle = "2.6.0"
+constraintlayout = "2.1.4"
+kotlin = "1.8.10"
+kotlinxCoroutines = "1.6.4"
+rxJava = "2.1.1"
+spotless = "6.15.0"
+trueTime = "4.0.0.alpha"
+trueTimeRx = "3.5"
+
+[libraries]
+
+# Dependencies of the included build-logic
+#android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }
+#kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
+
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "androidxAppCompat" }
+androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "androidxLifecycle" }
+kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib-jdk8", version.ref = "kotlin" }
+kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinxCoroutines" }
+rxjava-android = { group = "io.reactivex.rxjava2", name = "rxandroid", version.ref = "rxJava" }
+truetime = { group = "com.github.instacart", name = "truetime-android", version.ref = "trueTime" }
+truetime-rx = { group = "com.github.instacart.truetime-android", name = "library-extension-rx", version.ref = "trueTimeRx" }
+
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
+android-library = { id = "com.android.library", version.ref = "androidGradlePlugin" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
