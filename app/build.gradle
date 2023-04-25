@@ -4,13 +4,13 @@ plugins {
 }
 
 android {
-    compileSdkVersion rootProject.ext.compileSdkVersion
+    compileSdkVersion libs.versions.compileSdk.get().toInteger()
 
     namespace 'com.instacart.sample'
     defaultConfig {
         applicationId "com.instacart.truetime"
-        minSdkVersion 14
-        targetSdkVersion rootProject.ext.targetSdkVersion
+        minSdkVersion libs.versions.minSdk.get()
+        targetSdkVersion libs.versions.targetSdk.get()
 
         versionCode rootProject.ext.versionCode
         versionName rootProject.ext.versionName

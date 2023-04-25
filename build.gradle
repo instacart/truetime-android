@@ -16,14 +16,15 @@ buildscript {
 }
 
 plugins {
+
+    // alias for plugins that come from the version catalog file  libs.versions.toml
+    // ...
+
+    // id for plugins that don't come from the version catalog file
     id "com.diffplug.spotless" version "6.15.0"
 }
 
 ext {
-    minSdkVersion = 9
-    targetSdkVersion = 33
-    compileSdkVersion = 33
-
     versionCode = 12
     versionName = '4.0.0.alpha'
 }

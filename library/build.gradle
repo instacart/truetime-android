@@ -7,13 +7,13 @@ plugins {
 android {
     namespace = 'com.instacart.truetime'
 
-    compileSdkVersion rootProject.ext.compileSdkVersion
+    compileSdkVersion libs.versions.compileSdk.get().toInteger()
 
     defaultConfig {
-        minSdkVersion rootProject.ext.minSdkVersion
+        minSdkVersion libs.versions.minSdk.get()
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aarMetadata {
-            minCompileSdk = rootProject.ext.compileSdkVersion
+            minCompileSdk = libs.versions.compileSdk.get().toInteger()
         }
     }
 
