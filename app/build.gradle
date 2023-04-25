@@ -38,12 +38,6 @@ android {
     }
 }
 
-repositories {
-    maven {
-        url "https://jitpack.io"
-    }
-}
-
 dependencies {
     implementation project(path: ':library')
 //    implementation(libs.truetime)
