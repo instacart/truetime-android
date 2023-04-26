@@ -9,12 +9,17 @@ import com.instacart.truetime.time.TrueTimeParameters
 import kotlin.time.Duration.Companion.milliseconds
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
+import me.tatarka.inject.annotations.Scope
+
+/** The application-level scope. There will only be one instance of anything annotated with this. */
+@Scope annotation class AppScope
 
 @AppScope
 @Component
 abstract class AppComponent(
     @get:Provides val app: App,
 ) {
+
   abstract val trueTime: TrueTime
 
   @AppScope
@@ -35,6 +40,12 @@ abstract class AppComponent(
   }
 
   companion object {
-    fun from(context: Context): AppComponent = (context.applicationContext as App).component
+    private var instance: AppComponent? = null
+
+    fun from(context: Context): AppComponent =
+        instance
+            ?: AppComponent::class.create((context.applicationContext as App)).also {
+              instance = it
+            }
   }
 }
