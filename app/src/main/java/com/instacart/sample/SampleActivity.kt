@@ -6,12 +6,10 @@ import android.os.Bundle
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
 import com.instacart.library.truetime.TrueTimeRx
 import com.instacart.sample.databinding.ActivitySampleBinding
+import com.instacart.sample.di.AppComponent
 import com.instacart.truetime.time.TrueTime
-import com.instacart.truetime.time.TrueTimeImpl
-import com.instacart.truetime.time.TrueTimeParameters
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -19,8 +17,6 @@ import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.*
-import kotlin.concurrent.schedule
-import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.*
 
 @SuppressLint("SetTextI18n")
@@ -30,13 +26,18 @@ class SampleActivity : AppCompatActivity() {
   private lateinit var binding: ActivitySampleBinding
   private val disposables = CompositeDisposable()
 
+  private lateinit var appTrueTime: TrueTime
   private lateinit var sampleTrueTime: TrueTime
   private lateinit var job: Job
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+
+    val injector = AppComponent.from(this)
     binding = ActivitySampleBinding.inflate(layoutInflater)
     setContentView(binding.root)
+
+    appTrueTime = injector.trueTime
 
     supportActionBar?.title = "True Time Demo"
     //        (application as App).trueTime.now()
@@ -54,7 +55,7 @@ class SampleActivity : AppCompatActivity() {
     binding.deviceTime.text = "Device Time: (loading...)"
 
     kickOffTruetimeCoroutines()
-    kickOffTrueTimeRx()
+    //    kickOffTrueTimeRx()
 
     binding.deviceTime.text = "Device Time: ${formatDate(Date())}"
   }
@@ -62,37 +63,38 @@ class SampleActivity : AppCompatActivity() {
   private fun kickOffTruetimeCoroutines() {
 
     binding.truetimeNew.text = "(Coroutines): (loading...)"
+    binding.truetimeNew.text = "(Coroutines): ${formatDate(appTrueTime.now())}"
 
-    if (::job.isInitialized) job.cancel()
-
-    if (!::sampleTrueTime.isInitialized) {
-      val params =
-          TrueTimeParameters.Builder()
-              .ntpHostPool(arrayListOf("time.apple.com"))
-              .connectionTimeout(31428.milliseconds)
-              .syncInterval(5_000.milliseconds)
-              .retryCountAgainstSingleIp(3)
-              .returnSafelyWhenUninitialized(false)
-              .serverResponseDelayMax(
-                  900.milliseconds) // this value is pretty high (coding on a plane)
-              .buildParams()
-
-      sampleTrueTime = TrueTimeImpl(params, listener = TrueTimeLogEventListener())
-    }
-
-    job = sampleTrueTime.sync()
-
-    lifecycleScope.launch {
-      while (!sampleTrueTime.hasTheTime()) {
-        delay(500)
-      }
-
-      binding.truetimeNew.text = "(Coroutines): ${formatDate(sampleTrueTime.now())}"
-    }
-
-    if (false) {
-      Timer("Kill Sync Job", false).schedule(12_000) { job.cancel() }
-    }
+    //    if (::job.isInitialized) job.cancel()
+    //
+    //    if (!::sampleTrueTime.isInitialized) {
+    //      val params =
+    //          TrueTimeParameters.Builder()
+    //              .ntpHostPool(arrayListOf("time.apple.com"))
+    //              .connectionTimeout(31428.milliseconds)
+    //              .syncInterval(5_000.milliseconds)
+    //              .retryCountAgainstSingleIp(3)
+    //              .returnSafelyWhenUninitialized(false)
+    //              .serverResponseDelayMax(
+    //                  900.milliseconds) // this value is pretty high (coding on a plane)
+    //              .buildParams()
+    //
+    //      sampleTrueTime = TrueTimeImpl(params, listener = TrueTimeLogEventListener())
+    //    }
+    //
+    //    job = sampleTrueTime.sync()
+    //
+    //    lifecycleScope.launch {
+    //      while (!sampleTrueTime.hasTheTime()) {
+    //        delay(500)
+    //      }
+    //
+    //      binding.truetimeNew.text = "(Coroutines): ${formatDate(sampleTrueTime.now())}"
+    //    }
+    //
+    //    if (false) {
+    //      Timer("Kill Sync Job", false).schedule(12_000) { job.cancel() }
+    //    }
   }
 
   private fun kickOffTrueTimeRx() {

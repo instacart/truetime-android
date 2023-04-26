@@ -1,13 +1,17 @@
 package com.instacart.sample
 
 import android.util.Log
+import com.instacart.sample.di.AppScope
 import com.instacart.truetime.TrueTimeEventListener
 import com.instacart.truetime.sntp.SntpResult
 import com.instacart.truetime.time.TrueTimeParameters
 import java.net.InetAddress
 import java.util.*
 import kotlin.time.Duration
+import me.tatarka.inject.annotations.Inject
 
+@AppScope
+@Inject
 class TrueTimeLogEventListener : TrueTimeEventListener {
   override fun initialize(params: TrueTimeParameters) {
     Log.v("TrueTime4", "initialize call performed with $params")
