@@ -1,4 +1,3 @@
-// remove this on upgrading android gradle plugin to 8
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
   alias(libs.plugins.spotless)

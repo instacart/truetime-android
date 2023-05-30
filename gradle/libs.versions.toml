@@ -3,7 +3,11 @@ compileSdk = "33"
 minSdk = "21"
 targetSdk = "33"
 
-androidGradlePlugin = "7.4.2"
+trueTimeVersionCode = "12"
+trueTime = "4.0.0.alpha"
+trueTimeRx = "3.5"
+
+androidGradlePlugin = "8.0.0"
 androidxAppCompat = "1.6.1"
 androidxLifecycle = "2.6.0"
 constraintlayout = "2.1.4"
@@ -14,15 +18,17 @@ ksp = "1.8.10-1.0.9"
 rxJava = "2.1.1"
 spotless = "6.15.0"
 
-trueTimeVersionCode = "12"
-trueTime = "4.0.0.alpha"
-trueTimeRx = "3.5"
+[plugins]
+android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
+android-library = { id = "com.android.library", version.ref = "androidGradlePlugin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 
 [libraries]
 
-# Dependencies of the included build-logic
-#android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }
-#kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
+truetime = { group = "com.github.instacart", name = "truetime-android", version.ref = "trueTime" }
+truetime-rx = { group = "com.github.instacart.truetime-android", name = "library-extension-rx", version.ref = "trueTimeRx" }
 
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "androidxAppCompat" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
@@ -32,13 +38,3 @@ kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-cor
 kotlin-inject-compiler = { group = "me.tatarka.inject", name = "kotlin-inject-compiler-ksp", version.ref = "kotlinInject" }
 kotlin-inject-runtime = { group = "me.tatarka.inject", name = "kotlin-inject-runtime", version.ref = "kotlinInject" }
 rxjava-android = { group = "io.reactivex.rxjava2", name = "rxandroid", version.ref = "rxJava" }
-truetime = { group = "com.github.instacart", name = "truetime-android", version.ref = "trueTime" }
-truetime-rx = { group = "com.github.instacart.truetime-android", name = "library-extension-rx", version.ref = "trueTimeRx" }
-
-
-[plugins]
-android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
-android-library = { id = "com.android.library", version.ref = "androidGradlePlugin" }
-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
