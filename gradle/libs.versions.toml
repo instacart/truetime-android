@@ -7,7 +7,7 @@ trueTimeVersionCode = "12"
 trueTime = "4.0.0.alpha"
 trueTimeRx = "3.5"
 
-androidGradlePlugin = "8.0.0"
+androidGradlePlugin = "8.0.2"
 androidxAppCompat = "1.6.1"
 androidxLifecycle = "2.6.0"
 constraintlayout = "2.1.4"
