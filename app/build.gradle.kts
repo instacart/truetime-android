@@ -1,4 +1,3 @@
-// remove this on upgrading android gradle plugin to 8
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
   alias(libs.plugins.android.application)
@@ -36,7 +35,7 @@ kotlin { jvmToolchain(11) }
 
 dependencies {
   implementation(project(":library"))
-  //    implementation(libs.truetime)
+  //  implementation(libs.truetime)
   implementation(libs.truetime.rx)
   implementation(libs.kotlin.stdlib)
 
