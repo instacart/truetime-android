@@ -31,8 +31,6 @@ android {
   }
 }
 
-kotlin { jvmToolchain(17) }
-
 dependencies {
   implementation(project(":library"))
   //  implementation(libs.truetime)
