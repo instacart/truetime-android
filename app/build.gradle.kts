@@ -23,7 +23,9 @@ android {
 
   buildTypes { getByName("release") { isMinifyEnabled = false } }
 
-  buildFeatures { viewBinding = true }
+  buildFeatures { compose = true }
+
+  composeOptions { kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get() }
 
   compileOptions {
     sourceCompatibility = JavaVersion.VERSION_17
@@ -37,11 +39,16 @@ dependencies {
   implementation(libs.truetime.rx)
   implementation(libs.kotlin.stdlib)
 
+  // Compose Bill Of Materials
+  implementation(platform(libs.compose.bom))
+  // Android Studio Preview support
+  implementation(libs.compose.ui.tooling.preview)
+  debugImplementation(libs.compose.ui.tooling)
+
+  implementation(libs.activity.compose)
+  implementation(libs.compose.material3)
+  implementation(libs.compose.ui.ui)
+
   ksp(libs.kotlin.inject.compiler)
   implementation(libs.kotlin.inject.runtime)
-
-  implementation(libs.androidx.appcompat)
-  implementation(libs.androidx.constraintlayout)
-  implementation(libs.androidx.lifecycle.runtime.ktx)
-  implementation(libs.rxjava.android)
 }
