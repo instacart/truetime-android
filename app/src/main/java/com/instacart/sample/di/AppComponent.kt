@@ -44,8 +44,6 @@ abstract class AppComponent(
 
     fun from(context: Context): AppComponent =
         instance
-            ?: AppComponent::class.create((context.applicationContext as App)).also {
-              instance = it
-            }
+            ?: AppComponent::class.create(context.applicationContext as App).also { instance = it }
   }
 }

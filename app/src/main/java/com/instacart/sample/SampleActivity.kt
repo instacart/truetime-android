@@ -3,20 +3,17 @@ package com.instacart.sample
 import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import com.instacart.library.truetime.TrueTimeRx
+import androidx.lifecycle.lifecycleScope
 import com.instacart.sample.databinding.ActivitySampleBinding
 import com.instacart.sample.di.AppComponent
 import com.instacart.truetime.time.TrueTime
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.*
+import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.*
 
 @SuppressLint("SetTextI18n")
@@ -24,96 +21,36 @@ import kotlinx.coroutines.*
 class SampleActivity : AppCompatActivity() {
 
   private lateinit var binding: ActivitySampleBinding
-  private val disposables = CompositeDisposable()
 
   private lateinit var appTrueTime: TrueTime
-  private lateinit var sampleTrueTime: TrueTime
-  private lateinit var job: Job
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
-    val injector = AppComponent.from(this)
+    val appComponent = AppComponent.from(this)
+    appTrueTime = appComponent.trueTime
+
     binding = ActivitySampleBinding.inflate(layoutInflater)
     setContentView(binding.root)
-
-    appTrueTime = injector.trueTime
-
     supportActionBar?.title = "True Time Demo"
-    //        (application as App).trueTime.now()
-
     binding.btnRefresh.setOnClickListener { refreshTime() }
   }
 
-  override fun onDestroy() {
-    super.onDestroy()
-    disposables.clear()
-    job.cancel()
-  }
-
   private fun refreshTime() {
+    binding.truetimeNew.text = "(Coroutines): (loading...)"
+    checkTrueTimeHasTheTime()
+
     binding.deviceTime.text = "Device Time: (loading...)"
-
-    kickOffTruetimeCoroutines()
-    //    kickOffTrueTimeRx()
-
     binding.deviceTime.text = "Device Time: ${formatDate(Date())}"
   }
 
-  private fun kickOffTruetimeCoroutines() {
-
-    binding.truetimeNew.text = "(Coroutines): (loading...)"
-    binding.truetimeNew.text = "(Coroutines): ${formatDate(appTrueTime.now())}"
-
-    //    if (::job.isInitialized) job.cancel()
-    //
-    //    if (!::sampleTrueTime.isInitialized) {
-    //      val params =
-    //          TrueTimeParameters.Builder()
-    //              .ntpHostPool(arrayListOf("time.apple.com"))
-    //              .connectionTimeout(31428.milliseconds)
-    //              .syncInterval(5_000.milliseconds)
-    //              .retryCountAgainstSingleIp(3)
-    //              .returnSafelyWhenUninitialized(false)
-    //              .serverResponseDelayMax(
-    //                  900.milliseconds) // this value is pretty high (coding on a plane)
-    //              .buildParams()
-    //
-    //      sampleTrueTime = TrueTimeImpl(params, listener = TrueTimeLogEventListener())
-    //    }
-    //
-    //    job = sampleTrueTime.sync()
-    //
-    //    lifecycleScope.launch {
-    //      while (!sampleTrueTime.hasTheTime()) {
-    //        delay(500)
-    //      }
-    //
-    //      binding.truetimeNew.text = "(Coroutines): ${formatDate(sampleTrueTime.now())}"
-    //    }
-    //
-    //    if (false) {
-    //      Timer("Kill Sync Job", false).schedule(12_000) { job.cancel() }
-    //    }
-  }
-
-  private fun kickOffTrueTimeRx() {
-    binding.truetimeLegacy.text = "(Rx) : (loading...)"
-
-    val d =
-        TrueTimeRx()
-            .withConnectionTimeout(31428)
-            .withRetryCount(100)
-            //            .withSharedPreferencesCache(this)
-            .withLoggingEnabled(false)
-            .initializeRx("time.google.com")
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                { date -> binding.truetimeLegacy.text = "(Rx) : ${formatDate(date)}" },
-                { Log.e("Demo", "something went wrong when trying to initializeRx TrueTime", it) })
-
-    disposables.add(d)
+  private fun checkTrueTimeHasTheTime() {
+    lifecycleScope.launch {
+      while (!appTrueTime.hasTheTime()) {
+        delay(1.seconds)
+      }
+      binding.truetimeNew.text = "(Coroutines): ${formatDate(appTrueTime.now())}"
+    }
   }
 
   private fun formatDate(date: Date): String {
