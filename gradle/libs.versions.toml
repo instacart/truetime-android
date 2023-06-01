@@ -14,6 +14,7 @@ androidxLifecycle = "2.6.0"
 composeBom = "2023.04.01" # https://developer.android.com/jetpack/compose/bom/bom-mapping
 composeCompiler = "1.4.2" # https://developer.android.com/jetpack/androidx/releases/compose-kotlin#kts
 constraintlayout = "2.1.4"
+desugarJdk = "1.1.5"
 kotlin = "1.8.10"
 kotlinxCoroutines = "1.6.4"
 kotlinInject = "0.6.1"
@@ -41,6 +42,7 @@ compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
 compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
 compose-ui-ui = { module = "androidx.compose.ui:ui" }
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+desugar-jdk-lib = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "desugarJdk" }
 kotlin-inject-compiler = { group = "me.tatarka.inject", name = "kotlin-inject-compiler-ksp", version.ref = "kotlinInject" }
 kotlin-inject-runtime = { group = "me.tatarka.inject", name = "kotlin-inject-runtime", version.ref = "kotlinInject" }
 kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib-jdk8", version.ref = "kotlin" }

@@ -30,6 +30,8 @@ android {
   compileOptions {
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
+    // required for Date parsing
+    isCoreLibraryDesugaringEnabled = true
   }
 }
 
@@ -51,4 +53,6 @@ dependencies {
 
   ksp(libs.kotlin.inject.compiler)
   implementation(libs.kotlin.inject.runtime)
+
+  coreLibraryDesugaring(libs.desugar.jdk.lib)
 }
