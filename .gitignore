@@ -1,4 +1,8 @@
+# Adpated from multiple sources
+
+##############################################################################
 ### Android-specific stuff
+
 # Built application files
 *.apk
 *.ap_
@@ -18,6 +22,20 @@ local.properties
 # Google/Firebase secrets
 google-services.json
 
+# Android Studio generated files and folders
+captures/
+.externalNativeBuild/
+.cxx/
+output.json
+
+# Keystore files
+*.jks
+*.keystore
+
+# Android Profiling
+*.hprof
+
+##############################################################################
 ### Windows template
 # Windows thumbnail cache files
 Thumbs.db
@@ -44,6 +62,7 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
+##############################################################################
 ### macOS template
 # General
 .DS_Store
@@ -72,6 +91,7 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
+##############################################################################
 ### Linux template
 *~
 
@@ -87,6 +107,7 @@ Temporary Items
 # .nfs files are created when an open file is removed but is still being accessed
 .nfs*
 
+##############################################################################
 ### JetBrains template
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio and WebStorm
 # Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
@@ -94,6 +115,10 @@ Temporary Items
 *.iml
 *.ipr
 *.iws
+misc.xml
+deploymentTargetDropDown.xml
+render.experimental.xml
+
 /.idea/*
 
 # Exclude non-user-specific stuff
@@ -113,6 +138,8 @@ Temporary Items
 !.idea/scopes/
 !.idea/vcs.xml
 
+
+##############################################################################
 ### Kotlin template
 # Compiled class file
 *.class
@@ -132,12 +159,15 @@ Temporary Items
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 
+##############################################################################
 ### Gradle template
 .gradle
+.gradle/
 
 # Note that you may need to exclude by hand other folders
 # named build if necessary (e.g., in src/)
 **/build/
+!src/**/build/
 
 # Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
 !gradle/wrapper/gradle-wrapper.jar
