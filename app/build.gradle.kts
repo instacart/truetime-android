@@ -1,4 +1,4 @@
-@Suppress("DSL_SCOPE_VIOLATION")
+@Suppress("DSL_SCOPE_VIOLATION") // TODO: Remove once KTIJ-19369 is fixed
 plugins {
   alias(libs.plugins.android.application)
   alias(libs.plugins.kotlin.android)
@@ -28,6 +28,8 @@ android {
   composeOptions { kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get() }
 
   compileOptions {
+    // after agp 8.1.0-alpha09, this is no longer needed
+    // https://kotlinlang.org/docs/gradle-configure-project.html#gradle-java-toolchains-support
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
     // required for Date parsing
