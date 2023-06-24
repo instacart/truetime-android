@@ -14,9 +14,8 @@ android {
     applicationId = "com.instacart.truetime"
     minSdk = libs.versions.minSdk.get().toInt()
     targetSdk = libs.versions.targetSdk.get().toInt()
-
-    versionCode = libs.versions.trueTimeVersionCode.get().toInt()
-    versionName = libs.versions.trueTime.get()
+    versionCode = libs.versions.appVersionCode.get().toInt()
+    versionName = libs.versions.appVersionName.get()
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }

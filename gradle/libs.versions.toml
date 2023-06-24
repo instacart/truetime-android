@@ -3,7 +3,8 @@ compileSdk = "33"
 minSdk = "21"
 targetSdk = "33"
 
-trueTimeVersionCode = "12"
+appVersionCode = "12"
+appVersionName = "23.062.000"
 trueTime = "4.0.0.alpha"
 trueTimeRx = "3.5"
 
