@@ -4,6 +4,7 @@ import android.os.SystemClock
 import com.instacart.truetime.CacheProvider
 import com.instacart.truetime.TimeKeeperListener
 import com.instacart.truetime.sntp.SntpResult
+import java.io.File
 import java.util.*
 
 // TODO: move android dependency to separate package
@@ -24,14 +25,30 @@ internal class TimeKeeper(
     if (!cacheProvider.hasAnyEntries()) return false
 
     val lastEntry = cacheProvider.fetchLatest()!!
-    val currentElapsedTime = SystemClock.elapsedRealtime()
-    val deviceRebooted = lastEntry.timeSinceBoot() > currentElapsedTime
+    val deviceRebooted =
+        if (lastEntry.bootId.isNotEmpty()) {
+          // Reliable: boot ID changes on every reboot regardless of uptime
+          lastEntry.bootId != currentBootId()
+        } else {
+          // Fallback for cached entries without a boot ID: elapsed time heuristic.
+          // This can miss reboots once uptime exceeds the saved timeSinceBoot value.
+          lastEntry.timeSinceBoot() > SystemClock.elapsedRealtime()
+        }
+
     if (deviceRebooted) {
       cacheProvider.invalidate()
       listener.invalidateCacheOnRebootDetection()
     }
 
     return !deviceRebooted
+  }
+
+  private fun currentBootId(): String {
+    return try {
+      File("/proc/sys/kernel/random/boot_id").readText().trim()
+    } catch (e: Exception) {
+      ""
+    }
   }
 
   fun nowSafely(): Date {

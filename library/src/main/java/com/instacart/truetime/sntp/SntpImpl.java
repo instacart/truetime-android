@@ -24,6 +24,8 @@ import com.instacart.truetime.SntpEventListener;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -187,7 +189,7 @@ public class SntpImpl implements Sntp {
 
             listener.sntpRequestSuccessful(address);
 
-            return new SntpResult(t);
+            return new SntpResult(t, readBootId());
 
         } catch (Exception e) {
             listener.sntpRequestFailed(address, e);
@@ -200,6 +202,20 @@ public class SntpImpl implements Sntp {
     }
 
     //region private helpers
+
+    /**
+     * Reads the kernel boot ID from /proc/sys/kernel/random/boot_id.
+     * This UUID changes on every device reboot, making it a reliable reboot detector.
+     * Returns an empty string if the file cannot be read.
+     */
+    private String readBootId() {
+        try (BufferedReader reader = new BufferedReader(new FileReader("/proc/sys/kernel/random/boot_id"))) {
+            String line = reader.readLine();
+            return line != null ? line.trim() : "";
+        } catch (Exception e) {
+            return "";
+        }
+    }
 
     /**
      * Writes NTP version as defined in RFC-1305

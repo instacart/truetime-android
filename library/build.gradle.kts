@@ -17,7 +17,12 @@ android {
     aarMetadata { minCompileSdk = libs.versions.compileSdk.get().toInt() }
   }
 
-  buildTypes { getByName("release") { isMinifyEnabled = false } }
+  buildTypes {
+    getByName("release") {
+      isMinifyEnabled = false
+      consumerProguardFiles("consumer-rules.pro")
+    }
+  }
 
   buildFeatures { buildConfig = false }
 
