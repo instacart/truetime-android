@@ -1,5 +1,4 @@
-// remove this on upgrading android gradle plugin to 8
-@Suppress("DSL_SCOPE_VIOLATION") // TODO: Remove once KTIJ-19369 is fixed
+@file:Suppress("DSL_SCOPE_VIOLATION") // TODO: Remove once KTIJ-19369 is fixed (or agp 8.1)
 plugins {
   alias(libs.plugins.android.library)
   alias(libs.plugins.kotlin.android)

@@ -58,6 +58,8 @@ public class SntpImpl implements Sntp {
     private static final int INDEX_RECEIVE_TIME = 32;
     private static final int INDEX_TRANSMIT_TIME = 40;
 
+    // NTP uses 1900 as epoch, but Java uses 1970
+    // so there's a 70-year offset to convert between them:
     // 70 years plus 17 leap days
     private static final long OFFSET_1900_TO_1970 = ((365L * 70L) + 17L) * 24L * 60L * 60L;
 
@@ -121,6 +123,15 @@ public class SntpImpl implements Sntp {
             // See here for the algorithm used:
             // https://en.wikipedia.org/wiki/Network_Time_Protocol#Clock_synchronization_algorithm
 
+            // Client                    Server
+            //  |                         |
+            //  T0 -----> request ------> T1 (receive)
+            //  |                         |
+            //  |                      [processing]
+            //  |                         |
+            //  T3 <----- response <----- T2 (transmit)
+            //  |                         |
+
             long originateTime = readTimeStamp(buffer, INDEX_ORIGINATE_TIME);     // T0
             long receiveTime = readTimeStamp(buffer, INDEX_RECEIVE_TIME);         // T1
             long transmitTime = readTimeStamp(buffer, INDEX_TRANSMIT_TIME);       // T2
@@ -170,6 +181,7 @@ public class SntpImpl implements Sntp {
                 throw new InvalidNtpServerResponseException("unsynchronized server responded for TrueTime");
             }
 
+            // NTP algo to get accurate time
             double delay = Math.abs((responseTime - originateTime) - (transmitTime - receiveTime));
             if (delay >= serverResponseDelayMax) {
                 throw new InvalidNtpServerResponseException(
@@ -246,8 +258,12 @@ public class SntpImpl implements Sntp {
      */
     private long readTimeStamp(byte[] buffer, int offset) {
         long seconds = read(buffer, offset);
+        // NTP spec allocates 4 bytes for seconds
+        //             + 4 bytes for fractional seconds
         long fraction = read(buffer, offset + 4);
 
+        // convert back to java milliseconds
+        //  0x100000000L "count" of 2³² values
         return ((seconds - OFFSET_1900_TO_1970) * 1000) + ((fraction * 1000L) / 0x100000000L);
     }
 
@@ -262,6 +278,7 @@ public class SntpImpl implements Sntp {
         byte b2 = buffer[offset + 2];
         byte b3 = buffer[offset + 3];
 
+        // combine into single 32-bit long
         return ((long) ui(b0) << 24) +
                 ((long) ui(b1) << 16) +
                 ((long) ui(b2) << 8) +

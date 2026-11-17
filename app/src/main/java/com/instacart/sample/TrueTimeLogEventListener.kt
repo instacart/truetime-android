@@ -55,7 +55,7 @@ class TrueTimeLogEventListener : TrueTimeEventListener {
   }
 
   override fun sntpRequestFailed(address: InetAddress, e: Exception) {
-    //    Log.e("TrueTime4 SNTP", "SNTP Request to $ntpHost failed", e)
+    Log.e("TrueTime4 SNTP", "SNTP Request to $address failed", e)
   }
 
   override fun storingTrueTime(ntpResult: SntpResult) {

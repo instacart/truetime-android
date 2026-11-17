@@ -9,7 +9,7 @@ trueTime = "4.0.0.alpha"
 trueTimeRx = "3.5"
 
 activityCompose = "1.7.2"
-androidGradlePlugin = "8.0.2"
+androidGradlePlugin = "8.9.0"
 androidxAppCompat = "1.6.1"
 androidxLifecycle = "2.6.0"
 composeBom = "2023.04.01" # https://developer.android.com/jetpack/compose/bom/bom-mapping
